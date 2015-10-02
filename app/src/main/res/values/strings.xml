@@ -1,7 +1,20 @@
 <resources>
     <string name="app_name">CityGamesApp</string>
 
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_main">MainActivity</string>
+
+    <string-array name="nav_drawer_items">
+        <item>Start</item>
+        <item>Bieżaca rozgrywka</item>
+        <item>Przeglądaj gry</item>
+        <item>Moje konto</item>
+        <item>Statystyki</item>
+        <item>Ranking</item>
+    </string-array>
+
+    <string name="title_activity_register">Rejestracja</string>
+    <string name="email">Email</string>
+    <string name="password">Hasło</string>
+    <string name="confirm_password">Potwierdź hasło</string>
 </resources>

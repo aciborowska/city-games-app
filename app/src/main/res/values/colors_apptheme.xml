@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="apptheme_color">#ff7416</color>
+    <color name="dark_brown">#54573A</color>
+    <color name="light_brown">#8C7E51</color>
+    <color name="strong_orange">#F04903</color>
+    <color name="medium_orange">#FF7416</color>
+    <color name="light_orange">#F29B34</color>
+</resources>
