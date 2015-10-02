@@ -17,4 +17,9 @@
     <string name="email">Email</string>
     <string name="password">Hasło</string>
     <string name="confirm_password">Potwierdź hasło</string>
+    <string name="email_error">Nieprawidłowy adres email</string>
+    <string name="need_to_be_filled">Pole należy wypełnić</string>
+    <string name="diffrent_passwords">Podane hasła są różne</string>
+    <string name="password_too_short">Hasło musi mieć co najmniej 4 znaki</string>
+    <string name="connection_error">Błąd połącznia. Spróbuj ponownie później.</string>
 </resources>

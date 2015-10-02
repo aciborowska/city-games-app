@@ -1,17 +1,27 @@
 package com.wroclaw.citygames.citygamesapp.ui;
 
 import android.app.Activity;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.wroclaw.citygames.citygamesapp.Globals;
 import com.wroclaw.citygames.citygamesapp.R;
+import com.wroclaw.citygames.citygamesapp.model.Player;
+import com.wroclaw.citygames.citygamesapp.utils.Validation;
+
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
 
 public class RegisterActivity extends Activity {
 
+    private final String TAG = RegisterActivity.class.getName();
     private EditText emailEditText;
     private EditText passwordEditText;
     private EditText confirmPasswordEditText;
@@ -30,6 +40,30 @@ public class RegisterActivity extends Activity {
             @Override
             public void onClick(View v) {
                 String email = emailEditText.getText().toString();
+                String password = passwordEditText.getText().toString();
+                String confirmPassword = confirmPasswordEditText.getText().toString();
+                if(email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()){
+                    emailEditText.setError(getResources().getString(R.string.need_to_be_filled));
+                    passwordEditText.setError(getResources().getString(R.string.need_to_be_filled));
+                    confirmPasswordEditText.setError(getResources().getString(R.string.need_to_be_filled));
+                }
+                else {
+                    int validation = Validation.validateRegistartion(email,password,confirmPassword);
+                    switch(validation){
+                        case -1: emailEditText.setError(getResources().getString(R.string.email_error)); break;
+                        case -2: passwordEditText.setError(getResources().getString(R.string.diffrent_passwords));
+                            confirmPasswordEditText.setError(getResources().getString(R.string.diffrent_passwords));
+                            break;
+                        case -3: passwordEditText.setError(getResources().getString(R.string.password_too_short)); break;
+                        case 1:
+                            emailEditText.setError(null);
+                            passwordEditText.setError(null);
+                            confirmPasswordEditText.setError(null);
+
+                            NewPlayerTask newPlayerTask = new NewPlayerTask(email, password);
+                            newPlayerTask.execute();
+                    }
+                }
 
 
             }
@@ -56,5 +90,39 @@ public class RegisterActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public class NewPlayerTask extends AsyncTask<Void,Void,Player>{
+
+        String email;
+        String password;
+
+        public NewPlayerTask(String email, String password){
+            this.email=email;
+            this.password=password;
+
+
+        }
+        //TODO zaimplementować żadanie restowe
+        @Override
+        protected Player doInBackground(Void... params) {
+            RestTemplate restTemplate = new RestTemplate();
+            restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+            Uri.Builder builder = new Uri.Builder();
+            builder.scheme("http").encodedAuthority(Globals.MAIN_URL).appendEncodedPath(Globals.LOGIN_URI);
+            String uri=builder.build().toString();
+            Player player = null;
+            try {
+              //  player = restTemplate.getForObject(uri, Player.class);
+            }catch(final Exception e){
+                Log.d(TAG, "błąd połączenia");
+            }
+            return player;
+        }
+
+        @Override
+        protected void onPostExecute(Player player) {
+            super.onPostExecute(player);
+        }
     }
 }

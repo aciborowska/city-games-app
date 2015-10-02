@@ -201,6 +201,7 @@ public class LoginActivity extends Activity {
 
         private final String username;
         private final String password;
+        private boolean connection_error=false;
 
         UserLoginTask(String email, String password) {
             username = email;
@@ -218,10 +219,8 @@ public class LoginActivity extends Activity {
             try {
                 player = restTemplate.getForObject(uri, Player.class);
             }catch(final Exception e){
+                    connection_error=true;
                 Log.d(TAG, "błąd połączenia");
-                //showProgress(false);
-                //Toast toast = Toast.makeText(getApplicationContext(),"Usługa niedostępna. Spróbuj ponownie za chwilę",Toast.LENGTH_LONG );
-               // toast.show();
             }
             return player;
         }
@@ -234,10 +233,15 @@ public class LoginActivity extends Activity {
             if (success!=null) {
                 Toast toast =Toast.makeText(getApplicationContext(),"Zalogowany",Toast.LENGTH_LONG);
                 toast.show();
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
-            }
+            } else if(connection_error) {
+                Toast toast =Toast.makeText(getApplicationContext(),getResources().getString(R.string.connection_error),Toast.LENGTH_LONG);
+                toast.show();
+
+            }else {
+                    mPasswordView.setError(getString(R.string.error_incorrect_password));
+                    mPasswordView.requestFocus();
+                }
+
         }
 
         @Override
