@@ -28,4 +28,6 @@
     <string name="error_incorrect_password">Błędne hasło</string>
     <string name="password_too_short">Hasło musi mieć co najmniej 4 znaki</string>
     <string name="connection_error">Błąd połącznia. Spróbuj ponownie później</string>
+
+    <string name="shared_preferences_credentials">Credentials</string>
 </resources>

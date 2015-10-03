@@ -15,7 +15,8 @@ import android.widget.Toast;
 import com.wroclaw.citygames.citygamesapp.Globals;
 import com.wroclaw.citygames.citygamesapp.R;
 import com.wroclaw.citygames.citygamesapp.model.Player;
-import com.wroclaw.citygames.citygamesapp.utils.Validation;
+import com.wroclaw.citygames.citygamesapp.util.Login;
+import com.wroclaw.citygames.citygamesapp.util.Validation;
 
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
@@ -28,6 +29,7 @@ public class RegisterActivity extends Activity {
     private EditText confirmPasswordEditText;
     private Button registerButton;
     private View progressView;
+    private NewPlayerTask newPlayerTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +69,7 @@ public class RegisterActivity extends Activity {
                             emailEditText.setError(null);
                             passwordEditText.setError(null);
                             confirmPasswordEditText.setError(null);
-                            NewPlayerTask newPlayerTask = new NewPlayerTask(email, password);
+                            newPlayerTask = new NewPlayerTask(email, password);
                             changeProgressView(true);
                             newPlayerTask.execute();
                     }
@@ -138,10 +140,13 @@ public class RegisterActivity extends Activity {
 
         @Override
         protected void onPostExecute(Player player) {
+            newPlayerTask=null;
             changeProgressView(false);
+
             if (player != null) {
                 Toast toast = Toast.makeText(getApplicationContext(), "Utworzono konto", Toast.LENGTH_LONG);
                 toast.show();
+                Login.login(player.getPlayerId());
             } else if(connection_error){
                 Toast toast = Toast.makeText(getApplicationContext(), "Błąd połączenia, spróbuj ponownie później", Toast.LENGTH_LONG);
                 toast.show();
