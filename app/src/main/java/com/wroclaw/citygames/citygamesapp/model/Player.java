@@ -6,7 +6,7 @@ import java.util.Set;
 public class Player {
 
 	private Long playerId;
-	private String name;
+	private String email;
 	private String password;
 	private Set<Team> teams = new HashSet<>(0);
 
@@ -18,11 +18,11 @@ public class Player {
 		this.playerId = playerId;
 	}
 
-	public String getName() {
-		return name;
+	public String getEmail() {
+		return email;
 	}
-	public void setName(String name) {
-		this.name = name;
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public Set<Team> getTeams() {

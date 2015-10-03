@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.wroclaw.citygames.citygamesapp.Globals;
 import com.wroclaw.citygames.citygamesapp.R;
@@ -26,6 +27,8 @@ public class RegisterActivity extends Activity {
     private EditText passwordEditText;
     private EditText confirmPasswordEditText;
     private Button registerButton;
+    private View progressView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +37,7 @@ public class RegisterActivity extends Activity {
         emailEditText = (EditText) findViewById(R.id.register_email_edit_text);
         passwordEditText = (EditText) findViewById(R.id.register_password_edit_text);
         confirmPasswordEditText = (EditText) findViewById(R.id.register_confirm_password_edit_text);
+        progressView = findViewById(R.id.login_progress_register);
 
         registerButton = (Button) findViewById(R.id.register_register_button);
         registerButton.setOnClickListener(new View.OnClickListener() {
@@ -42,25 +46,29 @@ public class RegisterActivity extends Activity {
                 String email = emailEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
                 String confirmPassword = confirmPasswordEditText.getText().toString();
-                if(email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()){
+                if (email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
                     emailEditText.setError(getResources().getString(R.string.error_field_required));
                     passwordEditText.setError(getResources().getString(R.string.error_field_required));
                     confirmPasswordEditText.setError(getResources().getString(R.string.error_field_required));
-                }
-                else {
-                    int validation = Validation.validateRegistartion(email,password,confirmPassword);
-                    switch(validation){
-                        case -1: emailEditText.setError(getResources().getString(R.string.error_invalid_email)); break;
-                        case -2: passwordEditText.setError(getResources().getString(R.string.diffrent_passwords));
+                } else {
+                    int validation = Validation.validateRegistartion(email, password, confirmPassword);
+                    switch (validation) {
+                        case -1:
+                            emailEditText.setError(getResources().getString(R.string.error_invalid_email));
+                            break;
+                        case -2:
+                            passwordEditText.setError(getResources().getString(R.string.diffrent_passwords));
                             confirmPasswordEditText.setError(getResources().getString(R.string.diffrent_passwords));
                             break;
-                        case -3: passwordEditText.setError(getResources().getString(R.string.password_too_short)); break;
+                        case -3:
+                            passwordEditText.setError(getResources().getString(R.string.password_too_short));
+                            break;
                         case 1:
                             emailEditText.setError(null);
                             passwordEditText.setError(null);
                             confirmPasswordEditText.setError(null);
-
                             NewPlayerTask newPlayerTask = new NewPlayerTask(email, password);
+                            changeProgressView(true);
                             newPlayerTask.execute();
                     }
                 }
@@ -69,7 +77,9 @@ public class RegisterActivity extends Activity {
             }
         });
     }
-
+    private void changeProgressView(boolean show){
+        progressView.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -92,37 +102,54 @@ public class RegisterActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    public class NewPlayerTask extends AsyncTask<Void,Void,Player>{
+    public class NewPlayerTask extends AsyncTask<Void, Void, Player> {
 
-        String email;
-        String password;
+        private String email;
+        private String password;
+        boolean connection_error = false;
 
-        public NewPlayerTask(String email, String password){
-            this.email=email;
-            this.password=password;
+        public NewPlayerTask(String email, String password) {
+            this.email = email;
+            this.password = password;
 
 
         }
-        //TODO zaimplementować żadanie restowe
+
         @Override
         protected Player doInBackground(Void... params) {
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
             Uri.Builder builder = new Uri.Builder();
-            builder.scheme("http").encodedAuthority(Globals.MAIN_URL).appendEncodedPath(Globals.LOGIN_URI);
-            String uri=builder.build().toString();
-            Player player = null;
+            builder.scheme("http").encodedAuthority(Globals.MAIN_URL).appendEncodedPath(Globals.REGISTER_URI);
+            String uri = builder.build().toString();
+            Player player = new Player();
+            player.setEmail(email);
+            player.setPassword(password);
+            Player created = null;
             try {
-              //  player = restTemplate.getForObject(uri, Player.class);
-            }catch(final Exception e){
+                created = restTemplate.postForObject(uri, player, Player.class);
+            } catch (final Exception e) {
+                e.printStackTrace();
                 Log.d(TAG, "błąd połączenia");
+                connection_error = true;
             }
-            return player;
+            return created;
         }
 
         @Override
         protected void onPostExecute(Player player) {
-            super.onPostExecute(player);
+            changeProgressView(false);
+            if (player != null) {
+                Toast toast = Toast.makeText(getApplicationContext(), "Utworzono konto", Toast.LENGTH_LONG);
+                toast.show();
+            } else if(connection_error){
+                Toast toast = Toast.makeText(getApplicationContext(), "Błąd połączenia, spróbuj ponownie później", Toast.LENGTH_LONG);
+                toast.show();
+            }
+            else {
+                Toast toast = Toast.makeText(getApplicationContext(), "Podany email istnieje już w bazie", Toast.LENGTH_LONG);
+                toast.show();
+            }
         }
     }
 }
