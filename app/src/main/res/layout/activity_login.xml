@@ -26,7 +26,7 @@
                 android:id="@+id/imageView"
                 android:layout_gravity="center_horizontal"
                 android:background="@drawable/city_map_2"
-                android:layout_marginTop="40dp" />
+                android:layout_marginTop="10dp" />
 
             <EditText android:id="@+id/email" android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:hint="@string/prompt_email"
@@ -48,7 +48,7 @@
 
                 <Button android:id="@+id/sign_in_button" style="?android:textAppearanceSmall"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp" android:text="@string/action_sign_in"
+                    android:layout_marginTop="16dp" android:text="@string/action_login_in"
                     android:textStyle="bold"
                     android:layout_weight="1"
                     android:layout_marginRight="10dp" />

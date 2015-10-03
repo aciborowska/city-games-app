@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CityGamesApp</string>
+    <string name="app_name">Gry miejskie</string>
 
     <string name="action_settings">Settings</string>
     <string name="title_activity_main">MainActivity</string>
@@ -14,12 +14,18 @@
     </string-array>
 
     <string name="title_activity_register">Rejestracja</string>
-    <string name="email">Email</string>
-    <string name="password">Hasło</string>
+    <string name="title_activity_login">Zaloguj</string>
+
+    <string name="action_login_in">Zaloguj</string>
+    <string name="action_register">Zarejestruj</string>
+
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Hasło</string>
     <string name="confirm_password">Potwierdź hasło</string>
-    <string name="email_error">Nieprawidłowy adres email</string>
-    <string name="need_to_be_filled">Pole należy wypełnić</string>
+    <string name="error_invalid_email">Nieprawidłowy adres email</string>
+    <string name="error_field_required">Pole należy wypełnić</string>
     <string name="diffrent_passwords">Podane hasła są różne</string>
+    <string name="error_incorrect_password">Błędne hasło</string>
     <string name="password_too_short">Hasło musi mieć co najmniej 4 znaki</string>
-    <string name="connection_error">Błąd połącznia. Spróbuj ponownie później.</string>
+    <string name="connection_error">Błąd połącznia. Spróbuj ponownie później</string>
 </resources>

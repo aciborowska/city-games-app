@@ -43,14 +43,14 @@ public class RegisterActivity extends Activity {
                 String password = passwordEditText.getText().toString();
                 String confirmPassword = confirmPasswordEditText.getText().toString();
                 if(email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()){
-                    emailEditText.setError(getResources().getString(R.string.need_to_be_filled));
-                    passwordEditText.setError(getResources().getString(R.string.need_to_be_filled));
-                    confirmPasswordEditText.setError(getResources().getString(R.string.need_to_be_filled));
+                    emailEditText.setError(getResources().getString(R.string.error_field_required));
+                    passwordEditText.setError(getResources().getString(R.string.error_field_required));
+                    confirmPasswordEditText.setError(getResources().getString(R.string.error_field_required));
                 }
                 else {
                     int validation = Validation.validateRegistartion(email,password,confirmPassword);
                     switch(validation){
-                        case -1: emailEditText.setError(getResources().getString(R.string.email_error)); break;
+                        case -1: emailEditText.setError(getResources().getString(R.string.error_invalid_email)); break;
                         case -2: passwordEditText.setError(getResources().getString(R.string.diffrent_passwords));
                             confirmPasswordEditText.setError(getResources().getString(R.string.diffrent_passwords));
                             break;
