@@ -42,7 +42,6 @@ public class LoginActivity extends Activity {
     private EditText mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
-    private View mLoginFormView;
 
 
     @Override
@@ -70,7 +69,9 @@ public class LoginActivity extends Activity {
         signinButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptLogin();
+                //attemptLogin();
+                Intent intent = new Intent(getApplicationContext(), NavigationDrawerActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -83,7 +84,6 @@ public class LoginActivity extends Activity {
             }
         });
 
-        mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
         showProgress(false);
     }
@@ -98,7 +98,7 @@ public class LoginActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
+        //int id = item.getItemId();
 
         /*if (id == R.id.action_settings) {
             return true;
