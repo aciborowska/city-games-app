@@ -17,9 +17,12 @@ public class App extends Application {
     public static Context getCtx() {
         return ctx;
     }
-        public void onCreate() {
-            super.onCreate();
-            this.ctx = getApplicationContext();
-            Log.d(TAG, "onCreate");
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        this.ctx = getApplicationContext();
+        Log.d(TAG, "onCreate");
     }
+
 }

@@ -146,7 +146,7 @@ public class RegisterActivity extends Activity {
             if (player != null) {
                 Toast toast = Toast.makeText(getApplicationContext(), "Utworzono konto", Toast.LENGTH_LONG);
                 toast.show();
-                Login.login(player.getPlayerId());
+                Login.login(player.getPlayerId(),getApplicationContext());
             } else if(connection_error){
                 Toast toast = Toast.makeText(getApplicationContext(), "Błąd połączenia, spróbuj ponownie później", Toast.LENGTH_LONG);
                 toast.show();

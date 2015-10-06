@@ -7,7 +7,7 @@
     <string-array name="nav_drawer_items">
         <item>Start</item>
         <item>Przeglądaj gry</item>
-        <item>Statystyki</item>
+        <item>Drużyny</item>
         <item>Ranking</item>
     </string-array>
 
@@ -18,6 +18,7 @@
     <string name="action_login_in">Zaloguj</string>
     <string name="action_register">Zarejestruj</string>
 
+    <!-- LOGIN AND REGISTRATION ACTIVITIES -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Hasło</string>
     <string name="confirm_password">Potwierdź hasło</string>
@@ -32,6 +33,27 @@
 
     <string name="navigation_drawer_open">Otwarte menu</string>
     <string name="navigation_drawer_close">Zamknięte menu</string>
+
+    <!-- START FRAGMENT -->
+    <string name="hello_player">Witaj </string>
+    <string name="current_game">Bieżąca rozgrywka</string>
+    <string name="start_game">Rozpocznij nową grę</string>
+    <string name="tip_of_the_day">Dzisiejsze wydarzenia:</string>
+    <string name="info">Tu bedzie dluga i ciekawa informacja z serwera odnośnie nowych scenariuszy,
+    planowanych premier i innych tym podobnych. Mogą być też wskazówki i zagadki na dodatkowe punkty.
+    Pojawią się też informacje o rekordach. Ta informacja będzie odświeżana na żadnia użytkownika.</string>
+
+
+    <!-- STATISTICS -->
+    <string name="your_achievement">Twoje osiągnięcia:</string>
+    <string name="games_count">Liczba rozegranych gier</string>
+    <string name="games_won">wygrane</string>
+    <string name="games_lost">przegrane</string>
+    <string name="points_count">Liczba zdobytych punktów</string>
+    <string name="avarage">średnio</string>
+    <string name="max">maksymalnie</string>
+    <string name="time_in_game">Łączny czas</string>
+    <string name="distance">Pokonany dystans</string>
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

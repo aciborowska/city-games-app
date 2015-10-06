@@ -39,7 +39,7 @@ public class NavigationDrawerActivity extends FragmentActivity {
     private ActionBarDrawerToggle drawerToggle;
     private String[] fragments={"com.wroclaw.citygames.citygamesapp.ui.StartFragment",
                                 "com.wroclaw.citygames.citygamesapp.ui.ScenariosListFragment",
-                                "com.wroclaw.citygames.citygamesapp.ui.StatisticsFragment",
+                                "com.wroclaw.citygames.citygamesapp.ui.TeamsFragment",
                                 "com.wroclaw.citygames.citygamesapp.ui.RankFragment"};
 
     private CharSequence drawerTitle;
@@ -56,7 +56,7 @@ public class NavigationDrawerActivity extends FragmentActivity {
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerList = (ListView) findViewById(R.id.left_drawer);
 
-        drawerList.setAdapter(new ArrayAdapter<String>(getApplicationContext(),
+        drawerList.setAdapter(new ArrayAdapter<>(getApplicationContext(),
                 R.layout.drawer_list_item, fragmentsTitles));
         drawerList.setOnItemClickListener(new DrawerItemClickListener());
 
@@ -140,7 +140,7 @@ public class NavigationDrawerActivity extends FragmentActivity {
     private void selectItem(int position) {
         // update the main content by replacing fragments
         FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-        tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, fragments[0]));
+        tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, fragments[position]));
         tx.commit();
 
 

@@ -69,9 +69,7 @@ public class LoginActivity extends Activity {
         signinButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                //attemptLogin();
-                Intent intent = new Intent(getApplicationContext(), NavigationDrawerActivity.class);
-                startActivity(intent);
+                attemptLogin();
             }
         });
 
@@ -150,7 +148,7 @@ public class LoginActivity extends Activity {
     }
 
     private boolean isPasswordValid(String password) {
-        return (password.length() > 4 && !password.contains("'"));
+        return (password.length() >= 4 && !password.contains("'"));
     }
 
     public void showProgress(final boolean show) {
@@ -174,7 +172,7 @@ public class LoginActivity extends Activity {
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
             Uri.Builder builder = new Uri.Builder();
-            builder.scheme("http").encodedAuthority(Globals.MAIN_URL).appendEncodedPath(Globals.LOGIN_URI).appendQueryParameter("username",username).appendQueryParameter("password", password);
+            builder.scheme("http").encodedAuthority(Globals.MAIN_URL).appendEncodedPath(Globals.LOGIN_URI).appendEncodedPath("?username=" + username+"&password="+password);
             String uri=builder.build().toString();
             Player player = null;
             try {
@@ -194,7 +192,9 @@ public class LoginActivity extends Activity {
             if (success!=null) {
                 Toast toast =Toast.makeText(getApplicationContext(),"Zalogowany",Toast.LENGTH_LONG);
                 toast.show();
-                Login.login(success.getPlayerId());
+                Login.login(success.getPlayerId(),getApplicationContext());
+                Intent intent = new Intent(getApplicationContext(), NavigationDrawerActivity.class);
+                startActivity(intent);
             } else if(connection_error) {
                 Toast toast =Toast.makeText(getApplicationContext(),getResources().getString(R.string.connection_error),Toast.LENGTH_LONG);
                 toast.show();
