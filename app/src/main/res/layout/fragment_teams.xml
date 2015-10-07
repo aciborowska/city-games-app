@@ -3,10 +3,9 @@
     android:layout_height="match_parent"
     tools:context="com.wroclaw.citygames.citygamesapp.ui.TeamsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/team_list" />
+        android:id="@+id/team_list"
+        android:listSelector="@drawable/drawer_list_selector"/>
 </FrameLayout>

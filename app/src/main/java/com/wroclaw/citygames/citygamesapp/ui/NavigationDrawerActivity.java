@@ -16,6 +16,7 @@
 
 package com.wroclaw.citygames.citygamesapp.ui;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -23,6 +24,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -32,8 +34,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.wroclaw.citygames.citygamesapp.R;
+import com.wroclaw.citygames.citygamesapp.util.Login;
 
 public class NavigationDrawerActivity extends FragmentActivity {
+    private static final String TAG=NavigationDrawerActivity.class.getName();
     private DrawerLayout drawerLayout;
     private ListView drawerList;
     private ActionBarDrawerToggle drawerToggle;
@@ -45,7 +49,7 @@ public class NavigationDrawerActivity extends FragmentActivity {
     private CharSequence drawerTitle;
     private CharSequence title;
     private String[] fragmentsTitles;
-
+    private boolean isNewLogin=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,6 +91,12 @@ public class NavigationDrawerActivity extends FragmentActivity {
         if (savedInstanceState == null) {
             selectItem(0);
         }
+
+    }
+
+    protected void handleIntent(Intent intent) {
+        isNewLogin= intent.getBooleanExtra("isNewLogin", true);
+        Log.d(TAG, "handleIntent: " + isNewLogin);
     }
 
     @Override
@@ -138,14 +148,17 @@ public class NavigationDrawerActivity extends FragmentActivity {
     }
 
     private void selectItem(int position) {
-        // update the main content by replacing fragments
-        FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-        tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, fragments[position]));
-        tx.commit();
-
-
+        if (position == 4) {
+            Login.logout();
+            finish();
+        }
+        else{
+            FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+            tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, fragments[position]));
+            tx.commit();
+            setTitle(fragmentsTitles[position]);
+        }
         drawerList.setItemChecked(position, true);
-        setTitle(fragmentsTitles[position]);
         drawerLayout.closeDrawer(drawerList);
     }
 
@@ -173,5 +186,7 @@ public class NavigationDrawerActivity extends FragmentActivity {
         // Pass any configuration change to the drawer toggls
         drawerToggle.onConfigurationChanged(newConfig);
     }
+
+
 
 }

@@ -17,7 +17,7 @@ public class TeamTable {
             String sql="CREATE TABLE "+TABLE_NAME + "( ";
             sql+=BaseColumns._ID + " INTEGER NOT NULL PRIMARY KEY, ";
             sql+= TeamColumns.COLUMN_NAME + " text, ";
-            sql+= TeamColumns.COLUMN_PASSWORD + " text;";
+            sql+= TeamColumns.COLUMN_PASSWORD + " text );";
             db.execSQL(sql);
         }
 }

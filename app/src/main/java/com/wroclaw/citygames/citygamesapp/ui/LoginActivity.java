@@ -27,36 +27,30 @@ import com.wroclaw.citygames.citygamesapp.util.Login;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
-/**
- * A login screen that offers login via email/password.
- */
 public class LoginActivity extends Activity {
 
     private final String TAG = LoginActivity.class.getName();
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
-    private UserLoginTask mAuthTask = null;
 
-    // UI references.
-    private EditText mEmailView;
-    private EditText mPasswordView;
-    private View mProgressView;
+    private UserLoginTask loginTask = null;
+    private EditText emailView;
+    private EditText passwordView;
+    private View progressView;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // Set up the login form.
-        mEmailView = (EditText) findViewById(R.id.email);
-        mEmailView.setTypeface(Typeface.SERIF);
-        mPasswordView = (EditText) findViewById(R.id.password);
-        mPasswordView.setTypeface(Typeface.SERIF);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        emailView = (EditText) findViewById(R.id.email);
+        emailView.setTypeface(Typeface.SERIF);
+        passwordView = (EditText) findViewById(R.id.password);
+        passwordView.setTypeface(Typeface.SERIF);
+        passwordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
+
                 if (id == R.id.login || id == EditorInfo.IME_NULL) {
                     attemptLogin();
                     return true;
@@ -69,6 +63,7 @@ public class LoginActivity extends Activity {
         signinButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(Login.ifLogin()) startStartFragment(false);
                 attemptLogin();
             }
         });
@@ -82,8 +77,26 @@ public class LoginActivity extends Activity {
             }
         });
 
-        mProgressView = findViewById(R.id.login_progress);
+        progressView = findViewById(R.id.login_progress);
         showProgress(false);
+        if(Login.ifLogin()) startStartFragment(false);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG,"onResume");
+        if(!Login.ifLogin()){
+            passwordView.setText("");
+            emailView.setText("");
+            Log.d(TAG, "onResume - nie zalogowany");
+        }
+        else{
+            emailView.setText(Login.getEmail());
+            String fake_pass=null;
+            for(int i=0;i<Login.getPasswordLength();i++) fake_pass+="a";
+            passwordView.setText(fake_pass);
+        }
     }
 
 
@@ -110,31 +123,28 @@ public class LoginActivity extends Activity {
      * errors are presented and no actual login attempt is made.
      */
     public void attemptLogin() {
-        if (mAuthTask != null) {
+        if (loginTask != null) {
             return;
         }
 
-        // Reset errors.
-        mEmailView.setError(null);
-        mPasswordView.setError(null);
+        emailView.setError(null);
+        passwordView.setError(null);
 
-        // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
-        String password = mPasswordView.getText().toString();
+        String email = emailView.getText().toString();
+        String password = passwordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
 
-        // Check for a valid password, if the user entered one.
         if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_incorrect_password));
-            focusView = mPasswordView;
+            passwordView.setError(getString(R.string.error_incorrect_password));
+            focusView = passwordView;
             cancel = true;
         }
 
         if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
+            emailView.setError(getString(R.string.error_field_required));
+            focusView = emailView;
             cancel = true;
         }
 
@@ -142,8 +152,8 @@ public class LoginActivity extends Activity {
             focusView.requestFocus();
         } else {
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+            loginTask = new UserLoginTask(email, password);
+            loginTask.execute((Void) null);
         }
     }
 
@@ -151,8 +161,13 @@ public class LoginActivity extends Activity {
         return (password.length() >= 4 && !password.contains("'"));
     }
 
+    private void startStartFragment(boolean isNewLogin){
+        Intent intent = new Intent(getApplicationContext(), NavigationDrawerActivity.class);
+        intent.putExtra("isNewLogin",isNewLogin);
+        startActivity(intent);
+    }
     public void showProgress(final boolean show) {
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            progressView.setVisibility(show ? View.VISIBLE : View.GONE);
 
     }
 
@@ -186,29 +201,28 @@ public class LoginActivity extends Activity {
 
         @Override
         protected void onPostExecute(final Player success) {
-            mAuthTask = null;
+            loginTask = null;
             showProgress(false);
 
             if (success!=null) {
                 Toast toast =Toast.makeText(getApplicationContext(),"Zalogowany",Toast.LENGTH_LONG);
                 toast.show();
-                Login.login(success.getPlayerId(),getApplicationContext());
-                Intent intent = new Intent(getApplicationContext(), NavigationDrawerActivity.class);
-                startActivity(intent);
+                Login.login(success.getPlayerId(),username,password.length());
+                startStartFragment(true);
             } else if(connection_error) {
                 Toast toast =Toast.makeText(getApplicationContext(),getResources().getString(R.string.connection_error),Toast.LENGTH_LONG);
                 toast.show();
 
             }else {
-                    mPasswordView.setError(getString(R.string.error_incorrect_password));
-                    mPasswordView.requestFocus();
+                    passwordView.setError(getString(R.string.error_incorrect_password));
+                    passwordView.requestFocus();
                 }
 
         }
 
         @Override
         protected void onCancelled() {
-            mAuthTask = null;
+            loginTask = null;
             showProgress(false);
         }
     }

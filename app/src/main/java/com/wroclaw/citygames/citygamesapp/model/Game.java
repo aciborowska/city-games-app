@@ -1,19 +1,14 @@
 package com.wroclaw.citygames.citygamesapp.model;
 
 
-import java.util.Date;
-
-
-
 public class Game {
 
-	
 	private Long gameId;
-	private Scenario scenario;
-	private Date timeStart;
-	private Date timeEnd;
+	private Long scenarioId;
+	private Long timeStart;
+	private Long timeEnd;
 	private int points;
-	private Team team;
+	private Long teamId;
 
 	public Long getGameId() {
 		return gameId;
@@ -23,27 +18,6 @@ public class Game {
 		this.gameId = gameId;
 	}
 
-	public Scenario getScenario() {
-		return scenario;
-	}
-	public void setScenario(Scenario scanerioId) {
-		this.scenario = scanerioId;
-	}
-
-	public Date getTimeStart() {
-		return timeStart;
-	}
-	public void setTimeStart(Date timeStart) {
-		this.timeStart = timeStart;
-	}
-
-	public Date getTimeEnd() {
-		return timeEnd;
-	}
-	public void setTimeEnd(Date timeEnd) {
-		this.timeEnd = timeEnd;
-	}
-
 	public int getPoints() {
 		return points;
 	}
@@ -51,12 +25,35 @@ public class Game {
 		this.points = points;
 	}
 
-	public Team getTeam() {
-		return team;
+	public Long getScenarioId() {
+		return scenarioId;
 	}
 
-	public void setTeam(Team team) {
-		this.team = team;
+	public void setScenarioId(Long scenarioId) {
+		this.scenarioId = scenarioId;
 	}
 
+	public Long getTimeStart() {
+		return timeStart;
+	}
+
+	public void setTimeStart(Long timeStart) {
+		this.timeStart = timeStart;
+	}
+
+	public Long getTimeEnd() {
+		return timeEnd;
+	}
+
+	public void setTimeEnd(Long timeEnd) {
+		this.timeEnd = timeEnd;
+	}
+
+	public Long getTeamId() {
+		return teamId;
+	}
+
+	public void setTeamId(Long teamId) {
+		this.teamId = teamId;
+	}
 }

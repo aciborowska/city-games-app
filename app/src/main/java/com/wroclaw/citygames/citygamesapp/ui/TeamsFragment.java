@@ -76,8 +76,11 @@ public class TeamsFragment extends Fragment {
 
     private void refreshData(){
         Log.d(TAG, "refreshData");
-        teamTask = new GetTeamsTask();
-        teamTask.execute();
+        if(teamList.isEmpty()) {
+            teamTask = new GetTeamsTask();
+            teamTask.execute();
+            Log.d(TAG,"pobieranie danych");
+        }
     }
 
     private final class TeamListAdapter extends BaseAdapter{
@@ -133,7 +136,7 @@ public class TeamsFragment extends Fragment {
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
             Uri.Builder builder = new Uri.Builder();
-            builder.scheme("http").encodedAuthority(Globals.MAIN_URL).appendEncodedPath(Globals.PLAYER_TEAMS_URI).appendQueryParameter("id", String.valueOf(Login.getCredentials(getActivity().getApplicationContext())));
+            builder.scheme("http").encodedAuthority(Globals.MAIN_URL).appendEncodedPath(Globals.PLAYER_TEAMS_URI).appendQueryParameter("id", String.valueOf(Login.getCredentials()));
             String uri = builder.build().toString();
             try {
                 ResponseEntity<Team[]> responseEntity = restTemplate.getForEntity(uri, Team[].class);
@@ -150,12 +153,14 @@ public class TeamsFragment extends Fragment {
             Log.d(TAG,"onPostExecute");
             teamTask = null;
             if (result != null) {
-                teamList.clear();
-                teamList.addAll(Arrays.asList(result));
+                List<Team> teams = new ArrayList<>();
+                teams.addAll(Arrays.asList(result));
+                App.getTeamDao().saveAll(teams);
                 if(teamListAdapter != null)
+                    teamList.clear();
+                    teamList.addAll(App.getTeamDao().getAll());
                     teamListAdapter.notifyDataSetChanged();
             } else {
-
                 Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.connection_error), Toast.LENGTH_LONG).show();
             }
         }

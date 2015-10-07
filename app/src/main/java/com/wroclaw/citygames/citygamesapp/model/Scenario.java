@@ -8,9 +8,9 @@ public class Scenario {
 	private Long scenarioId;
 	private int usersAmount;
 	private String description;
-	private int time;
+	private float time;
 	private float distanceKm;
-	private float level;
+	private String level;
 	private Set<TaskGroup> taskGroups = new HashSet<>(0);
 	private Set<Game> games = new HashSet<>(0);
 	private boolean ready;
@@ -37,25 +37,11 @@ public class Scenario {
 		this.description = description;
 	}
 
-	public int getTime() {
-		return time;
-	}
-	public void setTime(int time) {
-		this.time = time;
-	}
-
 	public float getDistanceKm() {
 		return distanceKm;
 	}
 	public void setDistanceKm(float distanceKm) {
 		this.distanceKm = distanceKm;
-	}
-
-	public float getLevel() {
-		return level;
-	}
-	public void setLevel(float level) {
-		this.level = level;
 	}
 
 	public Set<TaskGroup> getTaskGroups() {
@@ -78,5 +64,24 @@ public class Scenario {
 	public void setGames(Set<Game> games) {
 		this.games = games;
 	}
-	
+
+	public float getTime() {
+		return time;
+	}
+
+	public void setTime(float time) {
+		this.time = time;
+	}
+
+	public String getLevel() {
+		return level;
+	}
+
+	public void setLevel(String level) {
+		this.level = level;
+	}
+
+	public boolean isReady() {
+		return ready;
+	}
 }

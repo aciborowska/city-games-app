@@ -26,7 +26,7 @@ public class ScenarioTable {
         sql +=ScenarioColumns.COLUMN_DESCRIPTION + " text, ";
         sql += ScenarioColumns.COLUMN_TIME + " real(10), ";
         sql += ScenarioColumns.COLUMN_DISTANCE_KM + " real(10), ";
-        sql += ScenarioColumns.COLUMN_LEVEL + " text;";
+        sql += ScenarioColumns.COLUMN_LEVEL + " text );";
 
         db.execSQL(sql);
     }

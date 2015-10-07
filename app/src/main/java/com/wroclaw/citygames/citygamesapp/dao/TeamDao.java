@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
 import android.util.Log;
 
+import com.wroclaw.citygames.citygamesapp.database.DatabaseHelper;
 import com.wroclaw.citygames.citygamesapp.database.TeamTable;
 import com.wroclaw.citygames.citygamesapp.model.Team;
 
@@ -14,16 +15,23 @@ import java.util.List;
 
 public class TeamDao implements Dao<Team> {
     public static final String TAG = TeamDao.class.getName();
+    private static TeamDao instance = null;
 
-    private SQLiteDatabase db;
+    public static TeamDao getInstance(DatabaseHelper dbManager){
+        if(instance==null){
+            instance= new TeamDao(dbManager);
+        }
+        return instance;
+    }
+    private DatabaseHelper dbManager;
 
-    public TeamDao(SQLiteDatabase db){
-        this.db=db;
+    public TeamDao(DatabaseHelper dbManager){
+        this.dbManager=dbManager;
     }
     @Override
     public long save(Team team) {
         Log.d(TAG, team.toString());
-
+        SQLiteDatabase db=dbManager.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(TeamTable.TeamColumns._ID, team.getTeamId());
         values.put(TeamTable.TeamColumns.COLUMN_NAME, team.getName());
@@ -37,6 +45,7 @@ public class TeamDao implements Dao<Team> {
 
     @Override
     public void update(Team team) {
+        SQLiteDatabase db=dbManager.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(TeamTable.TeamColumns.COLUMN_NAME, team.getName());
         values.put(TeamTable.TeamColumns.COLUMN_PASSWORD, team.getPassword());
@@ -45,12 +54,14 @@ public class TeamDao implements Dao<Team> {
 
     @Override
     public void delete(Team team) {
+        SQLiteDatabase db=dbManager.getWritableDatabase();
         if(team.getTeamId()>0)
             db.delete(TeamTable.TABLE_NAME, BaseColumns._ID + " = ?",new String[]{String.valueOf(team.getTeamId())});
     }
 
     @Override
     public Team get(long id) {
+        SQLiteDatabase db=dbManager.getReadableDatabase();
         Team team = null;
         Cursor c = db.query(TeamTable.TABLE_NAME,
                 TeamTable.ALL_COLUMNS,
@@ -69,6 +80,7 @@ public class TeamDao implements Dao<Team> {
 
     @Override
     public List<Team> getAll() {
+        SQLiteDatabase db=dbManager.getReadableDatabase();
         List<Team> teams = new ArrayList<>();
         Cursor c = db.query(TeamTable.TABLE_NAME,
                 TeamTable.ALL_COLUMNS,
@@ -100,5 +112,16 @@ public class TeamDao implements Dao<Team> {
             team.setPassword(c.getString(2));
         }
         return team;
+    }
+
+    public void saveAll(List<Team> teams){
+        for(Team team:teams){
+            save(team);
+        }
+    }
+
+    public void deleteAll(){
+        SQLiteDatabase db=dbManager.getWritableDatabase();
+        db.delete(TeamTable.TABLE_NAME,null,null);
     }
 }

@@ -9,6 +9,7 @@
         <item>Przeglądaj gry</item>
         <item>Drużyny</item>
         <item>Ranking</item>
+        <item>Wyloguj</item>
     </string-array>
 
     <string name="title_activity_register">Rejestracja</string>

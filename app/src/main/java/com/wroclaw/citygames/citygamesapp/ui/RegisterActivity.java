@@ -1,6 +1,7 @@
 package com.wroclaw.citygames.citygamesapp.ui;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -69,6 +70,7 @@ public class RegisterActivity extends Activity {
                             emailEditText.setError(null);
                             passwordEditText.setError(null);
                             confirmPasswordEditText.setError(null);
+                            if(Login.ifLogin()) Login.logout();
                             newPlayerTask = new NewPlayerTask(email, password);
                             changeProgressView(true);
                             newPlayerTask.execute();
@@ -102,6 +104,11 @@ public class RegisterActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void startStartFragment(){
+        Intent intent = new Intent(getApplicationContext(), NavigationDrawerActivity.class);
+        startActivity(intent);
     }
 
     public class NewPlayerTask extends AsyncTask<Void, Void, Player> {
@@ -146,7 +153,8 @@ public class RegisterActivity extends Activity {
             if (player != null) {
                 Toast toast = Toast.makeText(getApplicationContext(), "Utworzono konto", Toast.LENGTH_LONG);
                 toast.show();
-                Login.login(player.getPlayerId(),getApplicationContext());
+                Login.login(player.getPlayerId(),email,password.length());
+                startStartFragment();
             } else if(connection_error){
                 Toast toast = Toast.makeText(getApplicationContext(), "Błąd połączenia, spróbuj ponownie później", Toast.LENGTH_LONG);
                 toast.show();
