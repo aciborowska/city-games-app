@@ -2,13 +2,23 @@ package com.wroclaw.citygames.citygamesapp.model;
 
 
 public class Game {
-
 	private Long gameId;
-	private Long scenarioId;
+	private Scenario scenario;
 	private Long timeStart;
 	private Long timeEnd;
 	private int points;
 	private Long teamId;
+	private Long scenarioId;
+
+	public Long getScenarioId() {
+		return scenarioId;
+	}
+
+	public void setScenarioId(Long scenarioId) {
+		this.scenarioId = scenarioId;
+	}
+
+
 
 	public Long getGameId() {
 		return gameId;
@@ -25,12 +35,12 @@ public class Game {
 		this.points = points;
 	}
 
-	public Long getScenarioId() {
-		return scenarioId;
+	public Scenario getScenario() {
+		return scenario;
 	}
 
-	public void setScenarioId(Long scenarioId) {
-		this.scenarioId = scenarioId;
+	public void setScenario(Scenario scenario) {
+		this.scenario = scenario;
 	}
 
 	public Long getTimeStart() {

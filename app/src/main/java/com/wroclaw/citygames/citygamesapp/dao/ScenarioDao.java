@@ -56,7 +56,7 @@ public class ScenarioDao implements Dao<Scenario> {
         values.put(ScenarioTable.ScenarioColumns.COLUMN_TIME,scenario.getTime());
         values.put(ScenarioTable.ScenarioColumns.COLUMN_DISTANCE_KM,scenario.getDistanceKm());
         values.put(ScenarioTable.ScenarioColumns.COLUMN_LEVEL,scenario.getLevel());
-        db.update(ScenarioTable.TABLE_NAME, values, BaseColumns._ID + " = ?",new String[]{String.valueOf(scenario.getScenarioId())});
+        db.update(ScenarioTable.TABLE_NAME, values, BaseColumns._ID + " = ?", new String[]{String.valueOf(scenario.getScenarioId())});
     }
 
     @Override
@@ -124,6 +124,11 @@ public class ScenarioDao implements Dao<Scenario> {
         return scenario;
     }
 
+    public void saveAll(List<Scenario> scenarios){
+        for(Scenario scenario:scenarios){
+            save(scenario);
+        }
+    }
 
     public void deleteAll(){
         SQLiteDatabase db=dbManager.getWritableDatabase();

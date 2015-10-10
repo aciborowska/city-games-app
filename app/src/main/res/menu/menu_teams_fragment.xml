@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/action_add_team"
+        android:title="@string/add_team"
+        android:icon="@drawable/ic_action_new"
+        android:orderInCategory="10000"
+        android:showAsAction="always" />
+
+    <item android:id="@+id/action_sing_to_team"
+        android:title="@string/sign_to_team"
+        android:icon="@drawable/ic_action_edit"
+        android:orderInCategory="10000"
+        android:showAsAction="always" />
+</menu>

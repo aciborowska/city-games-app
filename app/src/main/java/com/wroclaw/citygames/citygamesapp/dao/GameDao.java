@@ -38,7 +38,7 @@ public class GameDao implements Dao<Game> {
         ContentValues values = new ContentValues();
         values.put(GameTable.GameColumns._ID, game.getGameId());
         values.put(GameTable.GameColumns.COLUMN_POINTS,game.getPoints());
-        values.put(GameTable.GameColumns.COLUMN_SCENARIO_ID,game.getScenarioId());
+        values.put(GameTable.GameColumns.COLUMN_SCENARIO_ID,game.getScenario().getScenarioId());
         values.put(GameTable.GameColumns.COLUMN_TEAM_ID,game.getTeamId());
         values.put(GameTable.GameColumns.COLUMN_TIME_START,0);
         values.put(GameTable.GameColumns.COLUMN_TIME_END,0);
@@ -53,11 +53,11 @@ public class GameDao implements Dao<Game> {
         SQLiteDatabase db=dbManager.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(GameTable.GameColumns.COLUMN_POINTS,game.getPoints());
-        values.put(GameTable.GameColumns.COLUMN_SCENARIO_ID,game.getScenarioId());
+        values.put(GameTable.GameColumns.COLUMN_SCENARIO_ID,game.getScenario().getScenarioId());
         values.put(GameTable.GameColumns.COLUMN_TEAM_ID,game.getTeamId());
         values.put(GameTable.GameColumns.COLUMN_TIME_START,0);
         values.put(GameTable.GameColumns.COLUMN_TIME_END,0);
-        db.update(ScenarioTable.TABLE_NAME, values, BaseColumns._ID + " = ?",new String[]{String.valueOf(game.getGameId())});
+        db.update(ScenarioTable.TABLE_NAME, values, BaseColumns._ID + " = ?", new String[]{String.valueOf(game.getGameId())});
     }
 
     @Override
@@ -125,6 +125,11 @@ public class GameDao implements Dao<Game> {
         return game;
     }
 
+    public void saveAll(List<Game> games){
+        for(Game game:games){
+            save(game);
+        }
+    }
 
     public void deleteAll(){
         SQLiteDatabase db=dbManager.getWritableDatabase();

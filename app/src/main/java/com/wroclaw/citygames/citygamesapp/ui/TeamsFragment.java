@@ -1,17 +1,28 @@
 package com.wroclaw.citygames.citygamesapp.ui;
 
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,12 +33,10 @@ import com.wroclaw.citygames.citygamesapp.R;
 import com.wroclaw.citygames.citygamesapp.model.Team;
 import com.wroclaw.citygames.citygamesapp.util.Login;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -36,7 +45,7 @@ import java.util.List;
 public class TeamsFragment extends Fragment {
 
 
-    private GetTeamsTask teamTask;
+    //private GetTeamsTask teamTask;
     private static final String TAG = TeamsFragment.class.getName();
     private TeamListAdapter teamListAdapter;
     private final List<Team> teamList = new ArrayList<>();
@@ -51,6 +60,7 @@ public class TeamsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView");
+        setHasOptionsMenu(true);
         return inflater.inflate(R.layout.fragment_teams, container, false);
     }
 
@@ -74,16 +84,97 @@ public class TeamsFragment extends Fragment {
         });
     }
 
-    private void refreshData(){
-        Log.d(TAG, "refreshData");
-        if(teamList.isEmpty()) {
-            teamTask = new GetTeamsTask();
-            teamTask.execute();
-            Log.d(TAG,"pobieranie danych");
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_teams_fragment,menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d(TAG,"onOptionsItemSelected");
+        switch(item.getItemId()){
+            case R.id.action_add_team:
+                Log.d(TAG,"ADD");
+                new TeamDialog(getActivity(),"Stwórz drużynę",3).show();
+                break;
+            case R.id.action_sing_to_team:
+                Log.d(TAG,"SIGN IN");
+                new TeamDialog(getActivity(),"Dołącz do drużyny",1).show();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public class TeamDialog extends Dialog {
+
+        private EditText teamName;
+        private EditText password;
+        private String title;
+        private int operation;
+        // Empty constructor required for DialogFragment
+        public TeamDialog(Activity a, String title,int operation) {
+            super(a);
+            this.title= title;
+            this.operation= operation;
+        }
+
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            setContentView(R.layout.dialog_add_team);
+            teamName = (EditText) findViewById(R.id.team_name_dialog_edit_text);
+            password = (EditText) findViewById(R.id.team_password_dialog_edit_text);
+
+            // set this instance as callback for editor action
+            teamName.requestFocus();
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+            setTitle(title);
+            Button cancel = (Button)findViewById(R.id.ok_button_dialog);
+            cancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dismiss();
+                }
+            });
+
+            Button ok = (Button) findViewById(R.id.ok_button_dialog);
+            ok.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (teamName.getText().equals("")) {
+                        teamName.setError("Wprowadź nazwę drużyny");
+                        return;
+                    }
+                    if (password.getText().equals("")) {
+                        password.setError("Wprowadź hasło");
+                        return;
+                    }
+                    password.setError(null);
+                    teamName.setError(null);
+                    String name = teamName.getText().toString();
+                    String pass = password.getText().toString();
+
+                    Team team = new Team();
+                    team.setName(name);
+                    team.setPassword(pass);
+                    team.setSingular(0);
+
+                    new SignTask(operation).execute(team);
+                    dismiss();
+                }
+            });
         }
     }
 
-    private final class TeamListAdapter extends BaseAdapter{
+    private void refreshData(){
+        Log.d(TAG, "refreshData");
+        if(teamListAdapter != null)
+            teamList.clear();
+        teamList.addAll(App.getTeamDao().getAll());
+        teamListAdapter.notifyDataSetChanged();
+    }
+
+    private final class TeamListAdapter extends BaseAdapter implements View.OnClickListener{
 
         private final List<Team> teams;
         private final Context ctx;
@@ -116,58 +207,105 @@ public class TeamsFragment extends Fragment {
             }
             TextView teamName=(TextView)v.findViewById(R.id.team_name);
             TextView teamPlayers = (TextView) v.findViewById(R.id.team_info);
+            ImageButton signoutButton = (ImageButton) v.findViewById(R.id.button_team_signout);
 
+            signoutButton.setOnClickListener(this);
+            signoutButton.setTag(R.id.buttons,position);
             Team team = getItem(position);
             String name = team.getName()!=null?team.getName():"team"+String.valueOf(team.getTeamId());
             teamName.setText(name);
             teamPlayers.setText("Pomyśle jeszcze co tu będzie");
             return v;
         }
-    }
-
-    public class GetTeamsTask extends AsyncTask<Void, Void, Team[]> {
-        private boolean connection_error = false;
-
-        GetTeamsTask() {
-        }
 
         @Override
-        protected Team[] doInBackground(Void... params) {
+        public void onClick(View v) {
+            final int position = (int) v.getTag(R.id.buttons);
+            Log.d(TAG,"WYPISZ: "+position);
+            showConfiramtionDialog(teamList.get(position));
+        }
+    }
+
+    private void showConfiramtionDialog(final Team team){
+        AlertDialog dialog =new AlertDialog.Builder(getActivity())
+                .setTitle("Wypisz z drużyny")
+                .setMessage("Czy chcesz odejść z drużyny")
+                .setIcon(R.drawable.ic_action_remove)
+                .setPositiveButton("Tak", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        new SignTask(2).execute(team);
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton("Nie", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create();
+        dialog.show();
+    }
+
+    private class SignTask extends AsyncTask<Team,Void,Team> {
+        public String TAG = SignTask.class.getName();
+        int operation;
+        public SignTask(int operation){
+            this.operation=operation;
+        }
+        @Override
+        protected Team doInBackground(Team... params) {
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
             Uri.Builder builder = new Uri.Builder();
-            builder.scheme("http").encodedAuthority(Globals.MAIN_URL).appendEncodedPath(Globals.PLAYER_TEAMS_URI).appendQueryParameter("id", String.valueOf(Login.getCredentials()));
-            String uri = builder.build().toString();
-            try {
-                ResponseEntity<Team[]> responseEntity = restTemplate.getForEntity(uri, Team[].class);
-                return responseEntity.getBody();
-            } catch (final Exception e) {
-                connection_error = true;
-                Log.d(TAG, "błąd połączenia");
+            switch(operation){
+                case 1:
+                    builder.scheme("http").encodedAuthority(Globals.MAIN_URL)
+                            .appendPath(Globals.SIGNIN_URI)
+                            .appendQueryParameter("playerId", String.valueOf(Login.getCredentials()))
+                            .appendQueryParameter("teamId", String.valueOf(params[0].getTeamId()));
+                    String uri = builder.build().toString();
+                    Team responseEntity = restTemplate.postForObject(uri, null, Team.class);
+                    return responseEntity;
+                case 2:
+                    builder.scheme("http").encodedAuthority(Globals.MAIN_URL)
+                            .appendEncodedPath(Globals.SIGNOUT_URI)
+                            .appendQueryParameter("playerId", String.valueOf(Login.getCredentials()))
+                            .appendQueryParameter("teamId",String.valueOf(params[0].getTeamId()));
+                    uri = builder.build().toString();
+                    responseEntity = restTemplate.postForObject(uri, null, Team.class);
+                    return responseEntity;
+                case 3:
+                    builder.scheme("http").encodedAuthority(Globals.MAIN_URL)
+                            .appendPath(Globals.CREATE_TEAM_URI)
+                            .appendQueryParameter("playerId", String.valueOf(Login.getCredentials()));
+                    uri = builder.build().toString();
+                    responseEntity = restTemplate.postForObject(uri,params[0],Team.class);
+                    return responseEntity;
             }
             return null;
         }
 
         @Override
-        protected void onPostExecute(final Team[] result) {
-            Log.d(TAG,"onPostExecute");
-            teamTask = null;
-            if (result != null) {
-                List<Team> teams = new ArrayList<>();
-                teams.addAll(Arrays.asList(result));
-                App.getTeamDao().saveAll(teams);
-                if(teamListAdapter != null)
-                    teamList.clear();
-                    teamList.addAll(App.getTeamDao().getAll());
-                    teamListAdapter.notifyDataSetChanged();
-            } else {
-                Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.connection_error), Toast.LENGTH_LONG).show();
+        protected void onPostExecute(Team team) {
+            super.onPostExecute(team);
+
+            if(team!=null){
+                if(operation==2){
+                    App.getTeamDao().delete(team);
+                    teamList.remove(team);
+                }
+                else{
+                    App.getTeamDao().save(team);
+                    teamList.add(team);
+                }
+                refreshData();
+
+                Toast.makeText(getContext(), "Wykonano",Toast.LENGTH_SHORT).show();
+            }
+            else{
+                Toast.makeText(getContext(), "Wystąpił błąd, spróbuj ponownie później",Toast.LENGTH_SHORT).show();
             }
         }
-
-        @Override
-        protected void onCancelled() {
-            teamTask = null;
-        }
     }
+
 }

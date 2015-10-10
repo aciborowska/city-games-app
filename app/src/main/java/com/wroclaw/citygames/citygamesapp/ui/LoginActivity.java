@@ -152,6 +152,7 @@ public class LoginActivity extends Activity {
             focusView.requestFocus();
         } else {
             showProgress(true);
+            Login.logout();
             loginTask = new UserLoginTask(email, password);
             loginTask.execute((Void) null);
         }
@@ -184,17 +185,19 @@ public class LoginActivity extends Activity {
 
         @Override
         protected Player doInBackground(Void... params) {
+            Log.d(TAG,"logowanie");
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
             Uri.Builder builder = new Uri.Builder();
-            builder.scheme("http").encodedAuthority(Globals.MAIN_URL).appendEncodedPath(Globals.LOGIN_URI).appendEncodedPath("?username=" + username+"&password="+password);
+            builder.scheme("http").encodedAuthority(Globals.MAIN_URL).appendEncodedPath(Globals.LOGIN_URI).appendEncodedPath("?email=" + username+"&password="+password);
             String uri=builder.build().toString();
             Player player = null;
             try {
                 player = restTemplate.getForObject(uri, Player.class);
             }catch(final Exception e){
                     connection_error=true;
-                Log.d(TAG, "błąd połączenia");
+                    e.printStackTrace();
+                    Log.d(TAG, "błąd połączenia");
             }
             return player;
         }

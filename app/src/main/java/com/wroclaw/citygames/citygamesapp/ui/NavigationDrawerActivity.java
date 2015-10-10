@@ -18,6 +18,8 @@ package com.wroclaw.citygames.citygamesapp.ui;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
@@ -32,9 +34,23 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.wroclaw.citygames.citygamesapp.App;
+import com.wroclaw.citygames.citygamesapp.Globals;
 import com.wroclaw.citygames.citygamesapp.R;
+import com.wroclaw.citygames.citygamesapp.model.Game;
+import com.wroclaw.citygames.citygamesapp.model.Scenario;
+import com.wroclaw.citygames.citygamesapp.model.Team;
 import com.wroclaw.citygames.citygamesapp.util.Login;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class NavigationDrawerActivity extends FragmentActivity {
     private static final String TAG=NavigationDrawerActivity.class.getName();
@@ -50,6 +66,10 @@ public class NavigationDrawerActivity extends FragmentActivity {
     private CharSequence title;
     private String[] fragmentsTitles;
     private boolean isNewLogin=false;
+
+    private CollectDataTask teamTask;
+    private CollectScenarioTask scenarioTask;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,11 +112,18 @@ public class NavigationDrawerActivity extends FragmentActivity {
             selectItem(0);
         }
 
+        handleIntent(getIntent());
     }
 
     protected void handleIntent(Intent intent) {
         isNewLogin= intent.getBooleanExtra("isNewLogin", true);
         Log.d(TAG, "handleIntent: " + isNewLogin);
+        if(isNewLogin){
+            teamTask = new CollectDataTask();
+            scenarioTask = new CollectScenarioTask();
+            scenarioTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+            teamTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+        }
     }
 
     @Override
@@ -187,6 +214,89 @@ public class NavigationDrawerActivity extends FragmentActivity {
         drawerToggle.onConfigurationChanged(newConfig);
     }
 
+    public class CollectDataTask extends AsyncTask<Void, Void, Team[]> {
+        public String TAG = CollectDataTask.class.getName();
 
+        CollectDataTask() {}
 
+        @Override
+        protected Team[] doInBackground(Void... params) {
+            RestTemplate restTemplate = new RestTemplate();
+            restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+            Uri.Builder builder = new Uri.Builder();
+            builder.scheme("http").encodedAuthority(Globals.MAIN_URL).appendEncodedPath(Globals.COLLECT_DATA_URI).appendQueryParameter("playerId", String.valueOf(Login.getCredentials()));
+            String uri = builder.build().toString();
+            try {
+                ResponseEntity<Team[]> responseEntity = restTemplate.getForEntity(uri, Team[].class);
+                return responseEntity.getBody();
+            } catch (final Exception e) {
+                Log.d(TAG, "błąd połączenia");
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(final Team[] result) {
+            Log.d(TAG, "onPostExecute");
+            if (result != null) {
+                List<Team> teams = new ArrayList<>();
+                teams.addAll(Arrays.asList(result));
+                App.getTeamDao().deleteAll();
+                for(Team team:result){
+                    App.getTeamDao().save(team);
+                    for(Game game:team.getGames()) App.getGameDao().save(game);
+                }
+            } else {
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.connection_error), Toast.LENGTH_LONG).show();
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            teamTask = null;
+        }
+    }
+
+    public class CollectScenarioTask extends AsyncTask<Void, Void, Scenario[]> {
+        public String TAG = CollectScenarioTask.class.getName();
+        private boolean connection_error = false;
+
+        CollectScenarioTask() {}
+
+        @Override
+        protected Scenario[] doInBackground(Void... params) {
+            RestTemplate restTemplate = new RestTemplate();
+            restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+            Uri.Builder builder = new Uri.Builder();
+            builder.scheme("http").encodedAuthority(Globals.MAIN_URL).appendPath(Globals.SCENARIOS_URI);
+            String uri = builder.build().toString();
+            try {
+                ResponseEntity<Scenario[]> responseEntity = restTemplate.getForEntity(uri, Scenario[].class);
+                return responseEntity.getBody();
+            } catch (final Exception e) {
+                connection_error = true;
+                Log.d(TAG, "błąd połączenia");
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(final Scenario[] result) {
+            Log.d(TAG,"onPostExecute");
+            if (result != null) {
+                List<Scenario> scenarios = new ArrayList<>();
+                scenarios.addAll(Arrays.asList(result));
+                App.getScenarioDao().deleteAll();
+                App.getScenarioDao().saveAll(scenarios);
+            } else {
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.connection_error), Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            scenarioTask = null;
+        }
+    }
 }

@@ -49,6 +49,7 @@ public class TeamDao implements Dao<Team> {
         ContentValues values = new ContentValues();
         values.put(TeamTable.TeamColumns.COLUMN_NAME, team.getName());
         values.put(TeamTable.TeamColumns.COLUMN_PASSWORD, team.getPassword());
+        values.put(TeamTable.TeamColumns.COLUMN_SINGULAR,team.getSingular());
         db.update(TeamTable.TABLE_NAME, values, BaseColumns._ID + " = ?",new String[]{String.valueOf(team.getTeamId())});
     }
 
@@ -110,6 +111,7 @@ public class TeamDao implements Dao<Team> {
             team.setTeamId(c.getLong(0));
             team.setName(c.getString(1));
             team.setPassword(c.getString(2));
+            team.setSingular(c.getInt(3));
         }
         return team;
     }
