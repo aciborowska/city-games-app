@@ -12,10 +12,11 @@ import com.wroclaw.citygames.citygamesapp.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class RankFragment extends Fragment {
-    public static final String NAME = RankFragment.class.getCanonicalName();
-    public static final String TAG = RankFragment.class.getName();
-    public RankFragment() {
+public class GamesListFragment extends Fragment {
+    public static final String NAME = NavigationDrawerActivity.class.getCanonicalName();
+    public static final String TAG = GamesListFragment.class.getName();
+
+    public GamesListFragment() {
         // Required empty public constructor
     }
 
@@ -24,7 +25,7 @@ public class RankFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_rank, container, false);
+        return inflater.inflate(R.layout.fragment_game, container, false);
     }
 
 

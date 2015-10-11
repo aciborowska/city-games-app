@@ -13,7 +13,8 @@ import com.wroclaw.citygames.citygamesapp.R;
  * A simple {@link Fragment} subclass.
  */
 public class ScenariosListFragment extends Fragment {
-
+    public static final String NAME = ScenariosListFragment.class.getCanonicalName();
+    public static final String TAG = ScenariosListFragment.class.getName();
 
     public ScenariosListFragment() {
         // Required empty public constructor

@@ -54,13 +54,10 @@ import java.util.List;
 
 public class NavigationDrawerActivity extends FragmentActivity {
     private static final String TAG=NavigationDrawerActivity.class.getName();
+    private static final String NAME = NavigationDrawerActivity.class.getCanonicalName();
     private DrawerLayout drawerLayout;
     private ListView drawerList;
     private ActionBarDrawerToggle drawerToggle;
-    private String[] fragments={"com.wroclaw.citygames.citygamesapp.ui.StartFragment",
-                                "com.wroclaw.citygames.citygamesapp.ui.ScenariosListFragment",
-                                "com.wroclaw.citygames.citygamesapp.ui.TeamsFragment",
-                                "com.wroclaw.citygames.citygamesapp.ui.RankFragment"};
 
     private CharSequence drawerTitle;
     private CharSequence title;
@@ -106,7 +103,7 @@ public class NavigationDrawerActivity extends FragmentActivity {
         };
         drawerLayout.setDrawerListener(drawerToggle);
         FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-        tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, fragments[0]));
+        tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, StartFragment.NAME));
         tx.commit();
         if (savedInstanceState == null) {
             selectItem(0);
@@ -129,7 +126,7 @@ public class NavigationDrawerActivity extends FragmentActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_login,menu);
+        inflater.inflate(R.menu.menu_login, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -166,6 +163,7 @@ public class NavigationDrawerActivity extends FragmentActivity {
         }
     }
 
+
     /* The click listner for ListView in the navigation drawer */
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
@@ -175,15 +173,36 @@ public class NavigationDrawerActivity extends FragmentActivity {
     }
 
     private void selectItem(int position) {
-        if (position == 4) {
-            Login.logout();
-            finish();
-        }
-        else{
-            FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-            tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, fragments[position]));
-            tx.commit();
-            setTitle(fragmentsTitles[position]);
+        FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+        switch (position)
+        {
+            case 0:
+                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, StartFragment.NAME));
+                tx.commit();
+                break;
+            case 1:
+                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, TeamsListFragment.NAME));
+                tx.commit();
+                setTitle(RankFragment.NAME);
+                break;
+            case 2:
+                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, GamesListFragment.NAME));
+                tx.commit();
+                setTitle(GamesListFragment.NAME);
+                break;
+            case 3:
+                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, ScenariosListFragment.NAME));
+                tx.commit();
+                setTitle(ScenariosListFragment.NAME);
+                break;
+            case 4:
+                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, RankFragment.NAME));
+                tx.commit();
+                setTitle(RankFragment.NAME);
+                break;
+            case 5:
+                Login.logout();
+                finish();
         }
         drawerList.setItemChecked(position, true);
         drawerLayout.closeDrawer(drawerList);

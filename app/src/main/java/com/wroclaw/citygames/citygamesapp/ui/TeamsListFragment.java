@@ -43,16 +43,15 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class TeamsFragment extends Fragment {
+public class TeamsListFragment extends Fragment {
+    public static final String NAME = TeamsListFragment.class.getCanonicalName();
+    public static final String TAG = TeamsListFragment.class.getName();
 
-
-    //private GetTeamsTask teamTask;
-    private static final String TAG = TeamsFragment.class.getName();
     private TeamListAdapter teamListAdapter;
     private final List<Team> teamList = new ArrayList<>();
     private ListView teamListView;
 
-    public TeamsFragment() {
+    public TeamsListFragment() {
         // Required empty public constructor
     }
 

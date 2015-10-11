@@ -6,8 +6,9 @@
 
     <string-array name="nav_drawer_items">
         <item>Start</item>
-        <item>Przeglądaj gry</item>
-        <item>Drużyny</item>
+        <item>Twoje drużyny</item>
+        <item>Twoje gry</item>
+        <item>Scenariusze</item>
         <item>Ranking</item>
         <item>Wyloguj</item>
     </string-array>
@@ -36,13 +37,12 @@
     <string name="navigation_drawer_close">Zamknięte menu</string>
 
     <!-- START FRAGMENT -->
-    <string name="hello_player">Witaj </string>
     <string name="current_game">Bieżąca rozgrywka</string>
     <string name="start_game">Rozpocznij nową grę</string>
-    <string name="tip_of_the_day">Dzisiejsze wydarzenia:</string>
-    <string name="info">Tu bedzie dluga i ciekawa informacja z serwera odnośnie nowych scenariuszy,
-    planowanych premier i innych tym podobnych. Mogą być też wskazówki i zagadki na dodatkowe punkty.
-    Pojawią się też informacje o rekordach. Ta informacja będzie odświeżana na żadnia użytkownika.</string>
+    <string name="your_teams">Twoje drużyny</string>
+    <string name="your_games">Twoje gry</string>
+    <string name="sceanrios">Scenariusze</string>
+    <string name="rank">Ranking</string>
 
 
     <!-- STATISTICS -->
