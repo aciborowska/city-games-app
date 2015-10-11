@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -114,7 +115,7 @@ public class TeamsFragment extends Fragment {
         private int operation;
         // Empty constructor required for DialogFragment
         public TeamDialog(Activity a, String title,int operation) {
-            super(a);
+            super(a, R.style.Theme_CustomDialog);
             this.title= title;
             this.operation= operation;
         }
@@ -124,12 +125,16 @@ public class TeamsFragment extends Fragment {
             setContentView(R.layout.dialog_add_team);
             teamName = (EditText) findViewById(R.id.team_name_dialog_edit_text);
             password = (EditText) findViewById(R.id.team_password_dialog_edit_text);
-
-            // set this instance as callback for editor action
+            final Resources res = getContext().getResources();
+            final int titleDividerId = res.getIdentifier("titleDivider", "id", "android");
+            final View titleDivider = findViewById(titleDividerId);
+            if (titleDivider != null) {
+                titleDivider.setBackgroundColor(res.getColor(R.color.strong_orange));
+            }
             teamName.requestFocus();
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
             setTitle(title);
-            Button cancel = (Button)findViewById(R.id.ok_button_dialog);
+            Button cancel = (Button)findViewById(R.id.cancel_button_dialog);
             cancel.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -244,6 +249,11 @@ public class TeamsFragment extends Fragment {
                 })
                 .create();
         dialog.show();
+
+        int titleDividerId = getResources().getIdentifier("titleDivider", "id", "android");
+        View titleDivider = dialog.findViewById(titleDividerId);
+        if (titleDivider != null)
+            titleDivider.setBackgroundColor(getResources().getColor(R.color.strong_orange));
     }
 
     private class SignTask extends AsyncTask<Team,Void,Team> {
