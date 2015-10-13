@@ -103,7 +103,7 @@ public class NavigationDrawerActivity extends FragmentActivity {
         };
         drawerLayout.setDrawerListener(drawerToggle);
         FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-        tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, StartFragment.NAME));
+        tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, StartFragment.NAME)).addToBackStack(TAG);
         tx.commit();
         if (savedInstanceState == null) {
             selectItem(0);
@@ -177,28 +177,29 @@ public class NavigationDrawerActivity extends FragmentActivity {
         switch (position)
         {
             case 0:
-                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, StartFragment.NAME));
+                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, StartFragment.NAME)).addToBackStack(TAG);
                 tx.commit();
+                setTitle(StartFragment.TITLE);
                 break;
             case 1:
-                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, TeamsListFragment.NAME));
+                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, TeamsListFragment.NAME)).addToBackStack(TAG);
                 tx.commit();
-                setTitle(RankFragment.NAME);
+                setTitle(TeamsListFragment.TITLE);
                 break;
             case 2:
-                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, GamesListFragment.NAME));
+                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, GamesListFragment.NAME)).addToBackStack(TAG);
                 tx.commit();
-                setTitle(GamesListFragment.NAME);
+                setTitle(GamesListFragment.TITLE);
                 break;
             case 3:
-                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, ScenariosListFragment.NAME));
+                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, ScenariosListFragment.NAME)).addToBackStack(TAG);
                 tx.commit();
-                setTitle(ScenariosListFragment.NAME);
+                setTitle(ScenariosListFragment.TITLE);
                 break;
             case 4:
-                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, RankFragment.NAME));
+                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, RankFragment.NAME)).addToBackStack(TAG);
                 tx.commit();
-                setTitle(RankFragment.NAME);
+                setTitle(RankFragment.TITLE);
                 break;
             case 5:
                 Login.logout();

@@ -9,7 +9,7 @@ public class ScenarioTable {
 
     public static final String[] ALL_COLUMNS = {ScenarioColumns._ID, ScenarioColumns.COLUMN_USERS_AMOUNT,
             ScenarioColumns.COLUMN_DESCRIPTION, ScenarioColumns.COLUMN_TIME, ScenarioColumns.COLUMN_DISTANCE_KM,
-            ScenarioColumns.COLUMN_LEVEL};
+            ScenarioColumns.COLUMN_LEVEL, ScenarioColumns.COLUMN_NAME};
 
     public interface ScenarioColumns extends BaseColumns {
         String COLUMN_USERS_AMOUNT ="USERS_AMOUNT";
@@ -17,6 +17,7 @@ public class ScenarioTable {
         String COLUMN_TIME="TIME";
         String COLUMN_DISTANCE_KM="DISTANCE_KM";
         String COLUMN_LEVEL="LEVEL";
+        String COLUMN_NAME="NAME";
     }
 
     public static void onCreate(SQLiteDatabase db) {
@@ -26,7 +27,8 @@ public class ScenarioTable {
         sql +=ScenarioColumns.COLUMN_DESCRIPTION + " text, ";
         sql += ScenarioColumns.COLUMN_TIME + " real(10), ";
         sql += ScenarioColumns.COLUMN_DISTANCE_KM + " real(10), ";
-        sql += ScenarioColumns.COLUMN_LEVEL + " text );";
+        sql += ScenarioColumns.COLUMN_LEVEL + " text, ";
+        sql += ScenarioColumns.COLUMN_NAME + " text );";
 
         db.execSQL(sql);
     }

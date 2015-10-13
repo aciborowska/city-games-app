@@ -15,6 +15,7 @@ import com.wroclaw.citygames.citygamesapp.R;
 public class RankFragment extends Fragment {
     public static final String NAME = RankFragment.class.getCanonicalName();
     public static final String TAG = RankFragment.class.getName();
+    public static final String TITLE = "Ranking";
     public RankFragment() {
         // Required empty public constructor
     }

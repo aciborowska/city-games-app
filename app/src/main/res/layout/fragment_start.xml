@@ -3,12 +3,13 @@
     android:layout_height="match_parent"
     tools:context="com.wroclaw.citygames.citygamesapp.ui.StartFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+    <!-- TODO:F7F6CD Update blank fragment layout -->
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/background">
 
         <TableLayout
             android:layout_width="match_parent"

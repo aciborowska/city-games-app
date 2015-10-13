@@ -8,7 +8,6 @@ import android.util.Log;
 
 import com.wroclaw.citygames.citygamesapp.database.DatabaseHelper;
 import com.wroclaw.citygames.citygamesapp.database.ScenarioTable;
-import com.wroclaw.citygames.citygamesapp.database.TeamTable;
 import com.wroclaw.citygames.citygamesapp.model.Scenario;
 
 import java.util.ArrayList;
@@ -56,6 +55,7 @@ public class ScenarioDao implements Dao<Scenario> {
         values.put(ScenarioTable.ScenarioColumns.COLUMN_TIME,scenario.getTime());
         values.put(ScenarioTable.ScenarioColumns.COLUMN_DISTANCE_KM,scenario.getDistanceKm());
         values.put(ScenarioTable.ScenarioColumns.COLUMN_LEVEL,scenario.getLevel());
+        values.put(ScenarioTable.ScenarioColumns.COLUMN_NAME,scenario.getName());
         db.update(ScenarioTable.TABLE_NAME, values, BaseColumns._ID + " = ?", new String[]{String.valueOf(scenario.getScenarioId())});
     }
 
@@ -63,7 +63,7 @@ public class ScenarioDao implements Dao<Scenario> {
     public void delete(Scenario scenario) {
         SQLiteDatabase db=dbManager.getWritableDatabase();
         if(scenario.getScenarioId()>0)
-            db.delete(TeamTable.TABLE_NAME, BaseColumns._ID + " = ?",new String[]{String.valueOf(scenario.getScenarioId())});
+            db.delete(ScenarioTable.TABLE_NAME, BaseColumns._ID + " = ?",new String[]{String.valueOf(scenario.getScenarioId())});
     }
 
     @Override

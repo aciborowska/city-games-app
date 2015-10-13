@@ -8,8 +8,6 @@ import android.util.Log;
 
 import com.wroclaw.citygames.citygamesapp.database.DatabaseHelper;
 import com.wroclaw.citygames.citygamesapp.database.GameTable;
-import com.wroclaw.citygames.citygamesapp.database.ScenarioTable;
-import com.wroclaw.citygames.citygamesapp.database.TeamTable;
 import com.wroclaw.citygames.citygamesapp.model.Game;
 
 import java.util.ArrayList;
@@ -57,14 +55,14 @@ public class GameDao implements Dao<Game> {
         values.put(GameTable.GameColumns.COLUMN_TEAM_ID,game.getTeamId());
         values.put(GameTable.GameColumns.COLUMN_TIME_START,0);
         values.put(GameTable.GameColumns.COLUMN_TIME_END,0);
-        db.update(ScenarioTable.TABLE_NAME, values, BaseColumns._ID + " = ?", new String[]{String.valueOf(game.getGameId())});
+        db.update(GameTable.TABLE_NAME, values, BaseColumns._ID + " = ?", new String[]{String.valueOf(game.getGameId())});
     }
 
     @Override
     public void delete(Game game) {
         SQLiteDatabase db=dbManager.getWritableDatabase();
         if(game.getGameId()>0)
-            db.delete(TeamTable.TABLE_NAME, BaseColumns._ID + " = ?",new String[]{String.valueOf(game.getGameId())});
+            db.delete(GameTable.TABLE_NAME, BaseColumns._ID + " = ?",new String[]{String.valueOf(game.getGameId())});
     }
 
     @Override

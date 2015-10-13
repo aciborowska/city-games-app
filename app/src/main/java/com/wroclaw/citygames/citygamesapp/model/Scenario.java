@@ -14,6 +14,18 @@ public class Scenario {
 	private Set<TaskGroup> taskGroups = new HashSet<>(0);
 	private Set<Game> games = new HashSet<>(0);
 	private boolean ready;
+	private String name;
+
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+
 
 	public Long getScenarioId() {
 		return scenarioId;

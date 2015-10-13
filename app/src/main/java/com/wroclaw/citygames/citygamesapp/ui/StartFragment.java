@@ -16,6 +16,7 @@ public class StartFragment extends Fragment implements View.OnClickListener{
 
     public static final String TAG = StartFragment.class.getName();
     public static final String NAME = StartFragment.class.getCanonicalName();
+    public static final String TITLE = "Start";
     public StartFragment(){}
 
     @Override
@@ -33,7 +34,16 @@ public class StartFragment extends Fragment implements View.OnClickListener{
 
         Button teamsButton = (Button) getView().findViewById(R.id.yout_teams_button);
         teamsButton.setOnClickListener(this);
+        Button gamesButton = (Button) getView().findViewById(R.id.your_games_button);
+        gamesButton.setOnClickListener(this);
+        Button scenariosButton = (Button) getView().findViewById(R.id.scenarios_button);
+        scenariosButton.setOnClickListener(this);
+        Button rankButton = (Button) getView().findViewById(R.id.rank_button);
+        rankButton.setOnClickListener(this);
+        getActivity().setTitle(this.TITLE);
     }
+
+
 
 
     @Override
@@ -41,16 +51,32 @@ public class StartFragment extends Fragment implements View.OnClickListener{
         Log.d(TAG,"On Click");
         int id = v.getId();
         FragmentTransaction tx = getActivity().getSupportFragmentManager().beginTransaction();
-        switch(id){
+        switch (id)
+        {
+            case R.id.start_game_button:
+                break;
+            case R.id.current_game_button:
+                break;
             case R.id.yout_teams_button:
-                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(getActivity(), TeamsListFragment.NAME));
+                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(getActivity(), TeamsListFragment.NAME)).addToBackStack(TAG);
                 tx.commit();
+                getActivity().setTitle(TeamsListFragment.TITLE);
                 break;
             case R.id.your_games_button:
-                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(getActivity(), GamesListFragment.NAME));
+                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(getActivity(), GamesListFragment.NAME)).addToBackStack(TAG);
                 tx.commit();
+                getActivity().setTitle(GamesListFragment.TITLE);
                 break;
-
+            case R.id.scenarios_button:
+                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(getActivity(), ScenariosListFragment.NAME)).addToBackStack(TAG);
+                tx.commit();
+                getActivity().setTitle(ScenariosListFragment.TITLE);
+                break;
+            case R.id.rank_button:
+                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(getActivity(), RankFragment.NAME)).addToBackStack(TAG);
+                tx.commit();
+                getActivity().setTitle(RankFragment.TITLE);
         }
+
     }
 }

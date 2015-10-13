@@ -46,6 +46,7 @@ import java.util.List;
 public class TeamsListFragment extends Fragment {
     public static final String NAME = TeamsListFragment.class.getCanonicalName();
     public static final String TAG = TeamsListFragment.class.getName();
+    public static final String TITLE = "Drużyny";
 
     private TeamListAdapter teamListAdapter;
     private final List<Team> teamList = new ArrayList<>();

@@ -6,4 +6,5 @@
     <color name="strong_orange">#F04903</color>
     <color name="medium_orange">#FF7416</color>
     <color name="light_orange">#F29B34</color>
+    <color name="background">#F7F6CD</color>
 </resources>

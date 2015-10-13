@@ -9,6 +9,7 @@ public class TaskGroup {
 	private String description;
 	private Scenario scenarioId;
 	private Set<Task> tasks = new HashSet<>(0);
+	private int number;
 
 	public Long getTaskGroupId() {
 		return taskGroupId;
@@ -38,5 +39,11 @@ public class TaskGroup {
 		this.tasks = tasks;
 	}
 
-	
+	public int getNumber() {
+		return number;
+	}
+
+	public void setNumber(int number) {
+		this.number = number;
+	}
 }

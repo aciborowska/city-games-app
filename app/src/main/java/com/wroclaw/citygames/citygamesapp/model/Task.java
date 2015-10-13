@@ -19,6 +19,7 @@ public class Task {
 	private Long nextTaskGood;
 	private Long nextTaskWrong;
 	private Set<Tip> tips = new HashSet<>(0);
+	private int start_task;
 
 	public Long getTaskId() {
 		return taskId;
@@ -111,5 +112,12 @@ public class Task {
 	public void setTips(Set<Tip> tips) {
 		this.tips = tips;
 	}
-	
+
+	public int getStart_task() {
+		return start_task;
+	}
+
+	public void setStart_task(int start_task) {
+		this.start_task = start_task;
+	}
 }
