@@ -37,8 +37,9 @@ public class App extends Application {
         super.onCreate();
         this.ctx = getApplicationContext();
         db = new DatabaseHelper(ctx);
-        teamDao = TeamDao.getInstance(db);
         scenarioDao = ScenarioDao.getInstance(db);
+        teamDao = TeamDao.getInstance(db);
+
         gameDao = GameDao.getInstance(db);
         Log.d(TAG, "onCreate");
     }

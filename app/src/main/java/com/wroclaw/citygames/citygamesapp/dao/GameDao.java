@@ -38,8 +38,8 @@ public class GameDao implements Dao<Game> {
         values.put(GameTable.GameColumns.COLUMN_POINTS,game.getPoints());
         values.put(GameTable.GameColumns.COLUMN_SCENARIO_ID,game.getScenario().getScenarioId());
         values.put(GameTable.GameColumns.COLUMN_TEAM_ID,game.getTeamId());
-        values.put(GameTable.GameColumns.COLUMN_TIME_START,0);
-        values.put(GameTable.GameColumns.COLUMN_TIME_END,0);
+        values.put(GameTable.GameColumns.COLUMN_TIME_START,game.getTimeStart());
+        values.put(GameTable.GameColumns.COLUMN_TIME_END,game.getTimeEnd());
 
         return db.insert(GameTable.TABLE_NAME, // table
                 null, //nullColumnHack
@@ -53,8 +53,8 @@ public class GameDao implements Dao<Game> {
         values.put(GameTable.GameColumns.COLUMN_POINTS,game.getPoints());
         values.put(GameTable.GameColumns.COLUMN_SCENARIO_ID,game.getScenario().getScenarioId());
         values.put(GameTable.GameColumns.COLUMN_TEAM_ID,game.getTeamId());
-        values.put(GameTable.GameColumns.COLUMN_TIME_START,0);
-        values.put(GameTable.GameColumns.COLUMN_TIME_END,0);
+        values.put(GameTable.GameColumns.COLUMN_TIME_START,game.getTimeStart());
+        values.put(GameTable.GameColumns.COLUMN_TIME_END,game.getTimeEnd());
         db.update(GameTable.TABLE_NAME, values, BaseColumns._ID + " = ?", new String[]{String.valueOf(game.getGameId())});
     }
 

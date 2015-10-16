@@ -219,7 +219,7 @@ public class TeamsListFragment extends Fragment {
             Team team = getItem(position);
             String name = team.getName()!=null?team.getName():"team"+String.valueOf(team.getTeamId());
             teamName.setText(name);
-            teamPlayers.setText("Pomyśle jeszcze co tu będzie");
+            teamPlayers.setText("");
             return v;
         }
 

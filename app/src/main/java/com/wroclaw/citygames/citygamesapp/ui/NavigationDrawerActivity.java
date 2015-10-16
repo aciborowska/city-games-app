@@ -177,22 +177,22 @@ public class NavigationDrawerActivity extends FragmentActivity {
         switch (position)
         {
             case 0:
-                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, StartFragment.NAME)).addToBackStack(TAG);
+                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, StartFragment.NAME)).addToBackStack("");
                 tx.commit();
                 setTitle(StartFragment.TITLE);
                 break;
             case 1:
-                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, TeamsListFragment.NAME)).addToBackStack(TAG);
+                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, TeamsListFragment.NAME)).addToBackStack("");
                 tx.commit();
                 setTitle(TeamsListFragment.TITLE);
                 break;
             case 2:
-                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, GamesListFragment.NAME)).addToBackStack(TAG);
+                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, GamesListFragment.NAME)).addToBackStack("");
                 tx.commit();
                 setTitle(GamesListFragment.TITLE);
                 break;
             case 3:
-                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, ScenariosListFragment.NAME)).addToBackStack(TAG);
+                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, ScenariosListFragment.NAME)).addToBackStack("");
                 tx.commit();
                 setTitle(ScenariosListFragment.TITLE);
                 break;
@@ -261,11 +261,17 @@ public class NavigationDrawerActivity extends FragmentActivity {
             Log.d(TAG, "onPostExecute");
             if (result != null) {
                 List<Team> teams = new ArrayList<>();
-                teams.addAll(Arrays.asList(result));
+                App.getGameDao().deleteAll();
                 App.getTeamDao().deleteAll();
+
+                teams.addAll(Arrays.asList(result));
                 for(Team team:result){
                     App.getTeamDao().save(team);
-                    for(Game game:team.getGames()) App.getGameDao().save(game);
+                    for(Game game:team.getGames()) {
+                        game.setTeamId(team.getTeamId());
+                        game.setTimeEnd(Long.valueOf(-1));
+                        App.getGameDao().save(game);
+                    }
                 }
             } else {
                 Toast.makeText(getApplicationContext(), getResources().getString(R.string.connection_error), Toast.LENGTH_LONG).show();

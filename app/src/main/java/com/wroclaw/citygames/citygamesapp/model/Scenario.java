@@ -24,9 +24,6 @@ public class Scenario {
 	public void setName(String name) {
 		this.name = name;
 	}
-
-
-
 	public Long getScenarioId() {
 		return scenarioId;
 	}

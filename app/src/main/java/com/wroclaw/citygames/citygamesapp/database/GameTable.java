@@ -26,8 +26,8 @@ public class GameTable {
         sql+=GameColumns.COLUMN_POINTS +" integer(10), ";
         sql+=GameColumns.COLUMN_TIME_START + " real(10), ";
         sql+=GameColumns.COLUMN_TIME_END + " real(10), ";
-        sql += "FOREIGN KEY(" + GameColumns.COLUMN_SCENARIO_ID + ") REFERENCES " + ScenarioTable.TABLE_NAME + "(_id), ";
-        sql += "FOREIGN KEY(" + GameColumns.COLUMN_TEAM_ID + ") REFERENCES " + TeamTable.TABLE_NAME + "(_id));";
+        sql += "FOREIGN KEY(" + GameColumns.COLUMN_SCENARIO_ID + ") REFERENCES " + ScenarioTable.TABLE_NAME + " (_id), ";
+        sql += "FOREIGN KEY(" + GameColumns.COLUMN_TEAM_ID + ") REFERENCES " + TeamTable.TABLE_NAME + " (_id));";
         db.execSQL(sql);
     }
 }

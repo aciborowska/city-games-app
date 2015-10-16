@@ -40,10 +40,12 @@ public class ScenarioDao implements Dao<Scenario> {
         values.put(ScenarioTable.ScenarioColumns.COLUMN_TIME,scenario.getTime());
         values.put(ScenarioTable.ScenarioColumns.COLUMN_DISTANCE_KM,scenario.getDistanceKm());
         values.put(ScenarioTable.ScenarioColumns.COLUMN_LEVEL,scenario.getLevel());
-
+        values.put(ScenarioTable.ScenarioColumns.COLUMN_NAME,scenario.getName());
+        Log.d(TAG, scenario.getName());
         return db.insert(ScenarioTable.TABLE_NAME, // table
                 null, //nullColumnHack
                 values);
+
     }
 
     @Override
@@ -56,6 +58,7 @@ public class ScenarioDao implements Dao<Scenario> {
         values.put(ScenarioTable.ScenarioColumns.COLUMN_DISTANCE_KM,scenario.getDistanceKm());
         values.put(ScenarioTable.ScenarioColumns.COLUMN_LEVEL,scenario.getLevel());
         values.put(ScenarioTable.ScenarioColumns.COLUMN_NAME,scenario.getName());
+
         db.update(ScenarioTable.TABLE_NAME, values, BaseColumns._ID + " = ?", new String[]{String.valueOf(scenario.getScenarioId())});
     }
 
@@ -73,7 +76,7 @@ public class ScenarioDao implements Dao<Scenario> {
         Cursor c = db.query(ScenarioTable.TABLE_NAME,
                 ScenarioTable.ALL_COLUMNS,
                 BaseColumns._ID + " = ?",
-                new String[]{String.valueOf(scenario.getScenarioId())},
+                new String[]{String.valueOf(id)},
                 null,
                 null,
                 null,
@@ -120,6 +123,7 @@ public class ScenarioDao implements Dao<Scenario> {
             scenario.setTime(c.getFloat(3));
             scenario.setDistanceKm(c.getFloat(4));
             scenario.setLevel(c.getString(5));
+            scenario.setName(c.getString(6));
         }
         return scenario;
     }

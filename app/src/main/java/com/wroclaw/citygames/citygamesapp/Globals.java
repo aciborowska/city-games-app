@@ -4,7 +4,7 @@ package com.wroclaw.citygames.citygamesapp;
 
 public interface Globals {
     //String MAIN_URL="192.168.56.1:8080/CityGamesServer/citygames";
-    String MAIN_URL="192.168.1.122:8080/CityGamesServer/citygames";
+    String MAIN_URL="192.168.0.48:8080/CityGamesServer/citygames";
     String LOGIN_URI="login";
     String REGISTER_URI="register";
     String SCENARIOS_URI="scenarios";

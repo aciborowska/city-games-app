@@ -69,10 +69,12 @@ public class ScenariosListFragment extends Fragment {
         if(scenarioListView != null)
             scenarioList.clear();
         scenarioList.addAll(App.getScenarioDao().getAll());
+        Log.d(TAG, String.valueOf(scenarioList.size()));
+        Log.d(TAG,scenarioList.get(0).getName());
         scenarioListAdapter.notifyDataSetChanged();
     }
 
-    private class ScenarioListAdapter extends BaseAdapter {
+    private final class ScenarioListAdapter extends BaseAdapter {
         private final List<Scenario> scenarios;
         private final Context ctx;
 
@@ -105,6 +107,7 @@ public class ScenariosListFragment extends Fragment {
             TextView scenarioInfo = (TextView) v.findViewById(R.id.sceanrio_info);
 
             Scenario scenario = getItem(position);
+            Log.d(TAG,scenario.getName());
             String name = scenario.getName();
             scenarioName.setText(name);
             scenarioInfo.setText(scenario.getLevel());
