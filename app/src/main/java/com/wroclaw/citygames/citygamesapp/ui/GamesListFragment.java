@@ -27,6 +27,12 @@ public class GamesListFragment extends Fragment {
     public static final String NAME = GamesListFragment.class.getCanonicalName();
     public static final String TAG = GamesListFragment.class.getName();
     public static final String TITLE = "Gry";
+
+    public static  GamesListFragment newInstance() {
+        GamesListFragment myFragment = new GamesListFragment();
+        return myFragment;
+    }
+
     public GamesListFragment() {
         // Required empty public constructor
     }
@@ -60,6 +66,7 @@ public class GamesListFragment extends Fragment {
 
             }
         });
+        getActivity().setTitle(GamesListFragment.TITLE);
     }
 
     private void refreshData(){

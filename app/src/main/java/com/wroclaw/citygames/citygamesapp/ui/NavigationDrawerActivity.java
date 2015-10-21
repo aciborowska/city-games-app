@@ -179,27 +179,22 @@ public class NavigationDrawerActivity extends FragmentActivity {
             case 0:
                 tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, StartFragment.NAME)).addToBackStack("");
                 tx.commit();
-                setTitle(StartFragment.TITLE);
                 break;
             case 1:
                 tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, TeamsListFragment.NAME)).addToBackStack("");
                 tx.commit();
-                setTitle(TeamsListFragment.TITLE);
                 break;
             case 2:
                 tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, GamesListFragment.NAME)).addToBackStack("");
                 tx.commit();
-                setTitle(GamesListFragment.TITLE);
                 break;
             case 3:
                 tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, ScenariosListFragment.NAME)).addToBackStack("");
                 tx.commit();
-                setTitle(ScenariosListFragment.TITLE);
                 break;
             case 4:
                 tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, RankFragment.NAME)).addToBackStack(TAG);
                 tx.commit();
-                setTitle(RankFragment.TITLE);
                 break;
             case 5:
                 Login.logout();

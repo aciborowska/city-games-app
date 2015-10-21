@@ -132,4 +132,23 @@
         <item name="android:fontFamily">sans-serif-light</item>
     </style>
 
+    <style name="ViewPagerStyle" parent="Theme.Action_bar_style">
+        <item name="android:textAppearance">@style/HeaderFont</item>
+        <item name="android:paddingLeft">2dp</item>
+        <item name="android:paddingRight">2dp</item>
+    </style>
+
+    <style name="HeaderFont" parent="RegularFont">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">15dp</item>
+    </style>
+
+    <style name="RegularFont" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@color/dark_brown</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">15dp</item>
+    </style>
+
 </resources>

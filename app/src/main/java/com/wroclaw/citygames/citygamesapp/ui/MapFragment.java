@@ -12,17 +12,12 @@ import com.wroclaw.citygames.citygamesapp.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class RankFragment extends Fragment {
-    public static final String NAME = RankFragment.class.getCanonicalName();
-    public static final String TAG = RankFragment.class.getName();
-    public static final String TITLE = "Ranking";
+public class MapFragment extends Fragment {
+    public static final String NAME =  MapFragment.class.getCanonicalName();
+    public static final String TAG =  MapFragment.class.getName();
+    public static final String TITLE = "Mapa";
 
-    public static  RankFragment newInstance() {
-        RankFragment myFragment = new RankFragment();
-        return myFragment;
-    }
-
-    public RankFragment() {
+    public MapFragment() {
         // Required empty public constructor
     }
 
@@ -31,12 +26,11 @@ public class RankFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_rank, container, false);
+        return inflater.inflate(R.layout.fragment_map, container, false);
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getActivity().setTitle(RankFragment.TITLE);
     }
 }

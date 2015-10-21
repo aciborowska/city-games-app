@@ -4,6 +4,7 @@ package com.wroclaw.citygames.citygamesapp.ui;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,9 +29,20 @@ public class ScenariosListFragment extends Fragment {
     public static final String TAG = ScenariosListFragment.class.getName();
     public static final String TITLE = "Scenariusze";
 
+    private boolean startingGame;
     private final List<Scenario> scenarioList = new ArrayList<>();
     private ListView scenarioListView;
     private ScenarioListAdapter scenarioListAdapter;
+
+    public static ScenariosListFragment newInstance(boolean startingGame) {
+        ScenariosListFragment myFragment = new ScenariosListFragment();
+
+        Bundle args = new Bundle();
+        args.putBoolean("startingGame", startingGame);
+        myFragment.setArguments(args);
+
+        return myFragment;
+    }
 
     public ScenariosListFragment() {
         // Required empty public constructor
@@ -52,25 +64,33 @@ public class ScenariosListFragment extends Fragment {
         scenarioListAdapter = new ScenarioListAdapter(scenarioList, App.getCtx());
         scenarioListView = (ListView) getView().findViewById(R.id.scenario_list);
         scenarioListView.setAdapter(scenarioListAdapter);
-
+        handleIntent();
         refreshData();
 
-        scenarioListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d(TAG, "omItemClick id: " + id);
-
-            }
-        });
+        getActivity().setTitle(ScenariosListFragment.TITLE);
     }
 
-    private void refreshData(){
+    protected void handleIntent() {
+        Log.d(TAG, "handleIntent: " + startingGame);
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            startingGame = getArguments().getBoolean("startingGame", false);
+            if (startingGame) {
+                scenarioListView.setOnItemClickListener(new ChooseScenario());
+                getActivity().setTitle("Wybierz scenariusz");
+                return;
+            }
+        }
+        scenarioListView.setOnItemClickListener(new ScenarioDetails());
+    }
+
+    private void refreshData() {
         Log.d(TAG, "refreshData");
-        if(scenarioListView != null)
+        if (scenarioListView != null)
             scenarioList.clear();
         scenarioList.addAll(App.getScenarioDao().getAll());
         Log.d(TAG, String.valueOf(scenarioList.size()));
-        Log.d(TAG,scenarioList.get(0).getName());
+        Log.d(TAG, scenarioList.get(0).getName());
         scenarioListAdapter.notifyDataSetChanged();
     }
 
@@ -78,10 +98,11 @@ public class ScenariosListFragment extends Fragment {
         private final List<Scenario> scenarios;
         private final Context ctx;
 
-        private ScenarioListAdapter(List<Scenario> scenarios, Context ctx){
-            this.scenarios=scenarios;
-            this.ctx=ctx;
+        private ScenarioListAdapter(List<Scenario> scenarios, Context ctx) {
+            this.scenarios = scenarios;
+            this.ctx = ctx;
         }
+
         @Override
         public int getCount() {
             return scenarios.size();
@@ -99,21 +120,50 @@ public class ScenariosListFragment extends Fragment {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            View v=convertView;
+            View v = convertView;
             if (v == null) {
                 v = LayoutInflater.from(ctx).inflate(R.layout.list_element_scenario, parent, false);
             }
-            TextView scenarioName=(TextView)v.findViewById(R.id.sceanrio_name);
+            TextView scenarioName = (TextView) v.findViewById(R.id.sceanrio_name);
             TextView scenarioInfo = (TextView) v.findViewById(R.id.sceanrio_info);
 
             Scenario scenario = getItem(position);
-            Log.d(TAG,scenario.getName());
+            Log.d(TAG, scenario.getName());
             String name = scenario.getName();
             scenarioName.setText(name);
             scenarioInfo.setText(scenario.getLevel());
             return v;
         }
 
+    }
+
+    private class ScenarioDetails implements AdapterView.OnItemClickListener {
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            Scenario scenario = scenarioList.get(position);
+            scenario.getScenarioId();
+            ScenarioDetailsFragment scenarioDetailsFragment = new ScenarioDetailsFragment();
+            Bundle args = new Bundle();
+            args.putBoolean("startingGame", false);
+            scenarioDetailsFragment.setArguments(args);
+            FragmentTransaction tx = getActivity().getSupportFragmentManager().beginTransaction();
+            tx.replace(R.id.navigation_drawer_frame, scenarioDetailsFragment).addToBackStack(null);
+            tx.commit();
+            getActivity().setTitle(scenario.getName());
+        }
+    }
+
+    private class ChooseScenario implements AdapterView.OnItemClickListener {
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            Scenario scenario = scenarioList.get(position);
+            FragmentTransaction tx = getActivity().getSupportFragmentManager().beginTransaction();
+            tx.replace(R.id.navigation_drawer_frame, TeamsListFragment.newInstance(true, scenario.getScenarioId()));
+            tx.commit();
+            getActivity().setTitle(scenario.getName());
+        }
     }
 
 
