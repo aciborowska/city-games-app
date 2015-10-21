@@ -177,7 +177,7 @@ public class NavigationDrawerActivity extends FragmentActivity {
         switch (position)
         {
             case 0:
-                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, StartFragment.NAME)).addToBackStack("");
+                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, StartFragment.NAME));
                 tx.commit();
                 break;
             case 1:

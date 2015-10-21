@@ -1,6 +1,5 @@
 package com.wroclaw.citygames.citygamesapp.ui;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -10,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.wroclaw.citygames.citygamesapp.App;
 import com.wroclaw.citygames.citygamesapp.R;
 
 
@@ -65,20 +63,18 @@ public class StartFragment extends Fragment implements View.OnClickListener{
         switch (id)
         {
             case R.id.start_game_button:
-                Intent intent = new Intent(App.getCtx(),MainTaskActivity.class);
-                startActivity(intent);
+                tx.replace(R.id.navigation_drawer_frame, ScenariosListFragment.newInstance(true)).addToBackStack(TAG);
+                tx.commit();
                 break;
             case R.id.current_game_button:
                 break;
             case R.id.yout_teams_button:
                 tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(getActivity(), TeamsListFragment.NAME)).addToBackStack(TAG);
                 tx.commit();
-                getActivity().setTitle(TeamsListFragment.TITLE);
                 break;
             case R.id.your_games_button:
                 tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(getActivity(), GamesListFragment.NAME)).addToBackStack(TAG);
                 tx.commit();
-                getActivity().setTitle(GamesListFragment.TITLE);
                 break;
             case R.id.scenarios_button:
                 tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(getActivity(), ScenariosListFragment.NAME)).addToBackStack(TAG);

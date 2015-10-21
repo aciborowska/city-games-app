@@ -12,7 +12,6 @@ import com.wroclaw.citygames.citygamesapp.database.DatabaseHelper;
 public class App extends Application {
 
     private static final String TAG = App.class.getName();
-
     /**
      * Globalnie dostępny kontekst aplikacji
      */
@@ -34,14 +33,13 @@ public class App extends Application {
 
     @Override
     public void onCreate() {
+        Log.d(TAG, "onCreate");
         super.onCreate();
         this.ctx = getApplicationContext();
         db = new DatabaseHelper(ctx);
         scenarioDao = ScenarioDao.getInstance(db);
         teamDao = TeamDao.getInstance(db);
-
         gameDao = GameDao.getInstance(db);
-        Log.d(TAG, "onCreate");
     }
 
 }

@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -348,7 +349,11 @@ public class TeamsListFragment extends Fragment {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Team team = teamList.get(position);
-            //TODO przesłanie info
+            Intent intent = new Intent(getActivity(),MainTaskActivity.class);
+            intent.putExtra("playerId",Login.getCredentials());
+            intent.putExtra("scenarioId",scenarioId);
+            intent.putExtra("teamId",team.getTeamId());
+            startActivity(intent);
         }
     }
 

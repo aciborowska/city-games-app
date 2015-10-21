@@ -1,22 +1,48 @@
 package com.wroclaw.citygames.citygamesapp.ui;
 
 
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.wroclaw.citygames.citygamesapp.Globals;
 import com.wroclaw.citygames.citygamesapp.R;
+import com.wroclaw.citygames.citygamesapp.model.Task;
+import com.wroclaw.citygames.citygamesapp.util.Login;
+
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class TaskFragment extends Fragment {
+public class TaskFragment extends Fragment implements View.OnClickListener{
 
     public static final String NAME = TaskFragment.class.getCanonicalName();
     public static final String TAG = TaskFragment.class.getName();
     public static final String TITLE = "Zadanie";
+
+    private TextView description;
+    private TextView question;
+    private Button answerA;
+    private Button answerB;
+    private Button answerC;
+    private ImageView picture;
+    private GetNextTask getNextTask;
+
+    public static TaskFragment newInstance(String description, String question,String picturePath) {
+        TaskFragment myFragment = new TaskFragment();
+        return myFragment;
+    }
+
 
     public TaskFragment() {
         // Required empty public constructor
@@ -33,5 +59,111 @@ public class TaskFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        description = (TextView) getView().findViewById(R.id.task_description);
+        question = (TextView) getView().findViewById(R.id.task_question);
+        answerA = (Button) getView().findViewById(R.id.answer_a_button);
+        answerB = (Button) getView().findViewById(R.id.answer_b_button);
+        answerC = (Button) getView().findViewById(R.id.answer_c_button);
+
+        handleIntent();
+
+    }
+
+
+    protected void handleIntent() {
+        Log.d(TAG, "handleIntent");
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            String questionText = getArguments().getString("question");
+            String descriptionText = getArguments().getString("description");
+            if (questionText!=null || descriptionText!=null) {
+                description.setText(descriptionText);
+                String[] makeQuestion = questionText.split(";");
+                question.setText(makeQuestion[0]);
+                if(makeQuestion.length>2){
+                    answerA.setVisibility(View.VISIBLE);
+                    answerA.setText(makeQuestion[1]);
+                    answerB.setVisibility(View.VISIBLE);
+                    answerB.setText(makeQuestion[2]);
+                    answerC.setVisibility(View.VISIBLE);
+                    answerC.setText(makeQuestion[3]);
+                }
+                else{
+                    //TODO pole na wpisanie odpowiedzi
+                }
+            }
+        }
+        else {
+            Log.e(TAG, "Nie przekazano parametrów zadania!");
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        Log.d(TAG,"On Click");
+        int id = v.getId();
+        Button clicked = (Button) v.findViewById(id);
+        if(clicked!=null){
+            String answer = clicked.getText().toString();
+            getNextTask =  new GetNextTask(answer);
+            getNextTask.execute();
+        }
+    }
+
+    public class GetNextTask extends AsyncTask<Void,Void,Task> {
+
+        private String answer;
+        public GetNextTask(String answer){
+            this.answer=answer;
+        }
+
+        @Override
+        protected Task doInBackground(Void... params) {
+            Log.d(TAG, "Pobieranie zadania...");
+            RestTemplate restTemplate = new RestTemplate();
+            restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+            Uri.Builder builder = new Uri.Builder();
+            builder.scheme("http").encodedAuthority(Globals.MAIN_URL)
+                    .appendPath(Globals.GAMEPLAY_URI)
+                    .appendPath(String.valueOf(MainTaskActivity.currentGameId))
+                    .appendPath(String.valueOf(Login.getCredentials()))
+                    .appendQueryParameter("taskId", String.valueOf(MainTaskActivity.currentTask.getTaskId()))
+                    .appendQueryParameter("answer", answer);
+            String uri=builder.build().toString();
+            Task task = null;
+            try {
+                task= restTemplate.getForObject(uri, Task.class);
+            }catch(final Exception e){
+                Log.d(TAG, "błąd połączenia");
+                e.printStackTrace();
+            }
+            return task;
+        }
+
+        @Override
+        protected void onPostExecute(Task task) {
+            getNextTask = null;
+            if (task != null) {
+                MainTaskActivity.currentTask=task;
+                String questionText = task.getQuestion();
+                String descriptionText = task.getDescription();
+                if(description!=null) description.setText(descriptionText);
+                if (questionText != null) {
+                    String[] makeQuestion = questionText.split(";");
+                    question.setText(makeQuestion[0]);
+                    if (makeQuestion.length > 2) {
+                        answerA.setVisibility(View.VISIBLE);
+                        answerA.setText(makeQuestion[1]);
+                        answerB.setVisibility(View.VISIBLE);
+                        answerB.setText(makeQuestion[2]);
+                        answerC.setVisibility(View.VISIBLE);
+                        answerC.setText(makeQuestion[3]);
+                    } else {
+                        //TODO pole na wpisanie odpowiedzi
+                    }
+                }
+            }
+        }
     }
 }

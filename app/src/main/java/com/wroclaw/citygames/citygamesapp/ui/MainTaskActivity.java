@@ -1,6 +1,8 @@
 package com.wroclaw.citygames.citygamesapp.ui;
 
 import android.content.Intent;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -11,12 +13,21 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.wroclaw.citygames.citygamesapp.App;
+import com.wroclaw.citygames.citygamesapp.Globals;
 import com.wroclaw.citygames.citygamesapp.R;
+import com.wroclaw.citygames.citygamesapp.model.Game;
+import com.wroclaw.citygames.citygamesapp.model.Task;
+
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
 
 public class MainTaskActivity extends FragmentActivity {
 
     private static final String TAG = MainTaskActivity.class.getName();
-
+    public static Long currentGameId = null;
+    public static Task currentTask = null;
+    private RegisterGame registerGameTask;
     @Override
     protected void onResume() {
         super.onResume();
@@ -63,7 +74,9 @@ public class MainTaskActivity extends FragmentActivity {
         setContentView(R.layout.activity_main_task);
 
         Log.d(TAG, "onCreate");
-
+        currentTask = new Task();
+        currentTask.setTaskId(Long.valueOf(-1));
+        currentTask.setCorrectAnswer("?");
         // Zainicjalizuj ViewPager
         mainViewPager = (ViewPager) findViewById(R.id.view_pager);
         mainViewPagerAdapter = new MainViewPagerAdapter(getSupportFragmentManager());
@@ -89,18 +102,19 @@ public class MainTaskActivity extends FragmentActivity {
      * @param intent intencja
      */
     protected void handleIntent(Intent intent) {
-        // Załaduj fragment o numerze przekazanym przez intencję lub domyślny
+        Log.d(TAG,"handle intent");
         if(intent != null) {
             int setPage = intent.getIntExtra(SET_FRAGMENT, START_FRAGMENT);
             mainViewPager.setCurrentItem(setPage);
+            Long playerId = intent.getLongExtra("playerId",Long.valueOf(-1));
+            Long teamId = intent.getLongExtra("teamId",Long.valueOf(-1));
+            Long scenarioId = intent.getLongExtra("scenarioId",Long.valueOf(-1));
+            if(playerId!=null & teamId!=null & scenarioId!=null)
+                registerGameTask = new RegisterGame(scenarioId,playerId,teamId);
+                registerGameTask.execute();
 
-            // Przekaż do fragmentu extrasy jeśli są dostępne
-            Bundle bundle = intent.getExtras();
-            if(bundle != null) {
-
-            }
         } else {
-            // Załaduj domyślne dane w przypadku braku intencji
+            Log.e(TAG,"handle intent = null");
             mainViewPager.setCurrentItem(START_FRAGMENT);
         }
     }
@@ -172,4 +186,52 @@ public class MainTaskActivity extends FragmentActivity {
             return null;
         }
     }
+
+
+    public class RegisterGame extends AsyncTask<Void,Void,Game>{
+
+        private Long  scenarioId;
+        private Long  playerId;
+        private Long  teamId;
+        public RegisterGame(Long scenarioId, Long  playerId, Long  teamId){
+            this.scenarioId=scenarioId;
+            this.playerId=playerId;
+            this.teamId=teamId;
+        }
+
+        @Override
+        protected Game doInBackground(Void... params) {
+            Log.d(TAG, "Rozpocznamy rozgrywke....");
+            RestTemplate restTemplate = new RestTemplate();
+            restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+            Uri.Builder builder = new Uri.Builder();
+            builder.scheme("http").encodedAuthority(Globals.MAIN_URL)
+                    .appendPath(Globals.GAMEPLAY_URI)
+                    .appendPath(Globals.REGISTER_GAME_URI)
+                    .appendQueryParameter("leaderId", String.valueOf(playerId))
+                    .appendQueryParameter("scenarioId",String.valueOf(scenarioId))
+                    .appendQueryParameter("teamId", String.valueOf(teamId));
+            String uri=builder.build().toString();
+            Game game = null;
+            try {
+                game= restTemplate.getForObject(uri, Game.class);
+            }catch(final Exception e){
+                Log.d(TAG, "błąd połączenia");
+                e.printStackTrace();
+            }
+            return game;
+        }
+
+        @Override
+        protected void onPostExecute(Game game) {
+            super.onPostExecute(game);
+            registerGameTask = null;
+            if(game!=null){
+                App.getGameDao().save(game);
+                currentGameId = game.getGameId();
+            }
+        }
+    }
+
+
 }

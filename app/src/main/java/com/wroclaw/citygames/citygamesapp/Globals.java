@@ -12,5 +12,7 @@ public interface Globals {
     String SIGNIN_URI ="signin";
     String SIGNOUT_URI = "signout";
     String CREATE_TEAM_URI="create_team";
+    String GAMEPLAY_URI="gameplay";
+    String REGISTER_GAME_URI = "new_game";
 
 }

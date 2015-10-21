@@ -13,18 +13,28 @@
         android:layout_marginRight="3dp"
         android:layout_marginTop="3dp">
 
-        <ImageView
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/imageView2" />
+            android:layout_gravity="center">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/task_picture"
+                android:layout_gravity="center"
+                android:background="@drawable/question"
+                android:layout_weight="1" />
+        </LinearLayout>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Medium Text"
-            android:id="@+id/textView"
-            android:layout_marginTop="2dp"
+            android:id="@+id/task_description"
+            android:layout_marginTop="10dp"
             android:layout_marginLeft="2dp"
             android:layout_marginRight="2dp" />
 
@@ -33,7 +43,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Medium Text"
-            android:id="@+id/textView4"
+            android:id="@+id/task_question"
             android:layout_marginTop="2dp"
             android:layout_marginLeft="2dp"
             android:layout_marginRight="2dp" />
@@ -41,28 +51,33 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="New Button"
-            android:id="@+id/button"
+            android:text="-"
+            android:id="@+id/answer_a_button"
             android:layout_marginTop="4dp"
             android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp" />
+            android:layout_marginRight="15dp"
+            android:enabled="false"
+            android:visibility="gone" />
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="New Button"
-            android:id="@+id/button2"
+            android:text="-"
+            android:id="@+id/answer_b_button"
             android:layout_marginTop="4dp"
             android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp" />
+            android:layout_marginRight="15dp"
+            android:visibility="gone" />
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="New Button"
-            android:id="@+id/button3"
+            android:text="-"
+            android:id="@+id/answer_c_button"
             android:layout_marginTop="4dp"
             android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp" />
+            android:layout_marginRight="15dp"
+            android:visibility="gone" />
+
     </LinearLayout>
 </FrameLayout>
