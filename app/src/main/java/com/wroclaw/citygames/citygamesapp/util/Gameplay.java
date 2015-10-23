@@ -1,0 +1,29 @@
+package com.wroclaw.citygames.citygamesapp.util;
+
+
+import android.content.Context;
+import android.content.SharedPreferences;
+
+import com.wroclaw.citygames.citygamesapp.App;
+import com.wroclaw.citygames.citygamesapp.R;
+
+public class Gameplay {
+    public static void registerGame(Long gameId){
+        SharedPreferences sharedpreferences = App.getCtx().getSharedPreferences( App.getCtx().getResources().getString(R.string.shared_preferences_credentials), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        editor.putLong("gameId",gameId);
+        editor.commit();
+    }
+
+    public static Long getCurrentGame(){
+        SharedPreferences sharedpreferences =  App.getCtx().getSharedPreferences( App.getCtx().getResources().getString(R.string.shared_preferences_credentials), Context.MODE_PRIVATE);
+        return sharedpreferences.getLong("gameId",-1);
+    }
+
+    public static void endGame(){
+        SharedPreferences sharedpreferences = App.getCtx().getSharedPreferences( App.getCtx().getResources().getString(R.string.shared_preferences_credentials), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        editor.putLong("gameId",Long.valueOf(-1));
+        editor.commit();
+    }
+}

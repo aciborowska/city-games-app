@@ -12,20 +12,25 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.wroclaw.citygames.citygamesapp.App;
 import com.wroclaw.citygames.citygamesapp.Globals;
 import com.wroclaw.citygames.citygamesapp.R;
 import com.wroclaw.citygames.citygamesapp.model.Game;
 import com.wroclaw.citygames.citygamesapp.model.Task;
+import com.wroclaw.citygames.citygamesapp.util.Gameplay;
 
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.concurrent.ExecutionException;
+
 public class MainTaskActivity extends FragmentActivity {
 
     private static final String TAG = MainTaskActivity.class.getName();
-    public static Long currentGameId = null;
     public static Task currentTask = null;
     private RegisterGame registerGameTask;
     @Override
@@ -33,56 +38,32 @@ public class MainTaskActivity extends FragmentActivity {
         super.onResume();
     }
 
-    /**
-     * Obiekt "kartownika" pozwalający na przechodzenie między fragmentami aktywności za
-     * pomocą gestów
-     */
+    private ProgressBar progressBar;
     private ViewPager mainViewPager;
-    /**
-     * Obiekt adaptera na potrzeby "kartownika"
-     */
     private MainViewPagerAdapter mainViewPagerAdapter;
 
-    /*
-    Stałe na potrzeby przekazywania parametrów przez Intencje
-     */
-    /**
-     * Klucz do wyboru aktywnego fragmentu
-     */
     public static final String SET_FRAGMENT = "SET_FRAGMENT";
-    /**
-     * Numer fragmentu ze zdjęciami
-     */
     public static final int TASK_FRAGMENT_NUM = 1;
-    /**
-     * Numer fragmentu głównego
-     */
     public static final int TIP_FRAGMENT_NUM = 0;
-    /**
-     * Numer fragmentu z podróżami
-     */
     public static final int MAP_FRAGMENT_NUM = 2;
-
-    /**
-     * Numer startowego fragmentu
-     */
     private static final int START_FRAGMENT = TASK_FRAGMENT_NUM;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_task);
-
         Log.d(TAG, "onCreate");
         currentTask = new Task();
         currentTask.setTaskId(Long.valueOf(-1));
         currentTask.setCorrectAnswer("?");
+        progressBar = (ProgressBar) findViewById(R.id.register_game_progress_bar);
         // Zainicjalizuj ViewPager
         mainViewPager = (ViewPager) findViewById(R.id.view_pager);
-        mainViewPagerAdapter = new MainViewPagerAdapter(getSupportFragmentManager());
-        mainViewPager.setAdapter(mainViewPagerAdapter);
 
         handleIntent(getIntent());
+
+        mainViewPagerAdapter = new MainViewPagerAdapter(getSupportFragmentManager());
+        mainViewPager.setAdapter(mainViewPagerAdapter);
         setTitle("Gra");
     }
 
@@ -105,14 +86,22 @@ public class MainTaskActivity extends FragmentActivity {
         Log.d(TAG,"handle intent");
         if(intent != null) {
             int setPage = intent.getIntExtra(SET_FRAGMENT, START_FRAGMENT);
-            mainViewPager.setCurrentItem(setPage);
             Long playerId = intent.getLongExtra("playerId",Long.valueOf(-1));
             Long teamId = intent.getLongExtra("teamId",Long.valueOf(-1));
             Long scenarioId = intent.getLongExtra("scenarioId",Long.valueOf(-1));
-            if(playerId!=null & teamId!=null & scenarioId!=null)
-                registerGameTask = new RegisterGame(scenarioId,playerId,teamId);
+            if(playerId!=-1 & teamId!=-1 & scenarioId!=-1) {
+                progressBar.setVisibility(View.VISIBLE);
+                registerGameTask = new RegisterGame(scenarioId, playerId, teamId);
                 registerGameTask.execute();
-
+                try {
+                    registerGameTask.get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
+            mainViewPager.setCurrentItem(setPage);
         } else {
             Log.e(TAG,"handle intent = null");
             mainViewPager.setCurrentItem(START_FRAGMENT);
@@ -187,12 +176,12 @@ public class MainTaskActivity extends FragmentActivity {
         }
     }
 
-
     public class RegisterGame extends AsyncTask<Void,Void,Game>{
 
         private Long  scenarioId;
         private Long  playerId;
         private Long  teamId;
+
         public RegisterGame(Long scenarioId, Long  playerId, Long  teamId){
             this.scenarioId=scenarioId;
             this.playerId=playerId;
@@ -214,7 +203,7 @@ public class MainTaskActivity extends FragmentActivity {
             String uri=builder.build().toString();
             Game game = null;
             try {
-                game= restTemplate.getForObject(uri, Game.class);
+                game= restTemplate.postForObject(uri,null, Game.class);
             }catch(final Exception e){
                 Log.d(TAG, "błąd połączenia");
                 e.printStackTrace();
@@ -226,9 +215,23 @@ public class MainTaskActivity extends FragmentActivity {
         protected void onPostExecute(Game game) {
             super.onPostExecute(game);
             registerGameTask = null;
-            if(game!=null){
+            progressBar.setVisibility(View.GONE);
+            if(game==null){
+                Toast.makeText(App.getCtx(),"Wystąpił błąd, spróbuj ponownie później",Toast.LENGTH_SHORT).show();
+                finish();
+            }
+            else if(game.getGameId()>0){
                 App.getGameDao().save(game);
-                currentGameId = game.getGameId();
+                Gameplay.registerGame(game.getGameId());
+                Log.d(TAG,"zarejestrowano nową grę "+game.getGameId());
+                Toast.makeText(App.getCtx(), "Zarejestrowano grę",Toast.LENGTH_SHORT).show();
+            }
+            else if(game.getGameId()<0){
+                Toast.makeText(App.getCtx(),"Członkowie wybranej drużyny uczestniczą już w innych grach!",Toast.LENGTH_SHORT).show();
+                finish();
+            }
+            else{
+                Log.e(TAG,"Nieznany błąd");
             }
         }
     }

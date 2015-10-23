@@ -1,5 +1,6 @@
 package com.wroclaw.citygames.citygamesapp.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -8,8 +9,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.wroclaw.citygames.citygamesapp.App;
 import com.wroclaw.citygames.citygamesapp.R;
+import com.wroclaw.citygames.citygamesapp.util.Gameplay;
 
 
 public class StartFragment extends Fragment implements View.OnClickListener{
@@ -48,7 +52,8 @@ public class StartFragment extends Fragment implements View.OnClickListener{
         rankButton.setOnClickListener(this);
         Button startGame = (Button) getView().findViewById(R.id.start_game_button);
         startGame.setOnClickListener(this);
-
+        Button currentGame = (Button) getView().findViewById(R.id.current_game_button);
+        currentGame.setOnClickListener(this);
         getActivity().setTitle(this.TITLE);
     }
 
@@ -63,25 +68,36 @@ public class StartFragment extends Fragment implements View.OnClickListener{
         switch (id)
         {
             case R.id.start_game_button:
-                tx.replace(R.id.navigation_drawer_frame, ScenariosListFragment.newInstance(true)).addToBackStack(TAG);
-                tx.commit();
+                Log.d(TAG, String.valueOf(Gameplay.getCurrentGame()));
+                if(Gameplay.getCurrentGame()==-1) {
+                    tx.replace(R.id.navigation_drawer_frame, ScenariosListFragment.newInstance(true));
+                    tx.commit();
+                }
+                else Toast.makeText(getActivity(),"Uczestniczysz już w grze!",Toast.LENGTH_SHORT).show();
                 break;
             case R.id.current_game_button:
+                Log.d(TAG, String.valueOf(Gameplay.getCurrentGame()));
+                if(Gameplay.getCurrentGame()!=-1){
+                    Intent intent = new Intent(getActivity(),MainTaskActivity.class);
+                    startActivity(intent);
+                }else{
+                    Toast.makeText(App.getCtx(),"Brak bieżących rozgrywek",Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.yout_teams_button:
-                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(getActivity(), TeamsListFragment.NAME)).addToBackStack(TAG);
+                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(getActivity(), TeamsListFragment.NAME));
                 tx.commit();
                 break;
             case R.id.your_games_button:
-                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(getActivity(), GamesListFragment.NAME)).addToBackStack(TAG);
+                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(getActivity(), GamesListFragment.NAME));
                 tx.commit();
                 break;
             case R.id.scenarios_button:
-                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(getActivity(), ScenariosListFragment.NAME)).addToBackStack(TAG);
+                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(getActivity(), ScenariosListFragment.NAME));
                 tx.commit();
                 break;
             case R.id.rank_button:
-                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(getActivity(), RankFragment.NAME)).addToBackStack(TAG);
+                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(getActivity(), RankFragment.NAME));
                 tx.commit();
         }
 
