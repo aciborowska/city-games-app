@@ -120,4 +120,24 @@ public class Task {
 	public void setStart_task(int start_task) {
 		this.start_task = start_task;
 	}
+
+	@Override
+	public String toString() {
+		return "Task{" +
+				"taskId=" + taskId +
+				", description='" + description + '\'' +
+				", question='" + question + '\'' +
+				", correctAnswer='" + correctAnswer + '\'' +
+				", picture='" + picture + '\'' +
+				", correctPoints=" + correctPoints +
+				", wrongPoints=" + wrongPoints +
+				", latitude=" + latitude +
+				", longitude=" + longitude +
+				", taskGroup=" + taskGroup +
+				", nextTaskGood=" + nextTaskGood +
+				", nextTaskWrong=" + nextTaskWrong +
+				", start_task=" + start_task +
+				", tips=" + tips +
+				'}';
+	}
 }

@@ -180,7 +180,7 @@ public class LoginActivity extends Activity {
 
         UserLoginTask(String email, String password) {
             username = email;
-            this.password = password;
+            this.password = Login.md5(password);
         }
 
         @Override

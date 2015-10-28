@@ -1,29 +1,83 @@
 package com.wroclaw.citygames.citygamesapp.ui;
 
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.wroclaw.citygames.citygamesapp.R;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MapFragment extends Fragment {
+public class MapFragment extends SupportMapFragment {
+    public static final String NAME =  MapFragment.class.getCanonicalName();
+    public static final String TAG =  MapFragment.class.getName();
+    public static final String TITLE = "Mapa";
+    private GoogleMap mapView;
+    @Override
+    public void onCreate(Bundle arg0) {
+        Log.d(TAG,"onCreate");
+        super.onCreate(arg0);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater mInflater, ViewGroup arg1,
+                             Bundle arg2) {
+        Log.d(TAG, "onCreateView");
+        return super.onCreateView(mInflater, arg1, arg2);
+    }
+
+    @Override
+    public void onInflate(Activity arg0, AttributeSet arg1, Bundle arg2) {
+        Log.d(TAG, "onInflate");
+        super.onInflate(arg0, arg1, arg2);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        Log.d(TAG, "onActivityCreated");
+        super.onActivityCreated(savedInstanceState);
+
+        mapView = getMap();
+        mapView.setMyLocationEnabled(true);
+        mapView.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.draggable(false);
+        if(MainTaskActivity.currentTask!=null){
+            float longitude = MainTaskActivity.currentTask.getLongitude();
+            float latitude = MainTaskActivity.currentTask.getLatitude();
+            markerOptions.position(new LatLng(latitude, longitude));
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker());
+            mapView.addMarker(markerOptions);
+            Log.d(TAG,"Współrzędne "+String.valueOf(latitude)+" "+String.valueOf(longitude));
+            //Location location = mapView.getMyLocation();
+
+            mapView.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(longitude, latitude), 8));
+        }
+    }
+
+    @Override
+    public void onResume() {
+        Log.d(TAG,"onResume");
+        super.onResume();
+    }
+
+
+}
+
+
+/*extends Fragment {
     public static final String NAME =  MapFragment.class.getCanonicalName();
     public static final String TAG =  MapFragment.class.getName();
     public static final String TITLE = "Mapa";
@@ -98,4 +152,4 @@ public class MapFragment extends Fragment {
         super.onLowMemory();
         mapView.onLowMemory();
     }
-}
+}*/

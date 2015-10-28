@@ -42,7 +42,6 @@ public class MainTaskActivity extends FragmentActivity {
     private ViewPager mainViewPager;
     private MainViewPagerAdapter mainViewPagerAdapter;
 
-    public static final String SET_FRAGMENT = "SET_FRAGMENT";
     public static final int TASK_FRAGMENT_NUM = 1;
     public static final int TIP_FRAGMENT_NUM = 0;
     public static final int MAP_FRAGMENT_NUM = 2;
@@ -59,11 +58,9 @@ public class MainTaskActivity extends FragmentActivity {
         progressBar = (ProgressBar) findViewById(R.id.register_game_progress_bar);
         // Zainicjalizuj ViewPager
         mainViewPager = (ViewPager) findViewById(R.id.view_pager);
-
-        handleIntent(getIntent());
-
         mainViewPagerAdapter = new MainViewPagerAdapter(getSupportFragmentManager());
         mainViewPager.setAdapter(mainViewPagerAdapter);
+        handleIntent(getIntent());
         setTitle("Gra");
     }
 
@@ -85,7 +82,6 @@ public class MainTaskActivity extends FragmentActivity {
     protected void handleIntent(Intent intent) {
         Log.d(TAG,"handle intent");
         if(intent != null) {
-            int setPage = intent.getIntExtra(SET_FRAGMENT, START_FRAGMENT);
             Long playerId = intent.getLongExtra("playerId",Long.valueOf(-1));
             Long teamId = intent.getLongExtra("teamId",Long.valueOf(-1));
             Long scenarioId = intent.getLongExtra("scenarioId",Long.valueOf(-1));
@@ -101,11 +97,10 @@ public class MainTaskActivity extends FragmentActivity {
                     e.printStackTrace();
                 }
             }
-            mainViewPager.setCurrentItem(setPage);
         } else {
-            Log.e(TAG,"handle intent = null");
-            mainViewPager.setCurrentItem(START_FRAGMENT);
+            Log.e(TAG, "handle intent = null");
         }
+        mainViewPager.setCurrentItem(START_FRAGMENT);
     }
 
     //Każdy fragment tworzy swoje menu
@@ -163,6 +158,7 @@ public class MainTaskActivity extends FragmentActivity {
 
         @Override
         public CharSequence getPageTitle(int position) {
+            Log.d(TAG, "getPageTitle "+position);
             switch(position) {
                 case TASK_FRAGMENT_NUM:
                     return TaskFragment.TITLE;
