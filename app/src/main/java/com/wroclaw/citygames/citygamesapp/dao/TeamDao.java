@@ -67,7 +67,7 @@ public class TeamDao implements Dao<Team> {
         Cursor c = db.query(TeamTable.TABLE_NAME,
                 TeamTable.ALL_COLUMNS,
                 BaseColumns._ID + " = ?",
-                new String[]{String.valueOf(team.getTeamId())},
+                new String[]{String.valueOf(id)},
                 null,
                 null,
                 null,

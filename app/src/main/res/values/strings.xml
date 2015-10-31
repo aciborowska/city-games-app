@@ -53,7 +53,6 @@
     <string name="points_count">Liczba zdobytych punktów</string>
     <string name="avarage">średnio</string>
     <string name="max">maksymalnie</string>
-    <string name="time_in_game">Łączny czas</string>
     <string name="distance">Pokonany dystans</string>
 
     <string name="add_team">Dodaj drużynę</string>
@@ -64,7 +63,12 @@
     <string name="team_name">Nazwa drużyny</string>
 
     <string name="no_tips">Nie ma wskazówek, to zadanie jest za proste :)</string>
-    <string name="buy">   Kup  </string>
+    <string name="buy">Kup</string>
+
+    <string name="scenario_name">Scenariusz</string>
+    <string name="time_in_game">Czas gry</string>
+    <string name="colleted_points">Zdobyte punkty</string>
+    <string name="team">Drużyna</string>
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

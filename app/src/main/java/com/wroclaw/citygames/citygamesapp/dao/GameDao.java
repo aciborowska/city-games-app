@@ -72,7 +72,7 @@ public class GameDao implements Dao<Game> {
         Cursor c = db.query(GameTable.TABLE_NAME,
                 GameTable.ALL_COLUMNS,
                 BaseColumns._ID + " = ?",
-                new String[]{String.valueOf(game.getGameId())},
+                new String[]{String.valueOf(id)},
                 null,
                 null,
                 null,

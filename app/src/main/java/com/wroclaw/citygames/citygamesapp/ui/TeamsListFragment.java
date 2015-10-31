@@ -85,6 +85,7 @@ public class TeamsListFragment extends Fragment {
         teamListView = (ListView) getView().findViewById(R.id.team_list);
         teamListView.setAdapter(teamListAdapter);
 
+        getActivity().setTitle(TITLE);
         refreshData();
         handleIntent();
     }

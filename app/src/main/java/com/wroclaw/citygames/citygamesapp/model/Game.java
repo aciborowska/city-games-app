@@ -67,4 +67,16 @@ public class Game {
 		this.teamId = teamId;
 	}
 
+	@Override
+	public String toString() {
+		return "Game{" +
+				"gameId=" + gameId +
+				", scenario=" + scenario +
+				", timeStart=" + timeStart +
+				", timeEnd=" + timeEnd +
+				", points=" + points +
+				", teamId=" + teamId +
+				", scenarioId=" + scenarioId +
+				'}';
+	}
 }

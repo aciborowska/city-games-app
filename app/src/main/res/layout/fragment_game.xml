@@ -4,9 +4,8 @@
     android:background="@android:color/white"
     tools:context="com.wroclaw.citygames.citygamesapp.ui.GamesListFragment">
 
-    <!-- TODO: Update blank fragment layout -->
 
-    <ListView
+    <ExpandableListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/games_list"

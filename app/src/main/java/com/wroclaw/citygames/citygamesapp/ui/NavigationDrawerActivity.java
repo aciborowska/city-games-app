@@ -264,7 +264,6 @@ public class NavigationDrawerActivity extends FragmentActivity {
                     App.getTeamDao().save(team);
                     for(Game game:team.getGames()) {
                         game.setTeamId(team.getTeamId());
-                        game.setTimeEnd(Long.valueOf(-1));
                         App.getGameDao().save(game);
                     }
                 }
