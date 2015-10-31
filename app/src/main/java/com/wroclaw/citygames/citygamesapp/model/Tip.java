@@ -6,6 +6,8 @@ public class Tip {
 	private String picture;
 	private int cost;
 	private Task task;
+	private int number;
+	private boolean bought=false;
 
 	public Long getTipId() {
 		return tipId;
@@ -42,4 +44,19 @@ public class Tip {
 		this.task = task;
 	}
 
+	public int getNumber() {
+		return number;
+	}
+
+	public void setNumber(int number) {
+		this.number = number;
+	}
+
+	public boolean isBought() {
+		return bought;
+	}
+
+	public void setBought(boolean bought) {
+		this.bought = bought;
+	}
 }

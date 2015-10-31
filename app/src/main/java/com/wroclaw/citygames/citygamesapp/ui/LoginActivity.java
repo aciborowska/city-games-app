@@ -95,7 +95,7 @@ public class LoginActivity extends Activity {
             emailView.setText(Login.getEmail());
             String fake_pass=null;
             for(int i=0;i<Login.getPasswordLength();i++) fake_pass+="a";
-            passwordView.setText(fake_pass);
+                passwordView.setText(fake_pass);
         }
     }
 
@@ -193,6 +193,7 @@ public class LoginActivity extends Activity {
             String uri=builder.build().toString();
             Player player = null;
             try {
+                Log.d(TAG,uri);
                 player = restTemplate.getForObject(uri, Player.class);
             }catch(final Exception e){
                     connection_error=true;
@@ -217,10 +218,10 @@ public class LoginActivity extends Activity {
                 toast.show();
 
             }else {
+                Log.d(TAG, "success == null");
                     passwordView.setError(getString(R.string.error_incorrect_password));
                     passwordView.requestFocus();
                 }
-
         }
 
         @Override

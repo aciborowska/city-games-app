@@ -70,7 +70,7 @@ public class StartFragment extends Fragment implements View.OnClickListener{
             case R.id.start_game_button:
                 Log.d(TAG, String.valueOf(Gameplay.getCurrentGame()));
                 if(Gameplay.getCurrentGame()==-1) {
-                    tx.replace(R.id.navigation_drawer_frame, ScenariosListFragment.newInstance(true));
+                    tx.replace(R.id.navigation_drawer_frame, ScenariosListFragment.newInstance(true)).addToBackStack("");
                     tx.commit();
                 }
                 else Toast.makeText(getActivity(),"Uczestniczysz już w grze!",Toast.LENGTH_SHORT).show();
@@ -79,6 +79,7 @@ public class StartFragment extends Fragment implements View.OnClickListener{
                 Log.d(TAG, String.valueOf(Gameplay.getCurrentGame()));
                 if(Gameplay.getCurrentGame()!=-1){
                     Intent intent = new Intent(getActivity(),MainTaskActivity.class);
+                    intent.putExtra("isCurrent",true);
                     startActivity(intent);
                 }else{
                     Toast.makeText(App.getCtx(),"Brak bieżących rozgrywek",Toast.LENGTH_SHORT).show();

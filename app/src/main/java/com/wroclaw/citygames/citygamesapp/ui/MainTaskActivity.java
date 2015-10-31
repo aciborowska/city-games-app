@@ -19,8 +19,8 @@ import android.widget.Toast;
 import com.wroclaw.citygames.citygamesapp.App;
 import com.wroclaw.citygames.citygamesapp.Globals;
 import com.wroclaw.citygames.citygamesapp.R;
+import com.wroclaw.citygames.citygamesapp.dao.TaskDao;
 import com.wroclaw.citygames.citygamesapp.model.Game;
-import com.wroclaw.citygames.citygamesapp.model.Task;
 import com.wroclaw.citygames.citygamesapp.util.Gameplay;
 
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -31,12 +31,9 @@ import java.util.concurrent.ExecutionException;
 public class MainTaskActivity extends FragmentActivity {
 
     private static final String TAG = MainTaskActivity.class.getName();
-    public static Task currentTask = null;
+    public static TaskDao currentTask = null;
     private RegisterGame registerGameTask;
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
+    private boolean isCurrent;
 
     private ProgressBar progressBar;
     private ViewPager mainViewPager;
@@ -52,55 +49,52 @@ public class MainTaskActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_task);
         Log.d(TAG, "onCreate");
-        currentTask = new Task();
-        currentTask.setTaskId(Long.valueOf(-1));
-        currentTask.setCorrectAnswer("?");
+        currentTask = new TaskDao();
         progressBar = (ProgressBar) findViewById(R.id.register_game_progress_bar);
+        handleIntent(getIntent());
         // Zainicjalizuj ViewPager
         mainViewPager = (ViewPager) findViewById(R.id.view_pager);
         mainViewPagerAdapter = new MainViewPagerAdapter(getSupportFragmentManager());
         mainViewPager.setAdapter(mainViewPagerAdapter);
-        handleIntent(getIntent());
+        mainViewPager.setCurrentItem(START_FRAGMENT);
+
         setTitle("Gra");
     }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        Log.d(TAG, "onNewIntent");
-
-        handleIntent(intent);
-    }
-
 
     /**
      * Metoda obsługująca nadejście nowej intencji.
      * W tej metodzie powinnien znaleźć się wszelki kod wypełniający aktywność danymi, które
      * zależą od intencji lub od jej braku!
+     *
      * @param intent intencja
      */
     protected void handleIntent(Intent intent) {
-        Log.d(TAG,"handle intent");
-        if(intent != null) {
-            Long playerId = intent.getLongExtra("playerId",Long.valueOf(-1));
-            Long teamId = intent.getLongExtra("teamId",Long.valueOf(-1));
-            Long scenarioId = intent.getLongExtra("scenarioId",Long.valueOf(-1));
-            if(playerId!=-1 & teamId!=-1 & scenarioId!=-1) {
-                progressBar.setVisibility(View.VISIBLE);
-                registerGameTask = new RegisterGame(scenarioId, playerId, teamId);
-                registerGameTask.execute();
-                try {
-                    registerGameTask.get();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
+        Log.d(TAG, "handle intent");
+        if (intent != null) {
+            isCurrent = intent.getBooleanExtra("isCurrent", false);
+            Log.d(TAG,"isCurrent = "+isCurrent);
+            if (!isCurrent) {
+                Long playerId = intent.getLongExtra("playerId", Long.valueOf(-1));
+                Long teamId = intent.getLongExtra("teamId", Long.valueOf(-1));
+                Long scenarioId = intent.getLongExtra("scenarioId", Long.valueOf(-1));
+                if (playerId != -1 & teamId != -1 & scenarioId != -1) {
+                    progressBar.setVisibility(View.VISIBLE);
+                    registerGameTask = new RegisterGame(scenarioId, playerId, teamId);
+                    registerGameTask.execute();
+                    try {
+                        registerGameTask.get();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
+
                 }
             }
         } else {
-            Log.e(TAG, "handle intent = null");
+            Log.e(TAG, "nie przekazano id gracz, scenariusza lub drużyny");
         }
-        mainViewPager.setCurrentItem(START_FRAGMENT);
+
     }
 
     //Każdy fragment tworzy swoje menu
@@ -132,14 +126,14 @@ public class MainTaskActivity extends FragmentActivity {
 
         private MainViewPagerAdapter(FragmentManager fm) {
             super(fm);
-            taskFragment = new TaskFragment();
+            taskFragment = TaskFragment.newInstance(isCurrent);
             tipFragment = new TipFragment();
             mapFragment = new MapFragment();
         }
 
         @Override
         public Fragment getItem(int i) {
-            switch(i) {
+            switch (i) {
                 case TASK_FRAGMENT_NUM:
                     return taskFragment;
                 case TIP_FRAGMENT_NUM:
@@ -158,8 +152,8 @@ public class MainTaskActivity extends FragmentActivity {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            Log.d(TAG, "getPageTitle "+position);
-            switch(position) {
+            Log.d(TAG, "getPageTitle " + position);
+            switch (position) {
                 case TASK_FRAGMENT_NUM:
                     return TaskFragment.TITLE;
                 case TIP_FRAGMENT_NUM:
@@ -172,16 +166,16 @@ public class MainTaskActivity extends FragmentActivity {
         }
     }
 
-    public class RegisterGame extends AsyncTask<Void,Void,Game>{
+    public class RegisterGame extends AsyncTask<Void, Void, Game> {
 
-        private Long  scenarioId;
-        private Long  playerId;
-        private Long  teamId;
+        private Long scenarioId;
+        private Long playerId;
+        private Long teamId;
 
-        public RegisterGame(Long scenarioId, Long  playerId, Long  teamId){
-            this.scenarioId=scenarioId;
-            this.playerId=playerId;
-            this.teamId=teamId;
+        public RegisterGame(Long scenarioId, Long playerId, Long teamId) {
+            this.scenarioId = scenarioId;
+            this.playerId = playerId;
+            this.teamId = teamId;
         }
 
         @Override
@@ -194,13 +188,14 @@ public class MainTaskActivity extends FragmentActivity {
                     .appendPath(Globals.GAMEPLAY_URI)
                     .appendPath(Globals.REGISTER_GAME_URI)
                     .appendQueryParameter("leaderId", String.valueOf(playerId))
-                    .appendQueryParameter("scenarioId",String.valueOf(scenarioId))
+                    .appendQueryParameter("scenarioId", String.valueOf(scenarioId))
                     .appendQueryParameter("teamId", String.valueOf(teamId));
-            String uri=builder.build().toString();
+            String uri = builder.build().toString();
             Game game = null;
             try {
-                game= restTemplate.postForObject(uri,null, Game.class);
-            }catch(final Exception e){
+                Log.d(TAG, "rejestraca gry: " + uri);
+                game = restTemplate.postForObject(uri, null, Game.class);
+            } catch (final Exception e) {
                 Log.d(TAG, "błąd połączenia");
                 e.printStackTrace();
             }
@@ -212,22 +207,19 @@ public class MainTaskActivity extends FragmentActivity {
             super.onPostExecute(game);
             registerGameTask = null;
             progressBar.setVisibility(View.GONE);
-            if(game==null){
-                Toast.makeText(App.getCtx(),"Wystąpił błąd, spróbuj ponownie później",Toast.LENGTH_SHORT).show();
+            if (game == null) {
+                Toast.makeText(App.getCtx(), "Wystąpił błąd, spróbuj ponownie później", Toast.LENGTH_SHORT).show();
                 finish();
-            }
-            else if(game.getGameId()>0){
+            } else if (game.getGameId() > 0) {
                 App.getGameDao().save(game);
-                Gameplay.registerGame(game.getGameId());
-                Log.d(TAG,"zarejestrowano nową grę "+game.getGameId());
-                Toast.makeText(App.getCtx(), "Zarejestrowano grę",Toast.LENGTH_SHORT).show();
-            }
-            else if(game.getGameId()<0){
-                Toast.makeText(App.getCtx(),"Członkowie wybranej drużyny uczestniczą już w innych grach!",Toast.LENGTH_SHORT).show();
+                Gameplay.registerGame(game.getGameId(), teamId);
+                Log.d(TAG, "zarejestrowano nową grę " + game.getGameId());
+                Toast.makeText(App.getCtx(), "Zarejestrowano grę", Toast.LENGTH_SHORT).show();
+            } else if (game.getGameId() < 0) {
+                Toast.makeText(App.getCtx(), "Członkowie wybranej drużyny uczestniczą już w innych grach!", Toast.LENGTH_SHORT).show();
                 finish();
-            }
-            else{
-                Log.e(TAG,"Nieznany błąd");
+            } else {
+                Log.e(TAG, "Nieznany błąd");
             }
         }
     }

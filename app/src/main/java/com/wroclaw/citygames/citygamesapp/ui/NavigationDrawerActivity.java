@@ -320,4 +320,10 @@ public class NavigationDrawerActivity extends FragmentActivity {
             scenarioTask = null;
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        Log.d(TAG, "onBackPressed Called");
+
+    }
 }

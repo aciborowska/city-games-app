@@ -9,7 +9,7 @@ public class Game {
 	private int points;
 	private Long teamId;
 	private Long scenarioId;
-	private Team team;
+
 
 	public Long getScenarioId() {
 		return scenarioId;
@@ -18,7 +18,6 @@ public class Game {
 	public void setScenarioId(Long scenarioId) {
 		this.scenarioId = scenarioId;
 	}
-
 
 
 	public Long getGameId() {
@@ -68,11 +67,4 @@ public class Game {
 		this.teamId = teamId;
 	}
 
-	public Team getTeam() {
-		return team;
-	}
-
-	public void setTeam(Team team) {
-		this.team = team;
-	}
 }

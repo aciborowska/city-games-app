@@ -15,15 +15,20 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MapFragment extends SupportMapFragment {
+public class MapFragment extends SupportMapFragment implements Observer{
     public static final String NAME =  MapFragment.class.getCanonicalName();
     public static final String TAG =  MapFragment.class.getName();
     public static final String TITLE = "Mapa";
+    private Marker taskMarker;
     private GoogleMap mapView;
     @Override
     public void onCreate(Bundle arg0) {
@@ -48,32 +53,40 @@ public class MapFragment extends SupportMapFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         Log.d(TAG, "onActivityCreated");
         super.onActivityCreated(savedInstanceState);
-
+        MainTaskActivity.currentTask.addObserver(this);
         mapView = getMap();
         mapView.setMyLocationEnabled(true);
         mapView.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.draggable(false);
-        if(MainTaskActivity.currentTask!=null){
-            float longitude = MainTaskActivity.currentTask.getLongitude();
-            float latitude = MainTaskActivity.currentTask.getLatitude();
-            markerOptions.position(new LatLng(latitude, longitude));
-            markerOptions.icon(BitmapDescriptorFactory.defaultMarker());
-            mapView.addMarker(markerOptions);
-            Log.d(TAG,"Współrzędne "+String.valueOf(latitude)+" "+String.valueOf(longitude));
-            //Location location = mapView.getMyLocation();
-
-            mapView.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(longitude, latitude), 8));
-        }
+        setLocation();
     }
 
     @Override
     public void onResume() {
-        Log.d(TAG,"onResume");
+        Log.d(TAG, "onResume");
         super.onResume();
     }
 
 
+    @Override
+    public void update(Observable observable, Object data) {
+        Log.d(TAG,"update");
+        setLocation();
+    }
+
+    private void setLocation(){
+        if(taskMarker!=null) taskMarker.remove();
+        MarkerOptions markerOptions = new MarkerOptions();
+        if(MainTaskActivity.currentTask!=null){
+            float longitude = MainTaskActivity.currentTask.getTask().getLongitude();
+            float latitude = MainTaskActivity.currentTask.getTask().getLatitude();
+            Log.d(TAG,"Współrzędne "+String.valueOf(latitude)+" "+String.valueOf(longitude));
+            LatLng location = new LatLng(latitude, longitude);
+            markerOptions.position(location);
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker());
+            taskMarker = mapView.addMarker(markerOptions);
+            mapView.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 14));
+        }
+    }
 }
 
 
