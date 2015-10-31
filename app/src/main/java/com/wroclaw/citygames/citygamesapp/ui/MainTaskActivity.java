@@ -216,7 +216,7 @@ public class MainTaskActivity extends FragmentActivity {
                 Log.d(TAG, "zarejestrowano nową grę " + game.getGameId());
                 Toast.makeText(App.getCtx(), "Zarejestrowano grę", Toast.LENGTH_SHORT).show();
             } else if (game.getGameId() < 0) {
-                Toast.makeText(App.getCtx(), "Członkowie wybranej drużyny uczestniczą już w innych grach!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(App.getCtx(), "Wybrana drużyna ma za mało graczy!", Toast.LENGTH_SHORT).show();
                 finish();
             } else {
                 Log.e(TAG, "Nieznany błąd");

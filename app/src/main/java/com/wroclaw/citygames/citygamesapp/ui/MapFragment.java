@@ -1,7 +1,13 @@
 package com.wroclaw.citygames.citygamesapp.ui;
 
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.AttributeSet;
@@ -9,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -17,6 +24,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.wroclaw.citygames.citygamesapp.App;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -24,15 +32,19 @@ import java.util.Observer;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MapFragment extends SupportMapFragment implements Observer{
-    public static final String NAME =  MapFragment.class.getCanonicalName();
-    public static final String TAG =  MapFragment.class.getName();
+public class MapFragment extends SupportMapFragment implements Observer {
+    public static final String NAME = MapFragment.class.getCanonicalName();
+    public static final String TAG = MapFragment.class.getName();
     public static final String TITLE = "Mapa";
     private Marker taskMarker;
     private GoogleMap mapView;
+    private LocationManager locationManager;
+    private static final long MIN_TIME = 400;
+    private static final float MIN_DISTANCE = 1000;
+
     @Override
     public void onCreate(Bundle arg0) {
-        Log.d(TAG,"onCreate");
+        Log.d(TAG, "onCreate");
         super.onCreate(arg0);
     }
 
@@ -69,24 +81,54 @@ public class MapFragment extends SupportMapFragment implements Observer{
 
     @Override
     public void update(Observable observable, Object data) {
-        Log.d(TAG,"update");
+        Log.d(TAG, "update");
         setLocation();
     }
 
-    private void setLocation(){
-        if(taskMarker!=null) taskMarker.remove();
+    private void setLocation() {
+        if (taskMarker != null) taskMarker.remove();
         MarkerOptions markerOptions = new MarkerOptions();
-        if(MainTaskActivity.currentTask!=null){
-            float longitude = MainTaskActivity.currentTask.getTask().getLongitude();
-            float latitude = MainTaskActivity.currentTask.getTask().getLatitude();
-            Log.d(TAG,"Współrzędne "+String.valueOf(latitude)+" "+String.valueOf(longitude));
-            LatLng location = new LatLng(latitude, longitude);
-            markerOptions.position(location);
-            markerOptions.icon(BitmapDescriptorFactory.defaultMarker());
-            taskMarker = mapView.addMarker(markerOptions);
-            mapView.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 14));
+        if (MainTaskActivity.currentTask != null) {
+            double longitude = MainTaskActivity.currentTask.getTask().getLongitude();
+            double latitude = MainTaskActivity.currentTask.getTask().getLatitude();
+            if (longitude != 0 && latitude != 0) {
+                Log.d(TAG, "Współrzędne " + String.valueOf(latitude) + " " + String.valueOf(longitude));
+                LatLng location = new LatLng(latitude, longitude);
+                markerOptions.position(location);
+                markerOptions.snippet(MainTaskActivity.currentTask.getTask().getDescription());
+                markerOptions.icon(BitmapDescriptorFactory.defaultMarker());
+                taskMarker = mapView.addMarker(markerOptions);
+                mapView.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 14));
+            } else {
+                Toast.makeText(App.getCtx(), "Zadanie bez lokalizacji", Toast.LENGTH_SHORT).show();
+                LocationManager locationManager = (LocationManager) getActivity().getSystemService(getActivity().LOCATION_SERVICE);
+
+                // Create a criteria object to retrieve provider
+                Criteria criteria = new Criteria();
+
+                // Get the name of the best provider
+                String provider = locationManager.getBestProvider(criteria, true);
+
+                Location myLocation = locationManager.getLastKnownLocation(provider);
+
+                // Get latitude of the current location
+                latitude = myLocation.getLatitude();
+
+                // Get longitude of the current location
+                longitude = myLocation.getLongitude();
+
+                // Create a LatLng object for the current location
+                LatLng latLng = new LatLng(latitude, longitude);
+
+                // Show the current location in Google Map
+                mapView.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+
+                // Zoom in the Google Map
+                mapView.animateCamera(CameraUpdateFactory.zoomTo(16));
+            }
         }
     }
+
 }
 
 

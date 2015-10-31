@@ -13,6 +13,7 @@ public class Gameplay {
         SharedPreferences.Editor editor = sharedpreferences.edit();
         editor.putLong("gameId",gameId);
         editor.putLong("teamId",teamId);
+        editor.putInt("penaltyPoints", 0);
         editor.commit();
     }
 
@@ -26,11 +27,26 @@ public class Gameplay {
         return sharedpreferences.getLong("teamId",-1);
     }
 
+    public static void addPenaltyPoints(int amount){
+        SharedPreferences sharedpreferences = App.getCtx().getSharedPreferences( App.getCtx().getResources().getString(R.string.shared_preferences_credentials), Context.MODE_PRIVATE);
+        int current = sharedpreferences.getInt("penaltyPoints", 0);
+        current+=amount;
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        editor.putInt("penaltyPoints",current);
+        editor.commit();
+    }
+
+    public static int getPenaltyPoints(){
+        SharedPreferences sharedpreferences = App.getCtx().getSharedPreferences( App.getCtx().getResources().getString(R.string.shared_preferences_credentials), Context.MODE_PRIVATE);
+        return sharedpreferences.getInt("penaltyPoints", 0);
+    }
+
     public static void endGame(){
         SharedPreferences sharedpreferences = App.getCtx().getSharedPreferences( App.getCtx().getResources().getString(R.string.shared_preferences_credentials), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedpreferences.edit();
         editor.putLong("gameId",Long.valueOf(-1));
         editor.putLong("teamId",Long.valueOf(-1));
+        editor.putInt("penaltyPoints", 0);
         editor.commit();
     }
 }

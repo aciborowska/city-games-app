@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.wroclaw.citygames.citygamesapp.App;
 import com.wroclaw.citygames.citygamesapp.R;
 import com.wroclaw.citygames.citygamesapp.model.Tip;
+import com.wroclaw.citygames.citygamesapp.util.Gameplay;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -191,6 +192,7 @@ public class TipFragment extends Fragment implements Observer{
                     Log.d(TAG, "onClick: " + position);
                     Tip tip = tipList.get(position);
                     tip.setBought(true);
+                    Gameplay.addPenaltyPoints(tip.getCost());
                     Toast.makeText(App.getCtx(), "Kupiono wskazówkę", Toast.LENGTH_SHORT).show();
                     buyTipButton.setVisibility(View.INVISIBLE);
                     refreshData();

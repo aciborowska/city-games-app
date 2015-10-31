@@ -242,6 +242,7 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
                         .appendPath(Globals.GAMEPLAY_URI)
                         .appendEncodedPath(Globals.GET_FINISHED_GAME_URI)
                         .appendQueryParameter("gameId", String.valueOf(Gameplay.getCurrentGame()))
+                        .appendQueryParameter("penaltyPoints",String.valueOf(Gameplay.getPenaltyPoints()))
                         .build()
                         .toString();
                 Log.d(TAG, getGame);
