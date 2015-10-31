@@ -13,7 +13,8 @@
             android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="5">
+            android:layout_weight="5"
+            android:layout_marginLeft="40dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -33,13 +34,6 @@
 
         </LinearLayout>
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/bought_tip_image_view"
-            android:background="@drawable/ic_action_accept"
-            android:layout_gravity="center"
-            android:visibility="gone" />
 
         <Button
             android:layout_width="wrap_content"
@@ -48,7 +42,7 @@
             android:background="@color/medium_orange"
             android:textColor="#000000"
             android:id="@+id/buy_tip_button"
-            android:layout_weight="1.04" />
+            android:layout_weight="0.44" />
 
     </LinearLayout>
 

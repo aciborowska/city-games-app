@@ -8,11 +8,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.ListView;
+import android.widget.ExpandableListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.wroclaw.citygames.citygamesapp.App;
 import com.wroclaw.citygames.citygamesapp.R;
@@ -35,7 +35,7 @@ public class TipFragment extends Fragment implements Observer{
 
     private TipListAdapter tipListAdapter;
     private final List<Tip> tipList = new ArrayList<>();
-    private ListView teamListView;
+    private ExpandableListView teamListView;
     private TextView noTips;
     public TipFragment() {
         // Required empty public constructor
@@ -57,7 +57,7 @@ public class TipFragment extends Fragment implements Observer{
         MainTaskActivity.currentTask.addObserver(this);
         noTips = (TextView) getView().findViewById(R.id.no_tips_textview);
         tipListAdapter = new TipListAdapter(tipList, App.getCtx());
-        teamListView = (ListView) getView().findViewById(R.id.tip_list);
+        teamListView = (ExpandableListView) getView().findViewById(R.id.tip_list);
         teamListView.setAdapter(tipListAdapter);
 
         refreshData();
@@ -85,7 +85,7 @@ public class TipFragment extends Fragment implements Observer{
         refreshData();
     }
 
-    private final class TipListAdapter extends BaseAdapter {
+    private final class TipListAdapter extends BaseExpandableListAdapter {
 
         private final List<Tip> tips;
         private final Context ctx;
@@ -95,7 +95,7 @@ public class TipFragment extends Fragment implements Observer{
             this.ctx = ctx;
         }
 
-        @Override
+       /* @Override
         public int getCount() {
             return tips.size();
         }
@@ -136,8 +136,94 @@ public class TipFragment extends Fragment implements Observer{
                 buyTipButton.setEnabled(false);
             }
             return v;
+        }*/
+
+
+        @Override
+        public int getGroupCount() {
+            return tipList.size();
         }
 
+        @Override
+        public int getChildrenCount(int groupPosition) {
+            return 1;
+        }
 
+        @Override
+        public Tip getGroup(int groupPosition) {
+            return tipList.get(groupPosition);
+        }
+
+        @Override
+        public Tip getChild(int groupPosition, int childPosition) {
+            return tipList.get(groupPosition);
+        }
+
+        @Override
+        public long getGroupId(int groupPosition) {
+            return tipList.get(groupPosition).getTipId();
+        }
+
+        @Override
+        public long getChildId(int groupPosition, int childPosition) {
+            return tipList.get(groupPosition).getTipId();
+        }
+
+        @Override
+        public boolean hasStableIds() {
+            return false;
+        }
+
+        @Override
+        public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
+            View v = convertView;
+            if (v == null) {
+                v = LayoutInflater.from(ctx).inflate(R.layout.list_element_tip, parent, false);
+            }
+            TextView tipNumber = (TextView) v.findViewById(R.id.tip_number_text_view);
+            TextView tipCost = (TextView) v.findViewById(R.id.cost_tip_text_view);
+            final Button buyTipButton = (Button) v.findViewById(R.id.buy_tip_button);
+            buyTipButton.setTag(R.id.buttons, groupPosition);
+            buyTipButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final int position = (int) v.getTag(R.id.buttons);
+                    Log.d(TAG, "onClick: " + position);
+                    Tip tip = tipList.get(position);
+                    tip.setBought(true);
+                    Toast.makeText(App.getCtx(), "Kupiono wskazówkę", Toast.LENGTH_SHORT).show();
+                    buyTipButton.setVisibility(View.INVISIBLE);
+                    refreshData();
+                }
+            });
+            buyTipButton.setTag(R.id.buttons, groupPosition);
+            Tip tip = getGroup(groupPosition);
+            tipNumber.setText("Wskazówka nr "+String.valueOf(tip.getNumber()));
+            tipCost.setText("Koszt: -" + String.valueOf(tip.getCost())+" punktów");
+            if(tip.isBought()) {
+                buyTipButton.setEnabled(false);
+            }
+            return v;
+        }
+
+        @Override
+        public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+            View v = convertView;
+            if (v == null) {
+                v = LayoutInflater.from(ctx).inflate(R.layout.list_exp_element_tip, parent, false);
+            }
+
+            TextView tipDescription = (TextView) v.findViewById(R.id.tip_exp_text_view);
+            Tip tip = getGroup(groupPosition);
+            if(tip.isBought())
+            tipDescription.setText(tip.getDescription());
+            else tipDescription.setText("Aby skorzystać z wskazówki musiszą ją kupić!");
+            return v;
+        }
+
+        @Override
+        public boolean isChildSelectable(int groupPosition, int childPosition) {
+            return false;
+        }
     }
 }
