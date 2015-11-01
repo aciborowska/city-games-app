@@ -25,7 +25,6 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/task_picture"
                 android:layout_gravity="center"
-                android:background="@drawable/question"
                 android:layout_weight="1" />
         </LinearLayout>
 

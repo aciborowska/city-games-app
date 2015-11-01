@@ -30,7 +30,8 @@ import java.util.concurrent.ExecutionException;
 
 public class MainTaskActivity extends FragmentActivity {
 
-    private static final String TAG = MainTaskActivity.class.getName();
+    public static final String TAG = MainTaskActivity.class.getName();
+
     public static TaskDao currentTask = null;
     private RegisterGame registerGameTask;
     private boolean isCurrent;
@@ -74,9 +75,9 @@ public class MainTaskActivity extends FragmentActivity {
             isCurrent = intent.getBooleanExtra("isCurrent", false);
             Log.d(TAG,"isCurrent = "+isCurrent);
             if (!isCurrent) {
-                Long playerId = intent.getLongExtra("playerId", Long.valueOf(-1));
-                Long teamId = intent.getLongExtra("teamId", Long.valueOf(-1));
-                Long scenarioId = intent.getLongExtra("scenarioId", Long.valueOf(-1));
+                Long playerId = intent.getLongExtra("playerId", (long) -1);
+                Long teamId = intent.getLongExtra("teamId", (long) -1);
+                Long scenarioId = intent.getLongExtra("scenarioId", (long) -1);
                 if (playerId != -1 & teamId != -1 & scenarioId != -1) {
                     progressBar.setVisibility(View.VISIBLE);
                     registerGameTask = new RegisterGame(scenarioId, playerId, teamId);

@@ -211,7 +211,7 @@ public class LoginActivity extends Activity {
             if (success!=null) {
                 Toast toast =Toast.makeText(getApplicationContext(),"Zalogowany",Toast.LENGTH_LONG);
                 toast.show();
-                Login.login(success.getPlayerId(),username,password.length());
+                Login.login(success.getPlayerId(),username,8);
                 startStartFragment(true);
             } else if(connection_error) {
                 Toast toast =Toast.makeText(getApplicationContext(),getResources().getString(R.string.connection_error),Toast.LENGTH_LONG);

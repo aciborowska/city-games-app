@@ -1,6 +1,7 @@
 package com.wroclaw.citygames.citygamesapp.ui;
 
 
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import com.wroclaw.citygames.citygamesapp.R;
 import com.wroclaw.citygames.citygamesapp.model.Game;
 import com.wroclaw.citygames.citygamesapp.model.Task;
 import com.wroclaw.citygames.citygamesapp.util.Gameplay;
+import com.wroclaw.citygames.citygamesapp.util.ImageConverter;
 import com.wroclaw.citygames.citygamesapp.util.Login;
 
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -75,6 +77,7 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         MainTaskActivity.currentTask.addObserver(this);
+        picture = (ImageView) getView().findViewById(R.id.task_picture);
         description = (TextView) getView().findViewById(R.id.task_description);
         question = (TextView) getView().findViewById(R.id.task_question);
         answer = (TextView) getView().findViewById(R.id.answer_edit_text);
@@ -150,8 +153,16 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
     }
 
     private void refreshData(){
-        Log.d(TAG,"refreshData ");
+        Log.d(TAG, "refreshData ");
         Task task = MainTaskActivity.currentTask.getTask();
+        if(task.getPicture()!=null) {
+            picture.setImageResource(android.R.color.transparent);
+            Bitmap taskImage = ImageConverter.loadBitmap(task.getPicture());
+            picture.setImageBitmap(taskImage);
+
+        } else{
+            picture.setImageResource(R.drawable.question1);
+        }
         String questionText = task.getQuestion();
         String descriptionText = task.getDescription();
         if (description != null) description.setText(descriptionText);

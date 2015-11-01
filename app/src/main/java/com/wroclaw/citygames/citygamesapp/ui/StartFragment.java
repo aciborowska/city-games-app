@@ -23,8 +23,7 @@ public class StartFragment extends Fragment implements View.OnClickListener{
     public static final String TITLE = "Start";
 
     public static  StartFragment newInstance() {
-        StartFragment myFragment = new StartFragment();
-        return myFragment;
+        return new StartFragment();
     }
 
     public StartFragment(){}
@@ -54,7 +53,7 @@ public class StartFragment extends Fragment implements View.OnClickListener{
         startGame.setOnClickListener(this);
         Button currentGame = (Button) getView().findViewById(R.id.current_game_button);
         currentGame.setOnClickListener(this);
-        getActivity().setTitle(this.TITLE);
+        getActivity().setTitle(TITLE);
     }
 
 
@@ -72,12 +71,14 @@ public class StartFragment extends Fragment implements View.OnClickListener{
                 if(Gameplay.getCurrentGame()==-1) {
                     tx.replace(R.id.navigation_drawer_frame, ScenariosListFragment.newInstance(true)).addToBackStack("");
                     tx.commit();
+                    NavigationDrawerActivity.CURRENT_FRAGMENT_NAME = ScenariosListFragment.NAME;
                 }
                 else Toast.makeText(getActivity(),"Uczestniczysz już w grze!",Toast.LENGTH_SHORT).show();
                 break;
             case R.id.current_game_button:
                 Log.d(TAG, String.valueOf(Gameplay.getCurrentGame()));
                 if(Gameplay.getCurrentGame()!=-1){
+                    NavigationDrawerActivity.CURRENT_FRAGMENT_NAME = StartFragment.NAME;
                     Intent intent = new Intent(getActivity(),MainTaskActivity.class);
                     intent.putExtra("isCurrent",true);
                     startActivity(intent);
@@ -88,18 +89,22 @@ public class StartFragment extends Fragment implements View.OnClickListener{
             case R.id.yout_teams_button:
                 tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(getActivity(), TeamsListFragment.NAME));
                 tx.commit();
+                NavigationDrawerActivity.CURRENT_FRAGMENT_NAME = ScenariosListFragment.NAME;
                 break;
             case R.id.your_games_button:
                 tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(getActivity(), GamesListFragment.NAME));
                 tx.commit();
+                NavigationDrawerActivity.CURRENT_FRAGMENT_NAME = ScenariosListFragment.NAME;
                 break;
             case R.id.scenarios_button:
                 tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(getActivity(), ScenariosListFragment.NAME));
                 tx.commit();
+                NavigationDrawerActivity.CURRENT_FRAGMENT_NAME = ScenariosListFragment.NAME;
                 break;
             case R.id.rank_button:
                 tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(getActivity(), RankFragment.NAME));
                 tx.commit();
+                NavigationDrawerActivity.CURRENT_FRAGMENT_NAME = ScenariosListFragment.NAME;
         }
 
     }

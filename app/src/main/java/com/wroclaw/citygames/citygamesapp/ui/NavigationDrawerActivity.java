@@ -54,7 +54,7 @@ import java.util.List;
 
 public class NavigationDrawerActivity extends FragmentActivity {
     private static final String TAG=NavigationDrawerActivity.class.getName();
-    private static final String NAME = NavigationDrawerActivity.class.getCanonicalName();
+    public static String CURRENT_FRAGMENT_NAME=StartFragment.NAME;
     private DrawerLayout drawerLayout;
     private ListView drawerList;
     private ActionBarDrawerToggle drawerToggle;
@@ -103,7 +103,7 @@ public class NavigationDrawerActivity extends FragmentActivity {
         };
         drawerLayout.setDrawerListener(drawerToggle);
         FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-        tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, StartFragment.NAME)).addToBackStack(TAG);
+        tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, StartFragment.TAG)).addToBackStack(TAG);
         tx.commit();
         if (savedInstanceState == null) {
             selectItem(0);
@@ -177,24 +177,29 @@ public class NavigationDrawerActivity extends FragmentActivity {
         switch (position)
         {
             case 0:
-                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, StartFragment.NAME));
+                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, StartFragment.TAG));
                 tx.commit();
+                CURRENT_FRAGMENT_NAME = StartFragment.TITLE;
                 break;
             case 1:
-                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, TeamsListFragment.NAME)).addToBackStack("");
+                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, TeamsListFragment.TAG)).addToBackStack("");
                 tx.commit();
+                CURRENT_FRAGMENT_NAME = TeamsListFragment.TITLE;
                 break;
             case 2:
-                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, GamesListFragment.NAME)).addToBackStack("");
+                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, GamesListFragment.TAG)).addToBackStack("");
                 tx.commit();
+                CURRENT_FRAGMENT_NAME = GamesListFragment.TITLE;
                 break;
             case 3:
-                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, ScenariosListFragment.NAME)).addToBackStack("");
+                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, ScenariosListFragment.TAG)).addToBackStack("");
                 tx.commit();
+                CURRENT_FRAGMENT_NAME = ScenariosListFragment.TITLE;
                 break;
             case 4:
-                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, RankFragment.NAME)).addToBackStack(TAG);
+                tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, RankFragment.TAG)).addToBackStack(TAG);
                 tx.commit();
+                CURRENT_FRAGMENT_NAME = RankFragment.TITLE;
                 break;
             case 5:
                 Login.logout();
@@ -322,7 +327,14 @@ public class NavigationDrawerActivity extends FragmentActivity {
 
     @Override
     public void onBackPressed() {
-        Log.d(TAG, "onBackPressed Called");
-
+        if(CURRENT_FRAGMENT_NAME.equals(StartFragment.TITLE)){
+            finish();
+        }
+        else {
+            FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+            tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, StartFragment.NAME));
+            tx.commit();
+            CURRENT_FRAGMENT_NAME = StartFragment.TITLE;
+        }
     }
 }
