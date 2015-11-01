@@ -142,15 +142,10 @@ public class ScenariosListFragment extends Fragment {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Scenario scenario = scenarioList.get(position);
-            scenario.getScenarioId();
-            ScenarioDetailsFragment scenarioDetailsFragment = new ScenarioDetailsFragment();
-            Bundle args = new Bundle();
-            args.putBoolean("startingGame", false);
-            scenarioDetailsFragment.setArguments(args);
             FragmentTransaction tx = getActivity().getSupportFragmentManager().beginTransaction();
-            tx.replace(R.id.navigation_drawer_frame, scenarioDetailsFragment).addToBackStack(null);
+            tx.replace(R.id.navigation_drawer_frame, ScenarioDetailsFragment.newInstance(scenario.getScenarioId()))
+                    .addToBackStack(null);
             tx.commit();
-            getActivity().setTitle(scenario.getName());
         }
     }
 
@@ -165,6 +160,8 @@ public class ScenariosListFragment extends Fragment {
             getActivity().setTitle(scenario.getName());
         }
     }
+
+
 
 
 }

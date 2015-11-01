@@ -4,12 +4,10 @@
     android:background="@android:color/white"
     tools:context="com.wroclaw.citygames.citygamesapp.ui.StartFragment">
 
-    <!-- TODO:F7F6CD Update blank fragment layout -->
-
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/background">
 
         <TableLayout
@@ -25,6 +23,7 @@
                     android:layout_width="@dimen/box_size"
                     android:layout_height="@dimen/box_size"
                     android:text="@string/start_game"
+                    android:textAppearance="@style/HeaderFont"
                     android:id="@+id/start_game_button"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
@@ -34,6 +33,7 @@
                     android:layout_width="@dimen/box_size"
                     android:layout_height="@dimen/box_size"
                     android:text="@string/current_game"
+                    android:textAppearance="@style/HeaderFont"
                     android:id="@+id/current_game_button"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
@@ -49,6 +49,7 @@
                     android:layout_width="@dimen/box_size"
                     android:layout_height="@dimen/box_size"
                     android:text="@string/your_teams"
+                    android:textAppearance="@style/HeaderFont"
                     android:id="@+id/yout_teams_button"
                     android:layout_weight="1"
                     android:layout_marginLeft="10dp"
@@ -58,6 +59,7 @@
                     android:layout_width="@dimen/box_size"
                     android:layout_height="@dimen/box_size"
                     android:text="@string/your_games"
+                    android:textAppearance="@style/HeaderFont"
                     android:id="@+id/your_games_button"
                     android:layout_weight="1"
                     android:layout_marginLeft="10dp"
@@ -73,6 +75,7 @@
                     android:layout_width="@dimen/box_size"
                     android:layout_height="@dimen/box_size"
                     android:text="@string/sceanrios"
+                    android:textAppearance="@style/HeaderFont"
                     android:id="@+id/scenarios_button"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
@@ -82,6 +85,7 @@
                     android:layout_width="@dimen/box_size"
                     android:layout_height="@dimen/box_size"
                     android:text="@string/rank"
+                    android:textAppearance="@style/HeaderFont"
                     android:id="@+id/rank_button"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
@@ -90,15 +94,7 @@
 
         </TableLayout>
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp">
-
-        </LinearLayout>
-
-        <TextView
+     <!--   <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
@@ -295,7 +291,7 @@
                     android:layout_column="7"/>
             </TableRow>
 
-        </TableLayout>
+        </TableLayout>-->
 
     </LinearLayout>
 </FrameLayout>

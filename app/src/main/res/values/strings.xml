@@ -55,23 +55,32 @@
     <string name="max">maksymalnie</string>
     <string name="distance">Pokonany dystans</string>
 
+    <!-- TEAMS FRAGEMENT -->
     <string name="add_team">Dodaj drużynę</string>
     <string name="sign_to_team">Zapisz się do drużyny</string>
-
     <string name="ok">Ok</string>
     <string name="cancel">Przerwij</string>
     <string name="team_name">Nazwa drużyny</string>
 
+    <!-- TIPS FRAGMENT -->
     <string name="no_tips">Nie ma wskazówek, to zadanie jest za proste :)</string>
     <string name="buy">Kup</string>
 
+    <!-- GAMES FRAGMNET-->
     <string name="scenario_name">Scenariusz</string>
     <string name="time_in_game">Czas gry</string>
     <string name="colleted_points">Zdobyte punkty</string>
     <string name="team">Drużyna</string>
 
+    <!-- TASK FRAGMENT -->
     <string name="answer">Odpowiedź</string>
-<!-- TODO: Remove or change this placeholder text -->
+
+    <!-- SCENARIO DETAILS FRAGMENT -->
+    <string name="level">Poziom trudności</string>
+    <string name="users_amount">Minimalna liczba graczy</string>
+    <string name="approximate_time">Czas gry</string>
+    <string name="approximate_distance">Szacowana odległość</string>
+    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_main_task">MainTaskActivity</string>
 
