@@ -40,6 +40,7 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
 
     private TextView description;
     private TextView question;
+    private TextView answer;
     private Button answerA;
     private Button answerB;
     private Button answerC;
@@ -76,6 +77,7 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
         MainTaskActivity.currentTask.addObserver(this);
         description = (TextView) getView().findViewById(R.id.task_description);
         question = (TextView) getView().findViewById(R.id.task_question);
+        answer = (TextView) getView().findViewById(R.id.answer_edit_text);
         answerA = (Button) getView().findViewById(R.id.answer_a_button);
         answerA.setOnClickListener(this);
         answerB = (Button) getView().findViewById(R.id.answer_b_button);
@@ -114,14 +116,14 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
     }
 
 
-    private String createGetNextTaskUri(String answer){
+    private String createGetNextTaskUri(String userAnswer){
         return  new Uri.Builder().scheme("http")
                 .encodedAuthority(Globals.MAIN_URL)
                 .appendPath(Globals.GAMEPLAY_URI)
                 .appendPath(String.valueOf(Gameplay.getCurrentGame()))
                 .appendEncodedPath(String.valueOf(Login.getCredentials()) + "?taskId="
                         + String.valueOf(MainTaskActivity.currentTask.getTask().getTaskId())
-                        + "&answer="+answer)
+                        + "&answer="+userAnswer)
                 .build()
                 .toString();
     }
@@ -132,8 +134,9 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
         Button clicked = (Button) v.findViewById(id);
         if (clicked != null) {
             if(MainTaskActivity.currentTask!=null) {
-                String answer = clicked.getText().toString();
-                String getNextTask = createGetNextTaskUri(answer);
+                String userAnswer = clicked.getText().toString();
+                if(userAnswer.equals("Wyślij odpowiedź")) userAnswer = answer.getText().toString();
+                String getNextTask = createGetNextTaskUri(userAnswer);
                 this.getNextTask = new GetNextTask(getNextTask);
                 this.getNextTask.execute();
                 progressBar.setVisibility(View.VISIBLE);
@@ -158,6 +161,7 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
             int amount = makeQuestion.length;
             if (amount > 1) {
                 Log.d(TAG,"liczba zadań: "+amount);
+                answer.setVisibility(View.GONE);
                 amount-=1;
                 switch(amount){
                     case 3:
@@ -171,7 +175,11 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
                         answerA.setText(makeQuestion[1]);
                 }
             } else {
-                //TODO pole na wpisanie odpowiedzi
+                answer.setVisibility(View.VISIBLE);
+                answerA.setVisibility(View.VISIBLE);
+                answerA.setText("Wyślij odpowiedź");
+                answerB.setVisibility(View.GONE);
+                answerC.setVisibility(View.GONE);
             }
         }
     }
