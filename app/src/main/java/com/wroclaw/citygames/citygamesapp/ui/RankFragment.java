@@ -9,6 +9,9 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -43,6 +46,15 @@ public class RankFragment extends Fragment {
     private ListView rankingListView;
     private ProgressBar progressBar;
     private GetGameTask getGameTask;
+    private  int MODE_NEW = 0;
+    private  int MODE_ADD = 1;
+
+    private static final String GET_BEST_20  = new Uri.Builder()
+            .scheme("http")
+            .encodedAuthority(Globals.MAIN_URL)
+            .appendEncodedPath(Globals.RANKING_BEST20_URI)
+            .build().toString();
+
     public static  RankFragment newInstance() {
         RankFragment myFragment = new RankFragment();
         return myFragment;
@@ -56,7 +68,8 @@ public class RankFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        Log.d(TAG, "onCreateView");
+        setHasOptionsMenu(true);
         return inflater.inflate(R.layout.fragment_rank, container, false);
     }
 
@@ -71,9 +84,40 @@ public class RankFragment extends Fragment {
         progressBar = (ProgressBar) getView().findViewById(R.id.ranking_progress_bar);
         getActivity().setTitle(RankFragment.TITLE);
 
-        getGameTask = new GetGameTask();
+        getGameTask = new GetGameTask(GET_BEST_20,MODE_NEW);
         progressBar.setVisibility(View.VISIBLE);
         getGameTask.execute();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_rank_fragment, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d(TAG, "onOptionsItemSelected");
+        switch (item.getItemId()) {
+            case R.id.action_rank_refresh:
+                getGameTask = new GetGameTask(GET_BEST_20,MODE_NEW);
+                getGameTask.execute();
+                progressBar.setVisibility(View.VISIBLE);
+                break;
+            case R.id.action_rank_next_10:
+                int size = gameList.size();
+                String uri =new Uri.Builder()
+                        .scheme("http")
+                        .encodedAuthority(Globals.MAIN_URL)
+                        .appendEncodedPath(Globals.RANKING_GET_NEXT_10 + "?usera_amount=" + String.valueOf(size))
+                        .build().toString();
+                getGameTask = new GetGameTask(uri,MODE_ADD);
+                getGameTask.execute();
+                progressBar.setVisibility(View.VISIBLE);
+
+
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private class RankingAdapter extends BaseAdapter{
@@ -127,13 +171,16 @@ public class RankFragment extends Fragment {
 
     private class GetGameTask extends AsyncTask<Void,Void,Game[]>{
 
+        private String uri;
+        private int mode;
+        public GetGameTask(String uri,int mode){
+            this.uri = uri;
+            this.mode = mode;
+        }
         @Override
         protected Game[] doInBackground(Void... params) {
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-            Uri.Builder builder = new Uri.Builder();
-            builder.scheme("http").encodedAuthority(Globals.MAIN_URL).appendEncodedPath(Globals.RANKING_BEST20_URI);
-            String uri = builder.build().toString();
             Log.d(TAG,uri);
             try {
                 ResponseEntity<Game[]> responseEntity = restTemplate.getForEntity(uri, Game[].class);
@@ -150,17 +197,23 @@ public class RankFragment extends Fragment {
             getGameTask = null;
             progressBar.setVisibility(View.GONE);
             if (games != null) {
-                refreshData(Arrays.asList(games));
+                refreshData(Arrays.asList(games),mode);
             } else {
                 Toast.makeText(App.getCtx(), getResources().getString(R.string.connection_error), Toast.LENGTH_SHORT).show();
             }
         }
     }
 
-    private void refreshData(List<Game> games) {
+    private void refreshData(List<Game> games,int mode) {
         Log.d(TAG, "refreshData");
-        if (rankingListView != null)
-            gameList.clear();
+        if(mode==MODE_NEW) {
+            if (rankingListView != null)
+                gameList.clear();
+            Toast.makeText(App.getCtx(),"Zsynchronizowano",Toast.LENGTH_SHORT).show();
+        }
+        else{
+            Toast.makeText(App.getCtx(),"Pobrano kolejne 10 pozycji",Toast.LENGTH_SHORT).show();
+        }
         gameList.addAll(games);
         rankingAdapter.notifyDataSetChanged();
     }

@@ -98,7 +98,6 @@ public class MainTaskActivity extends FragmentActivity {
 
     }
 
-    //Każdy fragment tworzy swoje menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         return true;
@@ -107,11 +106,7 @@ public class MainTaskActivity extends FragmentActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         Log.d(TAG, "onOptionsItemSelected");
-        //Pobieranie wybranej opcji menu
         int id = item.getItemId();
         return true;
     }

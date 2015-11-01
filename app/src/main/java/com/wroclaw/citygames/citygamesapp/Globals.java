@@ -16,6 +16,7 @@ public interface Globals {
     String GET_FINISHED_GAME_URI = "get_game";
     String IMAGE_DIRECTORY_PATH ="imageDir";
     String RANKING_BEST20_URI = "ranking/best20";
+    String RANKING_GET_NEXT_10 = "ranking/get_next";
 
 
 }

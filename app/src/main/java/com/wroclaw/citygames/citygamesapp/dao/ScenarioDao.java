@@ -3,12 +3,14 @@ package com.wroclaw.citygames.citygamesapp.dao;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.provider.BaseColumns;
 import android.util.Log;
 
 import com.wroclaw.citygames.citygamesapp.database.DatabaseHelper;
 import com.wroclaw.citygames.citygamesapp.database.ScenarioTable;
 import com.wroclaw.citygames.citygamesapp.model.Scenario;
+import com.wroclaw.citygames.citygamesapp.util.ImageConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +34,7 @@ public class ScenarioDao implements Dao<Scenario> {
     @Override
     public long save(Scenario scenario) {
         Log.d(TAG, scenario.toString());
+        saveImages(scenario);
         SQLiteDatabase db=dbManager.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(ScenarioTable.ScenarioColumns._ID, scenario.getScenarioId());
@@ -41,6 +44,7 @@ public class ScenarioDao implements Dao<Scenario> {
         values.put(ScenarioTable.ScenarioColumns.COLUMN_DISTANCE_KM,scenario.getDistanceKm());
         values.put(ScenarioTable.ScenarioColumns.COLUMN_LEVEL,scenario.getLevel());
         values.put(ScenarioTable.ScenarioColumns.COLUMN_NAME,scenario.getName());
+        values.put(ScenarioTable.ScenarioColumns.COLUMN_PICTURE,scenario.getPicture());
         Log.d(TAG, scenario.getName());
         return db.insert(ScenarioTable.TABLE_NAME, // table
                 null, //nullColumnHack
@@ -58,6 +62,7 @@ public class ScenarioDao implements Dao<Scenario> {
         values.put(ScenarioTable.ScenarioColumns.COLUMN_DISTANCE_KM,scenario.getDistanceKm());
         values.put(ScenarioTable.ScenarioColumns.COLUMN_LEVEL,scenario.getLevel());
         values.put(ScenarioTable.ScenarioColumns.COLUMN_NAME,scenario.getName());
+        values.put(ScenarioTable.ScenarioColumns.COLUMN_PICTURE,scenario.getPicture());
 
         db.update(ScenarioTable.TABLE_NAME, values, BaseColumns._ID + " = ?", new String[]{String.valueOf(scenario.getScenarioId())});
     }
@@ -124,6 +129,7 @@ public class ScenarioDao implements Dao<Scenario> {
             scenario.setDistanceKm(c.getFloat(4));
             scenario.setLevel(c.getString(5));
             scenario.setName(c.getString(6));
+            scenario.setPicture(c.getString(7));
         }
         return scenario;
     }
@@ -137,5 +143,14 @@ public class ScenarioDao implements Dao<Scenario> {
     public void deleteAll(){
         SQLiteDatabase db=dbManager.getWritableDatabase();
         db.delete(ScenarioTable.TABLE_NAME,null,null);
+    }
+
+    public void saveImages(Scenario scenario){
+        String image =  scenario.getPicture();
+        if(image!=null && !image.isEmpty()){
+            Bitmap  scenarioImage = ImageConverter.decode(image);
+            String filename = ImageConverter.saveBitmap("scenario"+String.valueOf(scenario.getScenarioId()),scenarioImage);
+            scenario.setPicture(filename);
+        }
     }
 }

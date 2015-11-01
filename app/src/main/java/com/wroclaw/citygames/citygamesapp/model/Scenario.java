@@ -15,6 +15,7 @@ public class Scenario {
 	private Set<Game> games = new HashSet<>(0);
 	private boolean ready;
 	private String name;
+	private String picture;
 
 
 	public String getName() {
@@ -92,5 +93,13 @@ public class Scenario {
 
 	public boolean isReady() {
 		return ready;
+	}
+
+	public String getPicture() {
+		return picture;
+	}
+
+	public void setPicture(String picture) {
+		this.picture = picture;
 	}
 }
