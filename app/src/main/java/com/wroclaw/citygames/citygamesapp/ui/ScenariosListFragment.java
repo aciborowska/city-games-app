@@ -134,7 +134,6 @@ public class ScenariosListFragment extends Fragment {
             scenarioInfo.setText(scenario.getLevel());
             return v;
         }
-
     }
 
     private class ScenarioDetails implements AdapterView.OnItemClickListener {
@@ -160,8 +159,5 @@ public class ScenariosListFragment extends Fragment {
             getActivity().setTitle(scenario.getName());
         }
     }
-
-
-
 
 }

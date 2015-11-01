@@ -56,9 +56,6 @@ public class StartFragment extends Fragment implements View.OnClickListener{
         getActivity().setTitle(TITLE);
     }
 
-
-
-
     @Override
     public void onClick(View v) {
         Log.d(TAG,"On Click");
@@ -70,7 +67,6 @@ public class StartFragment extends Fragment implements View.OnClickListener{
                 Log.d(TAG, String.valueOf(Gameplay.getCurrentGame()));
                 if(Gameplay.getCurrentGame()==-1) {
                     tx.replace(R.id.navigation_drawer_frame, ScenariosListFragment.newInstance(true)).addToBackStack("");
-                    tx.commit();
                     NavigationDrawerActivity.CURRENT_FRAGMENT_NAME = ScenariosListFragment.NAME;
                 }
                 else Toast.makeText(getActivity(),"Uczestniczysz już w grze!",Toast.LENGTH_SHORT).show();
@@ -88,24 +84,20 @@ public class StartFragment extends Fragment implements View.OnClickListener{
                 break;
             case R.id.yout_teams_button:
                 tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(getActivity(), TeamsListFragment.NAME));
-                tx.commit();
                 NavigationDrawerActivity.CURRENT_FRAGMENT_NAME = ScenariosListFragment.NAME;
                 break;
             case R.id.your_games_button:
                 tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(getActivity(), GamesListFragment.NAME));
-                tx.commit();
                 NavigationDrawerActivity.CURRENT_FRAGMENT_NAME = ScenariosListFragment.NAME;
                 break;
             case R.id.scenarios_button:
                 tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(getActivity(), ScenariosListFragment.NAME));
-                tx.commit();
                 NavigationDrawerActivity.CURRENT_FRAGMENT_NAME = ScenariosListFragment.NAME;
                 break;
             case R.id.rank_button:
                 tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(getActivity(), RankFragment.NAME));
-                tx.commit();
                 NavigationDrawerActivity.CURRENT_FRAGMENT_NAME = ScenariosListFragment.NAME;
         }
-
+        if(id!=R.id.current_game_button)tx.commit();
     }
 }

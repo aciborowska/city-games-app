@@ -285,9 +285,7 @@ public class NavigationDrawerActivity extends FragmentActivity {
 
     public class CollectScenarioTask extends AsyncTask<Void, Void, Scenario[]> {
         public String TAG = CollectScenarioTask.class.getName();
-        private boolean connection_error = false;
 
-        CollectScenarioTask() {}
 
         @Override
         protected Scenario[] doInBackground(Void... params) {
@@ -300,7 +298,6 @@ public class NavigationDrawerActivity extends FragmentActivity {
                 ResponseEntity<Scenario[]> responseEntity = restTemplate.getForEntity(uri, Scenario[].class);
                 return responseEntity.getBody();
             } catch (final Exception e) {
-                connection_error = true;
                 Log.d(TAG, "błąd połączenia");
             }
             return null;
