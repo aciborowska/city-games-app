@@ -1,17 +1,20 @@
 package com.wroclaw.citygames.citygamesapp.ui;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.wroclaw.citygames.citygamesapp.App;
 import com.wroclaw.citygames.citygamesapp.R;
 import com.wroclaw.citygames.citygamesapp.model.Scenario;
+import com.wroclaw.citygames.citygamesapp.util.ImageConverter;
 
 public class ScenarioDetailsFragment extends Fragment {
     public static final String NAME = ScenarioDetailsFragment.class.getCanonicalName();
@@ -55,9 +58,15 @@ public class ScenarioDetailsFragment extends Fragment {
             TextView usersAmount = (TextView) getView().findViewById(R.id.scenario_details_users_amount);
             usersAmount.setText(String.valueOf(scenario.getUsersAmount()));
             TextView time = (TextView) getView().findViewById(R.id.scenario_details_time);
-            time.setText(String.valueOf(scenario.getTime())+"h");
+            time.setText(String.valueOf(scenario.getTime()) + "h");
             TextView distance = (TextView) getView().findViewById(R.id.scenario_details_distance);
-            distance.setText(String.valueOf(scenario.getDistanceKm()+"km"));
+            distance.setText(String.valueOf(scenario.getDistanceKm() + "km"));
+            ImageView image = (ImageView) getView().findViewById(R.id.scenario_details_image);
+            String imagePath = scenario.getPicture();
+            if(imagePath!=null && !imagePath.isEmpty()){
+                Bitmap scenarioImage = ImageConverter.loadBitmap(imagePath);
+                image.setImageBitmap(scenarioImage);
+            }
             getActivity().setTitle(scenario.getName());
         }
         else {
