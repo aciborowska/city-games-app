@@ -17,6 +17,7 @@ public interface Globals {
     String IMAGE_DIRECTORY_PATH ="imageDir";
     String RANKING_BEST20_URI = "ranking/best20";
     String RANKING_GET_NEXT_10 = "ranking/get_next";
+    String PROJECT_NUMBER = "58592866754";
 
 
 }
