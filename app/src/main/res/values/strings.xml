@@ -84,6 +84,11 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_main_task">MainTaskActivity</string>
 
-    <string name="hello_world">Hello world!</string>
+    <!-- RANK FRAGMENT -->
+    <string name="get_best_20">Aktualizuj ranking</string>
+    <string name="get_next_10">Pobierz kolejne pozycje</string>
+
+    <!--MAIN TASK ACTIVITY -->
+    <string name="get_current_task">Odśwież</string>
 
 </resources>

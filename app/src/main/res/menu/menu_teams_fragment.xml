@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/action_add_team"
         android:title="@string/add_team"
-        android:icon="@drawable/ic_action_new"
+        android:icon="@drawable/ic_action_add_group"
         android:orderInCategory="10000"
         android:showAsAction="always" />
 

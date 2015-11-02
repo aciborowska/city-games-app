@@ -109,7 +109,7 @@ public class RankFragment extends Fragment {
                 String uri =new Uri.Builder()
                         .scheme("http")
                         .encodedAuthority(Globals.MAIN_URL)
-                        .appendEncodedPath(Globals.RANKING_GET_NEXT_10 + "?usera_amount=" + String.valueOf(size))
+                        .appendEncodedPath(Globals.RANKING_GET_NEXT_10 + "?current_amount=" + String.valueOf(size))
                         .build().toString();
                 getGameTask = new GetGameTask(uri,MODE_ADD);
                 getGameTask.execute();
@@ -181,7 +181,7 @@ public class RankFragment extends Fragment {
         protected Game[] doInBackground(Void... params) {
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-            Log.d(TAG,uri);
+            Log.d(TAG, uri);
             try {
                 ResponseEntity<Game[]> responseEntity = restTemplate.getForEntity(uri, Game[].class);
                 return responseEntity.getBody();
@@ -199,7 +199,7 @@ public class RankFragment extends Fragment {
             if (games != null) {
                 refreshData(Arrays.asList(games),mode);
             } else {
-                Toast.makeText(App.getCtx(), getResources().getString(R.string.connection_error), Toast.LENGTH_SHORT).show();
+                Toast.makeText(App.getCtx(), "Brak nowych pozycji", Toast.LENGTH_SHORT).show();
             }
         }
     }

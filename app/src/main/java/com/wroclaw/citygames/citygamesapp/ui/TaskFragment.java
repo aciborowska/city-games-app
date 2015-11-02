@@ -8,6 +8,9 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -19,6 +22,7 @@ import android.widget.Toast;
 import com.wroclaw.citygames.citygamesapp.App;
 import com.wroclaw.citygames.citygamesapp.Globals;
 import com.wroclaw.citygames.citygamesapp.R;
+import com.wroclaw.citygames.citygamesapp.dao.TaskDao;
 import com.wroclaw.citygames.citygamesapp.model.Game;
 import com.wroclaw.citygames.citygamesapp.model.Task;
 import com.wroclaw.citygames.citygamesapp.util.Gameplay;
@@ -50,7 +54,12 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
     private GetNextTask getNextTask;
     private GetGame getGame;
     private ProgressBar progressBar;
-
+    private String getCurrentTask = new Uri.Builder().scheme("http").encodedAuthority(Globals.MAIN_URL)
+            .appendPath(Globals.GAMEPLAY_URI)
+            .appendPath(String.valueOf(Gameplay.getCurrentGame()))
+            .appendEncodedPath("current_task?playerId="+String.valueOf(Login.getCredentials()))
+            .build()
+            .toString();
 
     public static TaskFragment newInstance(boolean isCurrent) {
         TaskFragment myFragment = new TaskFragment();
@@ -69,8 +78,20 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        Log.d(TAG, "onCreateView");
+        setHasOptionsMenu(true);
         return inflater.inflate(R.layout.fragment_task, container, false);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d(TAG, "onOptionsItemSelected");
+        switch (item.getItemId()) {
+            case R.id.action_task_refresh:
+                getNextTask = new GetNextTask(getCurrentTask);
+                getNextTask.execute();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -94,18 +115,19 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
 
     }
 
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_task_fragment, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
     private void handleIntent() {
         Log.d(TAG,"handleIntent");
         Bundle bundle = getArguments();
         if (bundle != null) {
             boolean isCurrent = getArguments().getBoolean("isCurrent", false);
             if (isCurrent) {
-                String getCurrentTask = new Uri.Builder().scheme("http").encodedAuthority(Globals.MAIN_URL)
-                        .appendPath(Globals.GAMEPLAY_URI)
-                        .appendPath(String.valueOf(Gameplay.getCurrentGame()))
-                        .appendEncodedPath("current_task")
-                        .build()
-                        .toString();
+
                 Log.d(TAG,"getCurrentTask "+getCurrentTask);
                 this.getNextTask = new GetNextTask(getCurrentTask);
             }
@@ -130,13 +152,32 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
                 .build()
                 .toString();
     }
+
+
+    private String signForTask(String taskId){
+        return  new Uri.Builder().scheme("http")
+                .encodedAuthority(Globals.MAIN_URL)
+                .appendPath(Globals.GAMEPLAY_URI)
+                .appendPath(String.valueOf(Gameplay.getCurrentGame()))
+                .appendEncodedPath("signfortask?taskId=" + taskId + "&playerId=" + String.valueOf(Login.getCredentials()))
+                .build()
+                .toString();
+    }
     @Override
     public void onClick(View v) {
         Log.d(TAG, "On Click");
         int id = v.getId();
         Button clicked = (Button) v.findViewById(id);
         if (clicked != null) {
-            if(MainTaskActivity.currentTask!=null) {
+            if(MainTaskActivity.currentTask!=null)
+                if(MainTaskActivity.currentTask.getTask().getTaskId()== TaskDao.CHOICE_TASK){
+                    String choice = clicked.getText().toString();
+                    String taskId = MainTaskActivity.currentTask.getIdForTask(choice);
+                    String getNextTask = signForTask(taskId);
+                    this.getNextTask = new GetNextTask(getNextTask);
+                    this.getNextTask.execute();
+                    progressBar.setVisibility(View.VISIBLE);
+                } else {
                 String userAnswer = clicked.getText().toString();
                 if(userAnswer.equals("Wyślij odpowiedź")) userAnswer = answer.getText().toString();
                 String getNextTask = createGetNextTaskUri(userAnswer);
@@ -163,10 +204,16 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
         } else{
             picture.setImageResource(R.drawable.question1);
         }
+
+        answerA.setVisibility(View.GONE);
+        answerB.setVisibility(View.GONE);
+        answerC.setVisibility(View.GONE);
+
         String questionText = task.getQuestion();
         String descriptionText = task.getDescription();
         if (description != null) description.setText(descriptionText);
         if (questionText != null) {
+            if(task.getTaskId()==TaskDao.CHOICE_TASK) questionText=questionText.split("#")[0];
             String[] makeQuestion = questionText.split(";");
             question.setText(makeQuestion[0]);
             int amount = makeQuestion.length;
@@ -229,9 +276,9 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
         protected void onPostExecute(Task task) {
             getNextTask = null;
             progressBar.setVisibility(View.GONE);
-            Log.d(TAG, "Pobrano");
+            Log.d(TAG, "Pobrano "+task.toString());
             if (task != null) {
-                if (task.getTaskId() == -300) {
+                if (task.getTaskId() == TaskDao.FINISH_TASK) {
                     MainTaskActivity.currentTask = null;
                     String descriptionText = task.getDescription();
                     if (description != null) description.setText(descriptionText);
@@ -240,7 +287,7 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
                     answerA.setText("Zobacz podsumowanie");
                     answerB.setVisibility(View.GONE);
                     answerC.setVisibility(View.GONE);
-                } else {
+                } else{
                     MainTaskActivity.currentTask.setTask(task);
                 }
             }

@@ -36,6 +36,7 @@ public class MainTaskActivity extends FragmentActivity {
     private RegisterGame registerGameTask;
     private boolean isCurrent;
 
+    private TaskFragment.GetNextTask getNextTask;
     private ProgressBar progressBar;
     private ViewPager mainViewPager;
     private MainViewPagerAdapter mainViewPagerAdapter;
@@ -106,8 +107,6 @@ public class MainTaskActivity extends FragmentActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Log.d(TAG, "onOptionsItemSelected");
-        int id = item.getItemId();
         return true;
     }
 

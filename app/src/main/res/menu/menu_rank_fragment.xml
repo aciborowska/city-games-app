@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/action_rank_refresh"
-        android:title="@string/add_team"
-        android:icon="@drawable/ic_get_app_white_36dp"
+        android:title="@string/get_best_20"
+        android:icon="@drawable/ic_action_refresh"
         android:orderInCategory="10000"
         android:showAsAction="always" />
 
     <item android:id="@+id/action_rank_next_10"
-        android:title="@string/sign_to_team"
-        android:icon="@drawable/ic_autorenew_white_36dp"
+        android:title="@string/get_next_10"
+        android:icon="@drawable/ic_action_download"
         android:orderInCategory="10000"
         android:showAsAction="always" />
 </menu>
