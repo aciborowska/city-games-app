@@ -66,7 +66,7 @@ public class MapFragment extends SupportMapFragment implements Observer {
         mapView = getMap();
         mapView.setMyLocationEnabled(true);
         mapView.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        setLocation();
+        setLocation(true);
     }
 
     @Override
@@ -79,25 +79,26 @@ public class MapFragment extends SupportMapFragment implements Observer {
     @Override
     public void update(Observable observable, Object data) {
         Log.d(TAG, "update");
-        setLocation();
+        setLocation(false);
     }
 
-    private void setLocation() {
+    private void setLocation(boolean start) {
         if (taskMarker != null) taskMarker.remove();
         MarkerOptions markerOptions = new MarkerOptions();
         if (MainTaskActivity.currentTask != null) {
             double longitude = MainTaskActivity.currentTask.getTask().getLongitude();
             double latitude = MainTaskActivity.currentTask.getTask().getLatitude();
             if (longitude != 0 && latitude != 0) {
+                if(!start)Toast.makeText(App.getCtx(), "Zobacz zadanie na mapie", Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "Współrzędne " + String.valueOf(latitude) + " " + String.valueOf(longitude));
                 LatLng location = new LatLng(latitude, longitude);
                 markerOptions.position(location);
-                markerOptions.snippet(MainTaskActivity.currentTask.getTask().getDescription());
+                markerOptions.title(MainTaskActivity.currentTask.getTask().getDescription());
                 markerOptions.icon(BitmapDescriptorFactory.defaultMarker());
                 taskMarker = mapView.addMarker(markerOptions);
                 mapView.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 14));
             } else {
-                Toast.makeText(App.getCtx(), "Zadanie bez lokalizacji", Toast.LENGTH_SHORT).show();
+                if(!start)Toast.makeText(App.getCtx(), "Zadanie bez lokalizacji", Toast.LENGTH_SHORT).show();
                 LocationManager locationManager = (LocationManager) getActivity().getSystemService(getActivity().LOCATION_SERVICE);
                 Criteria criteria = new Criteria();
                 String provider = locationManager.getBestProvider(criteria, true);

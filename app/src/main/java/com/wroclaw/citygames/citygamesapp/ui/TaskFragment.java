@@ -84,6 +84,12 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_task_fragment, menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Log.d(TAG, "onOptionsItemSelected");
         switch (item.getItemId()) {
@@ -115,12 +121,6 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
 
     }
 
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_task_fragment, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
     private void handleIntent() {
         Log.d(TAG,"handleIntent");
         Bundle bundle = getArguments();

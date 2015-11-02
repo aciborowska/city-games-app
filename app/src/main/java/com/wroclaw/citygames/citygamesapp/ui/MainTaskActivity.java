@@ -11,7 +11,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -104,11 +103,6 @@ public class MainTaskActivity extends FragmentActivity {
         return true;
     }
 
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return true;
-    }
 
     /**
      * Klasa implementująca adapter dla "kartownika"
