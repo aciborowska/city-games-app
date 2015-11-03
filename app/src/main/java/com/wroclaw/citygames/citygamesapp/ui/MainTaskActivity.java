@@ -35,7 +35,6 @@ public class MainTaskActivity extends FragmentActivity {
     private RegisterGame registerGameTask;
     private boolean isCurrent;
 
-    private TaskFragment.GetNextTask getNextTask;
     private ProgressBar progressBar;
     private ViewPager mainViewPager;
     private MainViewPagerAdapter mainViewPagerAdapter;
@@ -73,6 +72,7 @@ public class MainTaskActivity extends FragmentActivity {
         Log.d(TAG, "handle intent");
         if (intent != null) {
             isCurrent = intent.getBooleanExtra("isCurrent", false);
+            if(Gameplay.getCurrentGame()!=-1) isCurrent = true;
             Log.d(TAG,"isCurrent = "+isCurrent);
             if (!isCurrent) {
                 Long playerId = intent.getLongExtra("playerId", (long) -1);
@@ -182,7 +182,7 @@ public class MainTaskActivity extends FragmentActivity {
             String uri = builder.build().toString();
             Game game = null;
             try {
-                Log.d(TAG, "rejestraca gry: " + uri);
+                Log.d(TAG, "rejestracja gry: " + uri);
                 game = restTemplate.postForObject(uri, null, Game.class);
             } catch (final Exception e) {
                 Log.d(TAG, "błąd połączenia");

@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import com.wroclaw.citygames.citygamesapp.App;
 import com.wroclaw.citygames.citygamesapp.R;
 
+import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -54,22 +55,20 @@ public class Login {
         return sharedpreferences.getInt("passwordLength", 0);
     }
 
-    public static String md5(String s) {
+
+    public static String getMD5EncryptedString(String encTarget){
+        MessageDigest mdEnc = null;
         try {
-            // Create MD5 Hash
-            MessageDigest digest = java.security.MessageDigest.getInstance("MD5");
-            digest.update(s.getBytes());
-            byte messageDigest[] = digest.digest();
-
-            // Create Hex String
-            StringBuffer hexString = new StringBuffer();
-            for (int i=0; i<messageDigest.length; i++)
-                hexString.append(Integer.toHexString(0xFF & messageDigest[i]));
-            return hexString.toString();
-
+            mdEnc = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e) {
+            System.out.println("Exception while encrypting to md5");
             e.printStackTrace();
+        } // Encryption algorithm
+        mdEnc.update(encTarget.getBytes(), 0, encTarget.length());
+        String md5 = new BigInteger(1, mdEnc.digest()).toString(16);
+        while ( md5.length() < 32 ) {
+            md5 = "0"+md5;
         }
-        return "";
+        return md5;
     }
 }

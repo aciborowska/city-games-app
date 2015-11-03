@@ -54,12 +54,6 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
     private GetNextTask getNextTask;
     private GetGame getGame;
     private ProgressBar progressBar;
-    private String getCurrentTask = new Uri.Builder().scheme("http").encodedAuthority(Globals.MAIN_URL)
-            .appendPath(Globals.GAMEPLAY_URI)
-            .appendPath(String.valueOf(Gameplay.getCurrentGame()))
-            .appendEncodedPath("current_task?playerId="+String.valueOf(Login.getCredentials()))
-            .build()
-            .toString();
 
     public static TaskFragment newInstance(boolean isCurrent) {
         TaskFragment myFragment = new TaskFragment();
@@ -74,6 +68,14 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
         // Required empty public constructor
     }
 
+    private String getCurrentTask(){
+       return  new Uri.Builder().scheme("http").encodedAuthority(Globals.MAIN_URL)
+                .appendPath(Globals.GAMEPLAY_URI)
+                .appendPath(String.valueOf(Gameplay.getCurrentGame()))
+                .appendEncodedPath("current_task?playerId="+String.valueOf(Login.getCredentials()))
+                .build()
+                .toString();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -94,7 +96,7 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
         Log.d(TAG, "onOptionsItemSelected");
         switch (item.getItemId()) {
             case R.id.action_task_refresh:
-                getNextTask = new GetNextTask(getCurrentTask);
+                getNextTask = new GetNextTask(getCurrentTask());
                 getNextTask.execute();
         }
         return super.onOptionsItemSelected(item);
@@ -127,9 +129,8 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
         if (bundle != null) {
             boolean isCurrent = getArguments().getBoolean("isCurrent", false);
             if (isCurrent) {
-
-                Log.d(TAG,"getCurrentTask "+getCurrentTask);
-                this.getNextTask = new GetNextTask(getCurrentTask);
+                Log.d(TAG,"getCurrentTask "+getCurrentTask());
+                this.getNextTask = new GetNextTask(getCurrentTask());
             }
             else{
                 String getNextTask = createGetNextTaskUri("?");

@@ -105,11 +105,14 @@ public class MapFragment extends SupportMapFragment implements Observer {
 
                 Location myLocation = locationManager.getLastKnownLocation(provider);
 
-                latitude = myLocation.getLatitude();
-                longitude = myLocation.getLongitude();
-                LatLng latLng = new LatLng(latitude, longitude);
-                mapView.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                mapView.animateCamera(CameraUpdateFactory.zoomTo(16));
+                if(myLocation!=null ){
+                    latitude = myLocation.getLatitude();
+                    longitude = myLocation.getLongitude();
+                    LatLng latLng = new LatLng(latitude, longitude);
+                    mapView.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                    mapView.animateCamera(CameraUpdateFactory.zoomTo(16));
+                }
+                else Toast.makeText(App.getCtx(),"Usługa lokalizacji wyłączona",Toast.LENGTH_SHORT).show();
             }
         }
     }

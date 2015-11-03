@@ -19,16 +19,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.wroclaw.citygames.citygamesapp.Globals;
 import com.wroclaw.citygames.citygamesapp.R;
 import com.wroclaw.citygames.citygamesapp.model.Player;
+import com.wroclaw.citygames.citygamesapp.task.GcmRegister;
+import com.wroclaw.citygames.citygamesapp.util.GCM;
 import com.wroclaw.citygames.citygamesapp.util.Login;
 
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
-
-import java.io.IOException;
 
 public class LoginActivity extends Activity {
 
@@ -38,8 +37,7 @@ public class LoginActivity extends Activity {
     private EditText emailView;
     private EditText passwordView;
     private View progressView;
-    GoogleCloudMessaging gcm;
-    String regid;
+    private GcmRegister gcmRegister;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +87,7 @@ public class LoginActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(TAG,"onResume");
+        Log.d(TAG, "onResume");
         if(!Login.ifLogin()){
             passwordView.setText("");
             emailView.setText("");
@@ -157,7 +155,10 @@ public class LoginActivity extends Activity {
         } else {
             showProgress(true);
             Login.logout();
-            getRegId();
+            if (GCM.getGcmId().isEmpty()) {
+                gcmRegister = new GcmRegister();
+                gcmRegister.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+            }
             loginTask = new UserLoginTask(email, password);
             loginTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
         }
@@ -185,7 +186,7 @@ public class LoginActivity extends Activity {
 
         UserLoginTask(String email, String password) {
             username = email;
-            this.password = Login.md5(password);
+            this.password = Login.getMD5EncryptedString(password);//Login.md5(password);
         }
 
         @Override
@@ -194,7 +195,9 @@ public class LoginActivity extends Activity {
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
             Uri.Builder builder = new Uri.Builder();
-            builder.scheme("http").encodedAuthority(Globals.MAIN_URL).appendEncodedPath(Globals.LOGIN_URI).appendEncodedPath(regid).
+            builder.scheme("http").encodedAuthority(Globals.MAIN_URL)
+                    .appendEncodedPath(Globals.LOGIN_URI)
+                    .appendEncodedPath(GCM.getGcmId()).
                     appendEncodedPath("?email=" + username+"&password="+password);
             String uri=builder.build().toString();
             Player player = null;
@@ -235,32 +238,6 @@ public class LoginActivity extends Activity {
             showProgress(false);
         }
 
-    }
-    public void getRegId(){
-        new AsyncTask<Void, Void, String>() {
-            @Override
-            protected String doInBackground(Void... params) {
-                String msg ;
-                try {
-                    if (gcm == null) {
-                        gcm = GoogleCloudMessaging.getInstance(getApplicationContext());
-                    }
-                    regid = gcm.register(Globals.PROJECT_NUMBER);
-                    msg = "Device registered, registration ID=" + regid;
-                    Log.i("GCM",  msg);
-
-                } catch (IOException ex) {
-                    msg = "Error :" + ex.getMessage();
-
-                }
-                return msg;
-            }
-
-            @Override
-            protected void onPostExecute(String msg) {
-                Log.d(TAG,msg);
-            }
-        }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
     }
 }
 

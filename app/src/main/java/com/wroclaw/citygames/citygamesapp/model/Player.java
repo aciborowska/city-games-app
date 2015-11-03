@@ -8,6 +8,7 @@ public class Player {
 	private Long playerId;
 	private String email;
 	private String password;
+	private String deviceId;
 	private Set<Team> teams = new HashSet<>(0);
 
 
@@ -39,5 +40,11 @@ public class Player {
 		this.password = password;
 	}
 
-	
+	public String getDeviceId() {
+		return deviceId;
+	}
+
+	public void setDeviceId(String deviceId) {
+		this.deviceId = deviceId;
+	}
 }

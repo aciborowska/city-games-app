@@ -16,6 +16,8 @@ import android.widget.Toast;
 import com.wroclaw.citygames.citygamesapp.Globals;
 import com.wroclaw.citygames.citygamesapp.R;
 import com.wroclaw.citygames.citygamesapp.model.Player;
+import com.wroclaw.citygames.citygamesapp.task.GcmRegister;
+import com.wroclaw.citygames.citygamesapp.util.GCM;
 import com.wroclaw.citygames.citygamesapp.util.Login;
 import com.wroclaw.citygames.citygamesapp.util.Validation;
 
@@ -31,6 +33,7 @@ public class RegisterActivity extends Activity {
     private Button registerButton;
     private View progressView;
     private NewPlayerTask newPlayerTask;
+    private GcmRegister gcmRegister;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,10 +73,14 @@ public class RegisterActivity extends Activity {
                             emailEditText.setError(null);
                             passwordEditText.setError(null);
                             confirmPasswordEditText.setError(null);
-                            if(Login.ifLogin()) Login.logout();
+                            if (Login.ifLogin()) Login.logout();
+                            if (GCM.getGcmId().isEmpty()) {
+                                gcmRegister = new GcmRegister();
+                                gcmRegister.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+                            }
                             newPlayerTask = new NewPlayerTask(email, password);
                             changeProgressView(true);
-                            newPlayerTask.execute();
+                            newPlayerTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
                     }
                 }
 
@@ -119,7 +126,7 @@ public class RegisterActivity extends Activity {
 
         public NewPlayerTask(String email, String password) {
             this.email = email;
-            this.password = password;
+            this.password = Login.getMD5EncryptedString(password);
 
 
         }
@@ -134,6 +141,7 @@ public class RegisterActivity extends Activity {
             Player player = new Player();
             player.setEmail(email);
             player.setPassword(password);
+            player.setDeviceId(GCM.getGcmId());
             Player created = null;
             try {
                 created = restTemplate.postForObject(uri, player, Player.class);
@@ -165,4 +173,5 @@ public class RegisterActivity extends Activity {
             }
         }
     }
+
 }
