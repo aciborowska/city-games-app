@@ -81,7 +81,7 @@ public class MainTaskActivity extends FragmentActivity {
                 if (playerId != -1 & teamId != -1 & scenarioId != -1) {
                     progressBar.setVisibility(View.VISIBLE);
                     registerGameTask = new RegisterGame(scenarioId, playerId, teamId);
-                    registerGameTask.execute();
+                    registerGameTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
                     try {
                         registerGameTask.get();
                     } catch (InterruptedException e) {
@@ -89,7 +89,6 @@ public class MainTaskActivity extends FragmentActivity {
                     } catch (ExecutionException e) {
                         e.printStackTrace();
                     }
-
                 }
             }
         } else {
@@ -184,6 +183,7 @@ public class MainTaskActivity extends FragmentActivity {
             try {
                 Log.d(TAG, "rejestracja gry: " + uri);
                 game = restTemplate.postForObject(uri, null, Game.class);
+                if(game!=null) Gameplay.registerGame(game.getGameId(), teamId);
             } catch (final Exception e) {
                 Log.d(TAG, "błąd połączenia");
                 e.printStackTrace();
@@ -200,8 +200,8 @@ public class MainTaskActivity extends FragmentActivity {
                 Toast.makeText(App.getCtx(), "Wystąpił błąd, spróbuj ponownie później", Toast.LENGTH_SHORT).show();
                 finish();
             } else if (game.getGameId() > 0) {
-                App.getGameDao().save(game);
                 Gameplay.registerGame(game.getGameId(), teamId);
+                App.getGameDao().save(game);
                 Log.d(TAG, "zarejestrowano nową grę " + game.getGameId());
                 Toast.makeText(App.getCtx(), "Zarejestrowano grę", Toast.LENGTH_SHORT).show();
             } else if (game.getGameId() < 0) {

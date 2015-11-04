@@ -12,48 +12,47 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
-import java.util.Observer;
 
 public class TaskDao extends Observable {
     private static final String TAG = TaskDao.class.getName();
-    private List<Observer> observers = new ArrayList<>();
-    private Task instance;
+    private Task currentTask;
     public static final int FINISH_TASK = -300;
     public static final int CHOICE_TASK = -100;
     public static final int SYNC_TASK = -200;
+    public static final int UPDATE_TASK = -400;
     private Map<String,String> choiceTasks = new HashMap<>();
 
     public TaskDao() {
-        if (instance == null) {
-            instance = new Task();
-            instance.setTaskId((long) -1);
-            instance.setCorrectAnswer("?");
+        if (currentTask == null) {
+            currentTask = new Task();
+            currentTask.setTaskId((long) -1);
+            currentTask.setCorrectAnswer("?");
         }
     }
 
     public void setTask(Task task) {
         Log.d(TAG, "zmiana zadania, nowe=" + task.toString());
         ImageConverter.clean();
-        instance = task;
+        currentTask = task;
         saveImages();
-        if(instance.getTaskId()==CHOICE_TASK) choiceTask();
+        if(currentTask.getTaskId()==CHOICE_TASK) choiceTask();
         this.setChanged();
         this.notifyObservers();
     }
 
     public Task getTask() {
-        return instance;
+        return currentTask;
     }
 
     private void saveImages() {
-        String image = instance.getPicture();
+        String image = currentTask.getPicture();
         if (image != null && !image.isEmpty()) {
             Bitmap taskImage = ImageConverter.decode(image);
-            String filename = ImageConverter.saveBitmap("task" + instance.getTaskId(), taskImage);
-            instance.setPicture(filename);
+            String filename = ImageConverter.saveBitmap("task" + currentTask.getTaskId(), taskImage);
+            currentTask.setPicture(filename);
         }
         List<Tip> tips = new ArrayList<>();
-        tips.addAll(instance.getTips());
+        tips.addAll(currentTask.getTips());
         for (int i = 0; i < tips.size(); i++) {
             image = tips.get(i).getPicture();
             if (image != null && !image.isEmpty()) {
@@ -75,7 +74,7 @@ public class TaskDao extends Observable {
 
     private void choiceTask(){
         choiceTasks.clear();
-        String namesAndIds[] = instance.getQuestion().split("#");
+        String namesAndIds[] = currentTask.getQuestion().split("#");
         String names[] = namesAndIds[0].split(";");
         String ids[] = namesAndIds[1].split(";");
 
