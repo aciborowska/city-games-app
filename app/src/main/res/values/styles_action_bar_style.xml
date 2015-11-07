@@ -19,10 +19,7 @@
         <item name="android:dialogTheme">@style/Theme.CustomDialog</item>
                 <!-- Light.DarkActionBar specific -->
         <item name="android:actionBarWidgetTheme">@style/Theme.Action_bar_style.Widget</item>
-        <item name="android:alertDialogTheme">@style/Theme_Sphinx_Dialog_Alert</item>
     </style>
-
-    <style name="Theme_Sphinx_Dialog_Alert" parent="@style/Theme_Holo_Dialog_Alert"></style>
 
 
     <style name="Theme_Holo_Dialog_Alert" parent="@android:style/Theme.Holo.Light.Dialog">
@@ -141,8 +138,8 @@
     <style name="HeaderFont" parent="RegularFont">
         <item name="android:fontFamily">sans-serif-light</item>
         <item name="android:textColor">@color/dark_brown</item>
-        <item name="android:textStyle">normal</item>
-        <item name="android:textSize">17dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">20sp</item>
     </style>
 
     <style name="RegularFont" parent="@android:style/TextAppearance">

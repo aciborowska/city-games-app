@@ -3,6 +3,7 @@ package com.wroclaw.citygames.citygamesapp.dao;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import com.wroclaw.citygames.citygamesapp.Globals;
 import com.wroclaw.citygames.citygamesapp.model.Task;
 import com.wroclaw.citygames.citygamesapp.model.Tip;
 import com.wroclaw.citygames.citygamesapp.util.ImageConverter;
@@ -15,11 +16,8 @@ import java.util.Observable;
 
 public class TaskDao extends Observable {
     private static final String TAG = TaskDao.class.getName();
+
     private Task currentTask;
-    public static final int FINISH_TASK = -300;
-    public static final int CHOICE_TASK = -100;
-    public static final int SYNC_TASK = -200;
-    public static final int UPDATE_TASK = -400;
     private Map<String,String> choiceTasks = new HashMap<>();
 
     public TaskDao() {
@@ -32,10 +30,10 @@ public class TaskDao extends Observable {
 
     public void setTask(Task task) {
         Log.d(TAG, "zmiana zadania, nowe=" + task.toString());
-        ImageConverter.clean();
+        ImageConverter.cleanPhotoDir();
         currentTask = task;
         saveImages();
-        if(currentTask.getTaskId()==CHOICE_TASK) choiceTask();
+        if(currentTask.getTaskId()== Globals.CHOICE_TASK) choiceTask();
         this.setChanged();
         this.notifyObservers();
     }
@@ -61,7 +59,6 @@ public class TaskDao extends Observable {
                 tips.get(i).setPicture(filename);
             }
         }
-
     }
 
     public String getIdForTask(String taskName){

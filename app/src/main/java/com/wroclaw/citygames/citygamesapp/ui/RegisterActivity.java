@@ -2,23 +2,20 @@ package com.wroclaw.citygames.citygamesapp.ui;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.wroclaw.citygames.citygamesapp.Globals;
 import com.wroclaw.citygames.citygamesapp.R;
 import com.wroclaw.citygames.citygamesapp.model.Player;
 import com.wroclaw.citygames.citygamesapp.task.GcmRegister;
 import com.wroclaw.citygames.citygamesapp.util.GCM;
 import com.wroclaw.citygames.citygamesapp.util.Login;
+import com.wroclaw.citygames.citygamesapp.util.RestUriBuilder;
 import com.wroclaw.citygames.citygamesapp.util.Validation;
 
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -91,27 +88,7 @@ public class RegisterActivity extends Activity {
     private void changeProgressView(boolean show){
         progressView.setVisibility(show ? View.VISIBLE : View.GONE);
     }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_register, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     private void startStartFragment(){
         Intent intent = new Intent(getApplicationContext(), NavigationDrawerActivity.class);
@@ -126,7 +103,7 @@ public class RegisterActivity extends Activity {
 
         public NewPlayerTask(String email, String password) {
             this.email = email;
-            this.password = Login.getMD5EncryptedString(password);
+            this.password = Login.MD5Encryption(password);
 
 
         }
@@ -135,9 +112,7 @@ public class RegisterActivity extends Activity {
         protected Player doInBackground(Void... params) {
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-            Uri.Builder builder = new Uri.Builder();
-            builder.scheme("http").encodedAuthority(Globals.MAIN_URL).appendEncodedPath(Globals.REGISTER_URI);
-            String uri = builder.build().toString();
+            String uri = RestUriBuilder.registerUri();
             Player player = new Player();
             player.setEmail(email);
             player.setPassword(password);
@@ -159,17 +134,20 @@ public class RegisterActivity extends Activity {
             changeProgressView(false);
 
             if (player != null) {
-                Toast toast = Toast.makeText(getApplicationContext(), "Utworzono konto", Toast.LENGTH_LONG);
-                toast.show();
-                Login.login(player.getPlayerId(),email,password.length());
+                Toast.makeText(getApplicationContext(),
+                        getApplication().getString(R.string.toast_account_registered),
+                        Toast.LENGTH_LONG).show();
+                Login.login(player.getPlayerId(),email);
                 startStartFragment();
             } else if(connection_error){
-                Toast toast = Toast.makeText(getApplicationContext(), "Błąd połączenia, spróbuj ponownie później", Toast.LENGTH_LONG);
-                toast.show();
+                Toast.makeText(getApplicationContext(),
+                        getApplication().getString(R.string.toast_connection_error),
+                        Toast.LENGTH_LONG).show();
             }
             else {
-                Toast toast = Toast.makeText(getApplicationContext(), "Podany email istnieje już w bazie", Toast.LENGTH_LONG);
-                toast.show();
+               Toast.makeText(getApplicationContext(),
+                        getApplication().getString(R.string.toast_email_exist_in_db),
+                        Toast.LENGTH_LONG).show();
             }
         }
     }

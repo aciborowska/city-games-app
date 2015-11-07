@@ -1,7 +1,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.wroclaw.citygames.citygamesapp.ui.NavigationDrawerActivity">
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/action_data_refresh"
+        android:title="@string/get_current_task"
+        android:icon="@drawable/ic_action_refresh"
+        android:orderInCategory="10000"
+        android:showAsAction="always" />
 </menu>

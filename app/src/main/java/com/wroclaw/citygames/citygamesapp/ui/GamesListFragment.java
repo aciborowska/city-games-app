@@ -36,18 +36,15 @@ public class GamesListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_game, container, false);
     }
 
     public static  GamesListFragment newInstance() {
-        GamesListFragment myFragment = new GamesListFragment();
-        return myFragment;
+        return new GamesListFragment();
     }
 
-    public GamesListFragment() {
-        // Required empty public constructor
-    }
+    public GamesListFragment() {}
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -80,40 +77,10 @@ public class GamesListFragment extends Fragment {
             this.games=games;
             this.ctx=ctx;
         }
-       /* @Override
-        public int getCount() {
-            return games.size();
-        }
 
-        @Override
-        public Game getItem(int position) {
-            return games.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return getItem(position).getGameId();
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View v=convertView;
-            if (v == null) {
-                v = LayoutInflater.from(ctx).inflate(R.layout.list_element_game, parent, false);
-            }
-            TextView scenarioName=(TextView)v.findViewById(R.id.game_name);
-            TextView scenarioInfo = (TextView) v.findViewById(R.id.game_info);
-
-            Game game = getItem(position);
-            String name = App.getScenarioDao().get(game.getScenarioId()).getName();
-            scenarioName.setText(name);
-            scenarioInfo.setText("Zdobyte punkty "+String.valueOf(game.getPoints()));
-            return v;
-        }
-*/
         @Override
         public int getGroupCount() {
-            return gameList.size();
+            return games.size();
         }
 
         @Override
@@ -123,22 +90,22 @@ public class GamesListFragment extends Fragment {
 
         @Override
         public Game getGroup(int groupPosition) {
-            return gameList.get(groupPosition);
+            return games.get(groupPosition);
         }
 
         @Override
         public Game getChild(int groupPosition, int childPosition) {
-            return gameList.get(groupPosition);
+            return games.get(groupPosition);
         }
 
         @Override
         public long getGroupId(int groupPosition) {
-            return gameList.get(groupPosition).getGameId();
+            return games.get(groupPosition).getGameId();
         }
 
         @Override
         public long getChildId(int groupPosition, int childPosition) {
-            return gameList.get(groupPosition).getGameId();
+            return games.get(groupPosition).getGameId();
         }
 
         @Override
@@ -168,6 +135,7 @@ public class GamesListFragment extends Fragment {
             if (v == null) {
                 v = LayoutInflater.from(ctx).inflate(R.layout.list_exp_element_game, parent, false);
             }
+            v.setBackgroundColor(getResources().getColor(R.color.light_orange));
             TextView scenarioName=(TextView)v.findViewById(R.id.game_scenario_name);
             TextView collectedPoints=(TextView)v.findViewById(R.id.game_collected_points);
             TextView timeInGame=(TextView)v.findViewById(R.id.game_time_in_game);

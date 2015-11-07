@@ -6,9 +6,6 @@ import android.content.SharedPreferences;
 import com.wroclaw.citygames.citygamesapp.App;
 import com.wroclaw.citygames.citygamesapp.R;
 
-/**
- * Created by Aga on 2015-11-03.
- */
 public class GCM {
 
     public static void saveGcmID(String gcmId){

@@ -29,7 +29,7 @@
     <string name="diffrent_passwords">Podane hasła są różne</string>
     <string name="error_incorrect_password">Błędne hasło</string>
     <string name="password_too_short">Hasło musi mieć co najmniej 4 znaki</string>
-    <string name="connection_error">Błąd połącznia. Spróbuj ponownie później</string>
+
 
     <string name="shared_preferences_credentials">Credentials</string>
 
@@ -37,8 +37,8 @@
     <string name="navigation_drawer_close">Zamknięte menu</string>
 
     <!-- START FRAGMENT -->
-    <string name="current_game">Bieżąca rozgrywka</string>
-    <string name="start_game">Rozpocznij nową grę</string>
+    <string name="current_game">Kontynuuj grę</string>
+    <string name="start_game">Nowa gra</string>
     <string name="your_teams">Twoje drużyny</string>
     <string name="your_games">Twoje gry</string>
     <string name="sceanrios">Scenariusze</string>
@@ -91,4 +91,10 @@
     <!--MAIN TASK ACTIVITY -->
     <string name="get_current_task">Odśwież</string>
 
+
+    <!-- TOASTS -->
+    <string name="toast_connection_error">Błąd połącznia. Spróbuj ponownie później</string>
+    <string name="toast_login">Zalogowany</string>
+    <string name="toast_account_registered">Utworzono konto</string>
+    <string name="toast_email_exist_in_db">Podany email istnieje już w bazie</string>
 </resources>

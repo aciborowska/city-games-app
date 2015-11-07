@@ -42,6 +42,7 @@ import com.wroclaw.citygames.citygamesapp.R;
 import com.wroclaw.citygames.citygamesapp.model.Game;
 import com.wroclaw.citygames.citygamesapp.model.Scenario;
 import com.wroclaw.citygames.citygamesapp.model.Team;
+import com.wroclaw.citygames.citygamesapp.util.ImageConverter;
 import com.wroclaw.citygames.citygamesapp.util.Login;
 
 import org.springframework.http.ResponseEntity;
@@ -52,9 +53,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+
 public class NavigationDrawerActivity extends FragmentActivity {
-    private static final String TAG=NavigationDrawerActivity.class.getName();
-    public static String CURRENT_FRAGMENT_NAME=StartFragment.NAME;
+    private static final String TAG = NavigationDrawerActivity.class.getName();
+    public static String CURRENT_FRAGMENT_NAME = StartFragment.NAME;
     private DrawerLayout drawerLayout;
     private ListView drawerList;
     private ActionBarDrawerToggle drawerToggle;
@@ -62,7 +64,7 @@ public class NavigationDrawerActivity extends FragmentActivity {
     private CharSequence drawerTitle;
     private CharSequence title;
     private String[] fragmentsTitles;
-    private boolean isNewLogin=false;
+    private boolean isNewLogin = false;
 
     private CollectDataTask teamTask;
     private CollectScenarioTask scenarioTask;
@@ -113,20 +115,17 @@ public class NavigationDrawerActivity extends FragmentActivity {
     }
 
     protected void handleIntent(Intent intent) {
-        isNewLogin= intent.getBooleanExtra("isNewLogin", true);
+        isNewLogin = intent.getBooleanExtra("isNewLogin", true);
         Log.d(TAG, "handleIntent: " + isNewLogin);
-        if(isNewLogin){
-            teamTask = new CollectDataTask();
-            scenarioTask = new CollectScenarioTask();
-            scenarioTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
-            teamTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+        if (isNewLogin) {
+           startCollectingData();
         }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_login, menu);
+        inflater.inflate(R.menu.menu_navigation_drawer, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -141,14 +140,27 @@ public class NavigationDrawerActivity extends FragmentActivity {
         if (drawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
-        switch(item.getItemId()) {
-            default:
-                return super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case R.id.action_data_refresh:
+                startCollectingData();
+                break;
         }
+        return super.onOptionsItemSelected(item);
     }
 
+    private void startCollectingData() {
+        App.getGameDao().deleteAll();
+        App.getTeamDao().deleteAll();
+        App.getScenarioDao().deleteAll();
+        ImageConverter.cleanPhotoDir();
+        teamTask = null;
+        scenarioTask = null;
+        teamTask = new CollectDataTask();
+        scenarioTask = new CollectScenarioTask();
+        scenarioTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+        teamTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+    }
 
-    /* The click listner for ListView in the navigation drawer */
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -158,8 +170,7 @@ public class NavigationDrawerActivity extends FragmentActivity {
 
     private void selectItem(int position) {
         FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-        switch (position)
-        {
+        switch (position) {
             case 0:
                 tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, StartFragment.TAG));
                 tx.commit();
@@ -186,6 +197,10 @@ public class NavigationDrawerActivity extends FragmentActivity {
                 CURRENT_FRAGMENT_NAME = RankFragment.TITLE;
                 break;
             case 5:
+                ImageConverter.cleanPhotoDir();
+                App.getGameDao().deleteAll();
+                App.getGameDao().deleteAll();
+                App.getTeamDao().deleteAll();
                 Login.logout();
                 finish();
         }
@@ -199,36 +214,42 @@ public class NavigationDrawerActivity extends FragmentActivity {
         getActionBar().setTitle(this.title);
     }
 
-    /**
-     * When using the ActionBarDrawerToggle, you must call it during
-     * onPostCreate() and onConfigurationChanged()...
-     */
-
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        // Sync the toggle state after onRestoreInstanceState has occurred.
         drawerToggle.syncState();
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        // Pass any configuration change to the drawer toggls
         drawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (CURRENT_FRAGMENT_NAME.equals(StartFragment.TITLE)) {
+            finish();
+        } else {
+            FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+            tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, StartFragment.NAME));
+            tx.commit();
+            CURRENT_FRAGMENT_NAME = StartFragment.TITLE;
+        }
     }
 
     public class CollectDataTask extends AsyncTask<Void, Void, Team[]> {
         public String TAG = CollectDataTask.class.getName();
 
-        CollectDataTask() {}
+        CollectDataTask() {
+        }
 
         @Override
         protected Team[] doInBackground(Void... params) {
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
             Uri.Builder builder = new Uri.Builder();
-            builder.scheme("http").encodedAuthority(Globals.MAIN_URL).appendEncodedPath(Globals.COLLECT_DATA_URI).appendQueryParameter("playerId", String.valueOf(Login.getCredentials()));
+            builder.scheme("http").encodedAuthority(Globals.MAIN_URL).appendEncodedPath(Globals.COLLECT_DATA_URI).appendQueryParameter("playerId", String.valueOf(Login.getPlayerId()));
             String uri = builder.build().toString();
             try {
                 ResponseEntity<Team[]> responseEntity = restTemplate.getForEntity(uri, Team[].class);
@@ -249,15 +270,15 @@ public class NavigationDrawerActivity extends FragmentActivity {
                 App.getTeamDao().deleteAll();
 
                 teams.addAll(Arrays.asList(result));
-                for(Team team:result){
+                for (Team team : result) {
                     App.getTeamDao().save(team);
-                    for(Game game:team.getGames()) {
+                    for (Game game : team.getGames()) {
                         game.setTeamId(team.getTeamId());
                         App.getGameDao().save(game);
                     }
                 }
             } else {
-                Toast.makeText(getApplicationContext(), getResources().getString(R.string.connection_error), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.toast_connection_error), Toast.LENGTH_LONG).show();
             }
         }
 
@@ -289,33 +310,20 @@ public class NavigationDrawerActivity extends FragmentActivity {
 
         @Override
         protected void onPostExecute(final Scenario[] result) {
-            Log.d(TAG,"onPostExecute");
+            Log.d(TAG, "onPostExecute");
             if (result != null) {
                 List<Scenario> scenarios = new ArrayList<>();
                 scenarios.addAll(Arrays.asList(result));
                 App.getScenarioDao().deleteAll();
                 App.getScenarioDao().saveAll(scenarios);
             } else {
-                Toast.makeText(getApplicationContext(), getResources().getString(R.string.connection_error), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.toast_connection_error), Toast.LENGTH_SHORT).show();
             }
         }
 
         @Override
         protected void onCancelled() {
             scenarioTask = null;
-        }
-    }
-
-    @Override
-    public void onBackPressed() {
-        if(CURRENT_FRAGMENT_NAME.equals(StartFragment.TITLE)){
-            finish();
-        }
-        else {
-            FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-            tx.replace(R.id.navigation_drawer_frame, Fragment.instantiate(NavigationDrawerActivity.this, StartFragment.NAME));
-            tx.commit();
-            CURRENT_FRAGMENT_NAME = StartFragment.TITLE;
         }
     }
 }

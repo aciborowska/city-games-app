@@ -116,7 +116,7 @@ public class TeamsListFragment extends Fragment {
         Bundle bundle = getArguments();
         if(bundle!=null) {
             boolean startingGame = bundle.getBoolean("startingGame", false);
-            Long scenarioId = getArguments().getLong("scenarioId", Long.valueOf(-1));
+            Long scenarioId = getArguments().getLong("scenarioId", (long) -1);
             if (startingGame && scenarioId > 0) {
                 teamListView.setOnItemClickListener(new ChooseTeam(scenarioId));
                 return;
@@ -165,11 +165,11 @@ public class TeamsListFragment extends Fragment {
             ok.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (teamName.getText().equals("")) {
+                    if (teamName.getText().toString().equals("")) {
                         teamName.setError("Wprowadź nazwę drużyny");
                         return;
                     }
-                    if (password.getText().equals("")) {
+                    if (password.getText().toString().equals("")) {
                         password.setError("Wprowadź hasło");
                         return;
                     }
@@ -290,19 +290,20 @@ public class TeamsListFragment extends Fragment {
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
             Uri.Builder builder = new Uri.Builder();
+            Team responseEntity;
             switch (operation) {
                 case 1:
                     builder.scheme("http").encodedAuthority(Globals.MAIN_URL)
                             .appendPath(Globals.SIGNIN_URI)
-                            .appendQueryParameter("playerId", String.valueOf(Login.getCredentials()))
+                            .appendQueryParameter("playerId", String.valueOf(Login.getPlayerId()))
                             .appendQueryParameter("teamId", String.valueOf(params[0].getTeamId()));
                     String uri = builder.build().toString();
-                    Team responseEntity = restTemplate.postForObject(uri, null, Team.class);
+                    responseEntity = restTemplate.postForObject(uri, null, Team.class);
                     return responseEntity;
                 case 2:
                     builder.scheme("http").encodedAuthority(Globals.MAIN_URL)
                             .appendEncodedPath(Globals.SIGNOUT_URI)
-                            .appendQueryParameter("playerId", String.valueOf(Login.getCredentials()))
+                            .appendQueryParameter("playerId", String.valueOf(Login.getPlayerId()))
                             .appendQueryParameter("teamId", String.valueOf(params[0].getTeamId()));
                     uri = builder.build().toString();
                     responseEntity = restTemplate.postForObject(uri, null, Team.class);
@@ -310,7 +311,7 @@ public class TeamsListFragment extends Fragment {
                 case 3:
                     builder.scheme("http").encodedAuthority(Globals.MAIN_URL)
                             .appendPath(Globals.CREATE_TEAM_URI)
-                            .appendQueryParameter("playerId", String.valueOf(Login.getCredentials()));
+                            .appendQueryParameter("playerId", String.valueOf(Login.getPlayerId()));
                     uri = builder.build().toString();
                     responseEntity = restTemplate.postForObject(uri, params[0], Team.class);
                     return responseEntity;
@@ -351,7 +352,7 @@ public class TeamsListFragment extends Fragment {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Team team = teamList.get(position);
             Intent intent = new Intent(getActivity(),MainTaskActivity.class);
-            intent.putExtra("playerId",Login.getCredentials());
+            intent.putExtra("playerId",Login.getPlayerId());
             intent.putExtra("scenarioId",scenarioId);
             intent.putExtra("teamId",team.getTeamId());
             startActivity(intent);

@@ -22,18 +22,19 @@ import android.widget.Toast;
 import com.wroclaw.citygames.citygamesapp.App;
 import com.wroclaw.citygames.citygamesapp.Globals;
 import com.wroclaw.citygames.citygamesapp.R;
-import com.wroclaw.citygames.citygamesapp.dao.TaskDao;
 import com.wroclaw.citygames.citygamesapp.model.Game;
 import com.wroclaw.citygames.citygamesapp.model.Task;
 import com.wroclaw.citygames.citygamesapp.util.Gameplay;
 import com.wroclaw.citygames.citygamesapp.util.ImageConverter;
-import com.wroclaw.citygames.citygamesapp.util.Login;
+import com.wroclaw.citygames.citygamesapp.util.RestUriBuilder;
 
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Observable;
 import java.util.Observer;
+
+import static com.wroclaw.citygames.citygamesapp.R.id.task_picture;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -64,14 +65,11 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
     }
 
 
-    public TaskFragment() {
-        // Required empty public constructor
-    }
+    public TaskFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d(TAG, "onCreateView");
         setHasOptionsMenu(true);
         return inflater.inflate(R.layout.fragment_task, container, false);
     }
@@ -87,7 +85,7 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
         Log.d(TAG, "onOptionsItemSelected");
         switch (item.getItemId()) {
             case R.id.action_task_refresh:
-                getNextTask = new GetNextTask(getCurrentTask());
+                getNextTask = new GetNextTask(RestUriBuilder.getCurrentTask());
                 getNextTask.execute();
         }
         return super.onOptionsItemSelected(item);
@@ -97,7 +95,7 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         MainTaskActivity.currentTask.addObserver(this);
-        picture = (ImageView) getView().findViewById(R.id.task_picture);
+        picture = (ImageView) getView().findViewById(task_picture);
         description = (TextView) getView().findViewById(R.id.task_description);
         question = (TextView) getView().findViewById(R.id.task_question);
         answer = (TextView) getView().findViewById(R.id.answer_edit_text);
@@ -116,43 +114,12 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
 
     private void handleIntent() {
         Log.d(TAG, "handleIntent");
-        this.getNextTask = new GetNextTask(getCurrentTask());
+        this.getNextTask = new GetNextTask(RestUriBuilder.getCurrentTask());
         getNextTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
 
     }
 
 
-    private String createGetNextTaskUri(String userAnswer) {
-        return new Uri.Builder().scheme("http")
-                .encodedAuthority(Globals.MAIN_URL)
-                .appendPath(Globals.GAMEPLAY_URI)
-                .appendPath(String.valueOf(Gameplay.getCurrentGame()))
-                .appendEncodedPath(String.valueOf(Login.getCredentials()) + "?taskId="
-                        + String.valueOf(MainTaskActivity.currentTask.getTask().getTaskId())
-                        + "&answer=" + userAnswer)
-                .build()
-                .toString();
-    }
-
-    private String getCurrentTask() {
-        return new Uri.Builder().scheme("http").encodedAuthority(Globals.MAIN_URL)
-                .appendPath(Globals.GAMEPLAY_URI)
-                .appendPath(String.valueOf(Gameplay.getCurrentGame()))
-                .appendEncodedPath("current_task?playerId=" + String.valueOf(Login.getCredentials()))
-                .build()
-                .toString();
-    }
-
-
-    private String signForTask(String taskId) {
-        return new Uri.Builder().scheme("http")
-                .encodedAuthority(Globals.MAIN_URL)
-                .appendPath(Globals.GAMEPLAY_URI)
-                .appendPath(String.valueOf(Gameplay.getCurrentGame()))
-                .appendEncodedPath("signfortask?taskId=" + taskId + "&playerId=" + String.valueOf(Login.getCredentials()))
-                .build()
-                .toString();
-    }
 
     @Override
     public void onClick(View v) {
@@ -161,10 +128,10 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
         Button clicked = (Button) v.findViewById(id);
         if (clicked != null) {
             if (MainTaskActivity.currentTask != null)
-                if (MainTaskActivity.currentTask.getTask().getTaskId() == TaskDao.CHOICE_TASK) {
+                if (MainTaskActivity.currentTask.getTask().getTaskId() == Globals.CHOICE_TASK) {
                     String choice = clicked.getText().toString();
                     String taskId = MainTaskActivity.currentTask.getIdForTask(choice);
-                    String getNextTask = signForTask(taskId);
+                    String getNextTask = RestUriBuilder.signForTask(taskId);
                     this.getNextTask = new GetNextTask(getNextTask);
                     this.getNextTask.execute();
                     progressBar.setVisibility(View.VISIBLE);
@@ -172,7 +139,7 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
                     String userAnswer = clicked.getText().toString();
                     if (userAnswer.equals("Wyślij odpowiedź"))
                         userAnswer = answer.getText().toString();
-                    String getNextTask = createGetNextTaskUri(userAnswer);
+                    String getNextTask = RestUriBuilder.createGetNextTaskUri(userAnswer);
                     this.getNextTask = new GetNextTask(getNextTask);
                     this.getNextTask.execute();
                     progressBar.setVisibility(View.VISIBLE);
@@ -188,13 +155,15 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
     private void refreshData() {
         Log.d(TAG, "refreshData ");
         Task task = MainTaskActivity.currentTask.getTask();
-        if(task.getTaskId()==TaskDao.UPDATE_TASK){
+        if(task.getTaskId()== Globals.UPDATE_TASK){
             Toast.makeText(App.getCtx(),"Zadanie jest nieaktualne, pobieram nowe",Toast.LENGTH_SHORT).show();
             progressBar.setVisibility(View.VISIBLE);
-            getNextTask = new GetNextTask(getCurrentTask());
+            getNextTask = new GetNextTask(RestUriBuilder.getCurrentTask());
             getNextTask.execute();
             return;
         }
+        cleanView();
+
         if (task.getPicture() != null) {
             picture.setImageResource(android.R.color.transparent);
             Bitmap taskImage = ImageConverter.loadBitmap(task.getPicture());
@@ -204,13 +173,11 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
             picture.setImageResource(R.drawable.question1);
         }
 
-        cleanData();
-
         String questionText = task.getQuestion();
         String descriptionText = task.getDescription();
         if (description != null) description.setText(descriptionText);
         if (questionText != null) {
-            if (task.getTaskId() == TaskDao.CHOICE_TASK) questionText = questionText.split("#")[0];
+            if (task.getTaskId() == Globals.CHOICE_TASK) questionText = questionText.split("#")[0];
             String[] makeQuestion = questionText.split(";");
             question.setText(makeQuestion[0]);
             int amount = makeQuestion.length;
@@ -239,13 +206,14 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
         }
     }
 
-    private void cleanData(){
+    private void cleanView(){
         answerA.setVisibility(View.GONE);
         answerB.setVisibility(View.GONE);
         answerC.setVisibility(View.GONE);
         answer.setVisibility(View.GONE);
         question.setText("");
         description.setText("");
+        picture.setImageResource(R.drawable.question1);
     }
     @Override
     public void update(Observable observable, Object data) {
@@ -283,7 +251,7 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
             progressBar.setVisibility(View.GONE);
             Log.d(TAG, "Pobrano " + task.toString());
             if (task != null) {
-                if (task.getTaskId() == TaskDao.FINISH_TASK) {
+                if (task.getTaskId() == Globals.FINISH_TASK) {
                     MainTaskActivity.currentTask = null;
                     String descriptionText = task.getDescription();
                     if (description != null) description.setText(descriptionText);
@@ -335,7 +303,7 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
                 Gameplay.endGame();
                 getActivity().finish();
             } else {
-                Toast.makeText(App.getCtx(), "Wystąpił błąd, spróbuj ponownie później", Toast.LENGTH_SHORT).show();
+                Toast.makeText(App.getCtx(), App.getCtx().getString(R.string.toast_connection_error), Toast.LENGTH_SHORT).show();
             }
         }
     }

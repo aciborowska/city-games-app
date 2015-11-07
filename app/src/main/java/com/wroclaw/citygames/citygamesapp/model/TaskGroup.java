@@ -1,11 +1,8 @@
 package com.wroclaw.citygames.citygamesapp.model;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public class TaskGroup {
 	
-	private Long taskGroupId;
+	/*private Long taskGroupId;
 	private String description;
 	private Scenario scenarioId;
 	private Set<Task> tasks = new HashSet<>(0);
@@ -45,5 +42,5 @@ public class TaskGroup {
 
 	public void setNumber(int number) {
 		this.number = number;
-	}
+	}*/
 }

@@ -50,7 +50,7 @@ public class ImageConverter {
         return null;
     }
 
-    public static void clean() {
+    public static void cleanPhotoDir() {
         ContextWrapper cw = new ContextWrapper(App.getCtx());
         File directory = cw.getDir(Globals.IMAGE_DIRECTORY_PATH, Context.MODE_PRIVATE);
         Log.d(TAG,"Rozmiar katalogu "+ String.valueOf(directory.getUsableSpace()));
@@ -59,6 +59,6 @@ public class ImageConverter {
                 boolean delete = c.delete();
             }
         }
-        Log.d(TAG,"Rozmiar katalogu "+ String.valueOf(directory.getUsableSpace()));
+        Log.d(TAG,"Rozmiar katalogu " + String.valueOf(directory.getUsableSpace()));
     }
 }

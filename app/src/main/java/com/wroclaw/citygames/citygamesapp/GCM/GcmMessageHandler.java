@@ -6,7 +6,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
@@ -16,12 +15,9 @@ import com.wroclaw.citygames.citygamesapp.R;
 import com.wroclaw.citygames.citygamesapp.ui.MainTaskActivity;
 import com.wroclaw.citygames.citygamesapp.util.Gameplay;
 
-/**
- * Created by Aga on 2015-11-02.
- */
 public class GcmMessageHandler extends IntentService {
     private static final String TAG  =GcmMessageHandler.class.getName();
-    private Handler handler;
+   // private Handler handler;
 
     public GcmMessageHandler() {
         super("GcmMessageHandler");
@@ -30,7 +26,7 @@ public class GcmMessageHandler extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
-        handler = new Handler();
+      //  handler = new Handler();
     }
 
     @Override
