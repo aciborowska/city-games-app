@@ -45,7 +45,6 @@ public class ScenarioDao implements Dao<Scenario> {
         values.put(ScenarioTable.ScenarioColumns.COLUMN_LEVEL,scenario.getLevel());
         values.put(ScenarioTable.ScenarioColumns.COLUMN_NAME,scenario.getName());
         values.put(ScenarioTable.ScenarioColumns.COLUMN_PICTURE,scenario.getPicture());
-        Log.d(TAG, scenario.getName());
         return db.insert(ScenarioTable.TABLE_NAME, // table
                 null, //nullColumnHack
                 values);

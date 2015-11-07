@@ -18,7 +18,7 @@ public interface Globals {
     String RANKING_BEST20_URI = "ranking/best20";
     String RANKING_GET_NEXT_10 = "ranking/get_next";
     String PROJECT_NUMBER = "58592866754";
-
+    String CREDENTIALS = "CREDENTIALS";
 
     int FINISH_TASK = -300;
     int CHOICE_TASK = -100;

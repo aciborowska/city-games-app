@@ -23,7 +23,7 @@ public class ScenarioTable {
 
     public static void onCreate(SQLiteDatabase db) {
         String sql = "CREATE TABLE " + TABLE_NAME + "( ";
-        sql += BaseColumns._ID + " INTEGER(10) NOT NULL PRIMARY KEY, ";
+        sql += BaseColumns._ID + " INTEGER NOT NULL PRIMARY KEY, ";
         sql += ScenarioColumns.COLUMN_USERS_AMOUNT + " integer(2), ";
         sql +=ScenarioColumns.COLUMN_DESCRIPTION + " text, ";
         sql += ScenarioColumns.COLUMN_TIME + " real(10), ";

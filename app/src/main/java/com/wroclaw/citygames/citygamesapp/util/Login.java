@@ -26,7 +26,7 @@ public class Login {
     }
 
     public static void logout() {
-        SharedPreferences sharedpreferences = App.getCtx().getSharedPreferences(App.getCtx().getResources().getString(R.string.shared_preferences_credentials), Context.MODE_PRIVATE);
+        SharedPreferences sharedpreferences = App.getCtx().getSharedPreferences("CREDENTIALS", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedpreferences.edit();
         editor.putBoolean("ifLogin", false);
         editor.putLong("playerId", (long) (-1));
@@ -35,12 +35,12 @@ public class Login {
     }
 
     public static boolean ifLogin() {
-        SharedPreferences sharedpreferences = App.getCtx().getSharedPreferences(App.getCtx().getResources().getString(R.string.shared_preferences_credentials), Context.MODE_PRIVATE);
+        SharedPreferences sharedpreferences = App.getCtx().getSharedPreferences("CREDENTIALS", Context.MODE_PRIVATE);
         return sharedpreferences.getBoolean("ifLogin", false);
     }
 
     public static Long getPlayerId() {
-        SharedPreferences sharedpreferences = App.getCtx().getSharedPreferences(App.getCtx().getResources().getString(R.string.shared_preferences_credentials), Context.MODE_PRIVATE);
+        SharedPreferences sharedpreferences = App.getCtx().getSharedPreferences("CREDENTIALS", Context.MODE_PRIVATE);
         if (sharedpreferences.getBoolean("ifLogin", false))
             return sharedpreferences.getLong("playerId", -1);
         else return (long) (-1);
@@ -52,6 +52,7 @@ public class Login {
     }
 
     public static String MD5Encryption(String encTarget) {
+        if(encTarget==null || encTarget.isEmpty()) return null;
         MessageDigest md5password = null;
         try {
             md5password = MessageDigest.getInstance("MD5");

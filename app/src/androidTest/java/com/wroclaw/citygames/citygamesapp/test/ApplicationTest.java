@@ -1,4 +1,4 @@
-package com.wroclaw.citygames.citygamesapp;
+package com.wroclaw.citygames.citygamesapp.test;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

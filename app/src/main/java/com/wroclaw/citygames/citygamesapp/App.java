@@ -31,6 +31,8 @@ public class App extends Application {
         return ctx;
     }
 
+    public static void setCtx(Context context){ctx = context;}
+
     @Override
     public void onCreate() {
         Log.d(TAG, "onCreate");

@@ -20,7 +20,7 @@ public class GameTable {
 
     public static void onCreate(SQLiteDatabase db) {
         String sql = "CREATE TABLE " + TABLE_NAME + "( ";
-        sql += BaseColumns._ID + " INTEGER(10) NOT NULL PRIMARY KEY, ";
+        sql += BaseColumns._ID + " INTEGER NOT NULL PRIMARY KEY, ";
         sql += GameColumns.COLUMN_SCENARIO_ID + " integer(10), ";
         sql += GameColumns.COLUMN_TEAM_ID + " integer(10), ";
         sql+=GameColumns.COLUMN_POINTS +" integer(10), ";
