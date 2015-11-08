@@ -97,4 +97,8 @@
     <string name="toast_login">Zalogowany</string>
     <string name="toast_account_registered">Utworzono konto</string>
     <string name="toast_email_exist_in_db">Podany email istnieje już w bazie</string>
+
+
+    <string name="startTrackingIntent">StartTracking</string>
+    <string name="stopTrackingIntent">StopTrackingIntent</string>
 </resources>

@@ -71,7 +71,7 @@
             </intent-filter>
         </receiver>
         <service android:name=".GCM.GcmMessageHandler" />
-
+        <service android:name=".service.LocationService" />
         <meta-data android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 

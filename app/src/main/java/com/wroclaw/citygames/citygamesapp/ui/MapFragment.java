@@ -37,10 +37,6 @@ public class MapFragment extends SupportMapFragment implements Observer {
     public static final String TITLE = "Mapa";
     private Marker taskMarker;
     private GoogleMap mapView;
-    private LocationManager locationManager;
-    private MyLocationListener locationListener;
-    private static final long MINIMUM_DISTANCE_CHANGE_FOR_UPDATES = 3; // in Meters
-    private static final long MINIMUM_TIME_BETWEEN_UPDATES = 5000; // in Milliseconds
 
     @Override
     public void onCreate(Bundle arg0) {
@@ -69,8 +65,7 @@ public class MapFragment extends SupportMapFragment implements Observer {
         mapView = getMap();
         mapView.setMyLocationEnabled(true);
         mapView.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        locationListener = new MyLocationListener();
-        locationManager = (LocationManager) getActivity().getSystemService(getActivity().LOCATION_SERVICE);
+
 
         setLocation(true);
     }
@@ -95,12 +90,6 @@ public class MapFragment extends SupportMapFragment implements Observer {
             double longitude = MainTaskActivity.currentTask.getTask().getLongitude();
             double latitude = MainTaskActivity.currentTask.getTask().getLatitude();
             if (longitude != 0 && latitude != 0) {
-                locationManager.requestLocationUpdates(
-                        LocationManager.GPS_PROVIDER,
-                        MINIMUM_TIME_BETWEEN_UPDATES,
-                        MINIMUM_DISTANCE_CHANGE_FOR_UPDATES,
-                        locationListener
-                );
                 Log.d(TAG, "Współrzędne " + String.valueOf(latitude) + " " + String.valueOf(longitude));
                 LatLng location = new LatLng(latitude, longitude);
                 markerOptions.position(location);
@@ -110,8 +99,9 @@ public class MapFragment extends SupportMapFragment implements Observer {
                 mapView.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 14));
             } else {
                 if(!start)Toast.makeText(App.getCtx(), "Zadanie bez lokalizacji", Toast.LENGTH_SHORT).show();
-                locationManager.removeUpdates(locationListener);
+             //   locationManager.removeUpdates(locationListener);
                 Criteria criteria = new Criteria();
+                LocationManager locationManager = (LocationManager) getActivity().getSystemService(getActivity().LOCATION_SERVICE);
                 String provider = locationManager.getBestProvider(criteria, true);
                 Location myLocation = locationManager.getLastKnownLocation(provider);
                 if(myLocation!=null ){
@@ -124,35 +114,6 @@ public class MapFragment extends SupportMapFragment implements Observer {
                 else Toast.makeText(App.getCtx(),"Usługa lokalizacji wyłączona",Toast.LENGTH_SHORT).show();
             }
         }
-    }
-
-    private class MyLocationListener implements LocationListener {
-
-        public void onLocationChanged(Location location) {
-            String message = String.format(
-                    "New Location \n Longitude: %1$s \n Latitude: %2$s",
-                    location.getLongitude(), location.getLatitude()
-            );
-            Toast.makeText(App.getCtx(), message, Toast.LENGTH_LONG).show();
-        }
-
-        public void onStatusChanged(String s, int i, Bundle b) {
-            Toast.makeText(App.getCtx(), "Provider status changed",
-                    Toast.LENGTH_LONG).show();
-        }
-
-        public void onProviderDisabled(String s) {
-            Toast.makeText(App.getCtx(),
-                    "Provider disabled by the user. GPS turned off",
-                    Toast.LENGTH_LONG).show();
-        }
-
-        public void onProviderEnabled(String s) {
-            Toast.makeText(App.getCtx(),
-                    "Provider enabled by the user. GPS turned on",
-                    Toast.LENGTH_LONG).show();
-        }
-
     }
 
 }

@@ -178,7 +178,6 @@ public class LoginActivity extends Activity {
                         getApplicationContext().getString(R.string.toast_login),
                         Toast.LENGTH_LONG).show();
                 Login.login(success.getPlayerId(), email);
-                Log.d(TAG,"AAAAAA "+Login.getPlayerId());
                 startStartFragment(true);
             } else if (connection_error) {
                 Toast.makeText(getApplicationContext(),

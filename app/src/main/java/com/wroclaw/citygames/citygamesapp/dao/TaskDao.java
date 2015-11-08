@@ -18,6 +18,7 @@ public class TaskDao extends Observable {
     private static final String TAG = TaskDao.class.getName();
 
     private Task currentTask;
+    private boolean avaliable;
     private Map<String,String> choiceTasks = new HashMap<>();
 
     public TaskDao() {
@@ -79,5 +80,14 @@ public class TaskDao extends Observable {
             choiceTasks.put(names[i],ids[i]);
             Log.d(TAG,"choice :"+names[i]+", "+ids[i]);
         }
+    }
+
+    public boolean isAvaliable() {
+        return avaliable;
+    }
+
+    public void setAvaliable(boolean avaliable) {
+        this.avaliable = avaliable;
+        notifyObservers();
     }
 }

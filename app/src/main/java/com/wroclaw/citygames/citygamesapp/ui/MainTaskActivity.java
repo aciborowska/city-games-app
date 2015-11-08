@@ -20,6 +20,7 @@ import com.wroclaw.citygames.citygamesapp.Globals;
 import com.wroclaw.citygames.citygamesapp.R;
 import com.wroclaw.citygames.citygamesapp.dao.TaskDao;
 import com.wroclaw.citygames.citygamesapp.model.Game;
+import com.wroclaw.citygames.citygamesapp.service.LocationService;
 import com.wroclaw.citygames.citygamesapp.util.Gameplay;
 
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -57,7 +58,8 @@ public class MainTaskActivity extends FragmentActivity {
         mainViewPagerAdapter = new MainViewPagerAdapter(getSupportFragmentManager());
         mainViewPager.setAdapter(mainViewPagerAdapter);
         mainViewPager.setCurrentItem(START_FRAGMENT);
-
+        Intent intent = new Intent(this, LocationService.class);
+        startService(intent);
         setTitle("Gra");
     }
 
@@ -102,10 +104,6 @@ public class MainTaskActivity extends FragmentActivity {
         return true;
     }
 
-
-    /**
-     * Klasa implementująca adapter dla "kartownika"
-     */
     private final class MainViewPagerAdapter extends FragmentPagerAdapter {
 
         private final TaskFragment taskFragment;
