@@ -217,6 +217,7 @@ public class DatabaseTest extends AndroidTestCase {
     public void testInsertGame(){
         Game game = new Game();
 
+
     }
 
 }

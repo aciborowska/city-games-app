@@ -138,8 +138,8 @@
     <style name="HeaderFont" parent="RegularFont">
         <item name="android:fontFamily">sans-serif-light</item>
         <item name="android:textColor">@color/dark_brown</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">20dp</item>
     </style>
 
     <style name="RegularFont" parent="@android:style/TextAppearance">
