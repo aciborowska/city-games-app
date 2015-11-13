@@ -62,6 +62,7 @@ public class LoginActivity extends Activity {
         signinButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.d(TAG,"Przyciśnięto zaloguj");
                 if (Login.ifLogin()) startStartFragment(false);
                 attemptLogin();
             }
@@ -172,6 +173,7 @@ public class LoginActivity extends Activity {
 
         @Override
         protected void onPostExecute(final Player success) {
+            loginTask=null;
             progressView.setVisibility(View.GONE);
             if (success != null) {
                 Toast.makeText(getApplicationContext(),

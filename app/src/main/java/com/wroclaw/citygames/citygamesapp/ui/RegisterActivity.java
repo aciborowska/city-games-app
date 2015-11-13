@@ -134,11 +134,16 @@ public class RegisterActivity extends Activity {
             changeProgressView(false);
 
             if (player != null) {
-                Toast.makeText(getApplicationContext(),
-                        getApplication().getString(R.string.toast_account_registered),
-                        Toast.LENGTH_LONG).show();
-                Login.login(player.getPlayerId(),email);
-                startStartFragment();
+                if(player.getPlayerId()==-101){
+                    Toast.makeText(getApplicationContext(),"Podany email jest zajęty", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Toast.makeText(getApplicationContext(),
+                            getApplication().getString(R.string.toast_account_registered),
+                            Toast.LENGTH_LONG).show();
+                    Login.login(player.getPlayerId(), email);
+                    startStartFragment();
+                }
             } else if(connection_error){
                 Toast.makeText(getApplicationContext(),
                         getApplication().getString(R.string.toast_connection_error),

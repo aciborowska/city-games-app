@@ -61,8 +61,10 @@ public class MapFragment extends SupportMapFragment implements Observer {
     public void onActivityCreated(Bundle savedInstanceState) {
         Log.d(TAG, "onActivityCreated");
         super.onActivityCreated(savedInstanceState);
-        MainTaskActivity.currentTask.addObserver(this);
+        if(MainTaskActivity.currentTask!=null)
+            MainTaskActivity.currentTask.addObserver(this);
         mapView = getMap();
+
         mapView.setMyLocationEnabled(true);
         mapView.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 

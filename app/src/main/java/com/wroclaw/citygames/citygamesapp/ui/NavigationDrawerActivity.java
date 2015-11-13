@@ -34,6 +34,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.wroclaw.citygames.citygamesapp.App;
@@ -59,6 +60,7 @@ public class NavigationDrawerActivity extends FragmentActivity {
     public static String CURRENT_FRAGMENT_NAME = StartFragment.NAME;
     private DrawerLayout drawerLayout;
     private ListView drawerList;
+    private ProgressBar progressBar;
     private ActionBarDrawerToggle drawerToggle;
 
     private CharSequence drawerTitle;
@@ -75,6 +77,7 @@ public class NavigationDrawerActivity extends FragmentActivity {
         setContentView(R.layout.drawer_layout);
 
         title = drawerTitle = getTitle();
+        progressBar = (ProgressBar) findViewById(R.id.drawer_progress_bar);
         fragmentsTitles = getResources().getStringArray(R.array.nav_drawer_items);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerList = (ListView) findViewById(R.id.left_drawer);
@@ -142,6 +145,8 @@ public class NavigationDrawerActivity extends FragmentActivity {
         }
         switch (item.getItemId()) {
             case R.id.action_data_refresh:
+                Toast.makeText(getApplicationContext(),R.string.toast_synchronization,Toast.LENGTH_SHORT).show();
+                progressBar.setVisibility(View.VISIBLE);
                 startCollectingData();
                 break;
         }
@@ -264,6 +269,7 @@ public class NavigationDrawerActivity extends FragmentActivity {
         @Override
         protected void onPostExecute(final Team[] result) {
             Log.d(TAG, "onPostExecute");
+
             if (result != null) {
                 List<Team> teams = new ArrayList<>();
                 App.getGameDao().deleteAll();
@@ -280,6 +286,7 @@ public class NavigationDrawerActivity extends FragmentActivity {
             } else {
                 Toast.makeText(getApplicationContext(), getResources().getString(R.string.toast_connection_error), Toast.LENGTH_LONG).show();
             }
+            progressBar.setVisibility(View.VISIBLE);
         }
 
         @Override

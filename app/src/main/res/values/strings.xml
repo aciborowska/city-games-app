@@ -17,10 +17,9 @@
     <string name="title_activity_login">Zaloguj</string>
     <string name="title_activity_navigation_drawer">Gry miejskie</string>
 
+    <!-- LOGIN AND REGISTRATION ACTIVITIES -->
     <string name="action_login_in">Zaloguj</string>
     <string name="action_register">Zarejestruj</string>
-
-    <!-- LOGIN AND REGISTRATION ACTIVITIES -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Hasło</string>
     <string name="confirm_password">Potwierdź hasło</string>
@@ -97,7 +96,7 @@
     <string name="toast_login">Zalogowany</string>
     <string name="toast_account_registered">Utworzono konto</string>
     <string name="toast_email_exist_in_db">Podany email istnieje już w bazie</string>
-
+    <string name="toast_synchronization">Trwa synchronizacja danych</string>
 
     <string name="startTrackingIntent">StartTracking</string>
     <string name="stopTrackingIntent">StopTrackingIntent</string>

@@ -46,8 +46,8 @@ public class RankFragment extends Fragment {
     private ListView rankingListView;
     private ProgressBar progressBar;
     private GetGameTask getGameTask;
-    private  int MODE_NEW = 0;
-    private  int MODE_ADD = 1;
+    private final int MODE_NEW = 0;
+    private final int MODE_ADD = 1;
 
     private static final String GET_BEST_20  = new Uri.Builder()
             .scheme("http")
@@ -91,6 +91,7 @@ public class RankFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
         inflater.inflate(R.menu.menu_rank_fragment, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -114,8 +115,6 @@ public class RankFragment extends Fragment {
                 getGameTask = new GetGameTask(uri,MODE_ADD);
                 getGameTask.execute();
                 progressBar.setVisibility(View.VISIBLE);
-
-
         }
         return super.onOptionsItemSelected(item);
     }

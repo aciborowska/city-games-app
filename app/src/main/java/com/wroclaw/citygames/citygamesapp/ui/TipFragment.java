@@ -58,7 +58,8 @@ public class TipFragment extends Fragment implements Observer{
         super.onActivityCreated(savedInstanceState);
 
         Log.d(TAG, "onActivityCreated");
-        MainTaskActivity.currentTask.addObserver(this);
+        if(MainTaskActivity.currentTask!=null)
+            MainTaskActivity.currentTask.addObserver(this);
         noTips = (TextView) getView().findViewById(R.id.no_tips_textview);
         tipListAdapter = new TipListAdapter(tipList, App.getCtx());
         teamListView = (ExpandableListView) getView().findViewById(R.id.tip_list);
@@ -69,17 +70,18 @@ public class TipFragment extends Fragment implements Observer{
 
     private void refreshData() {
         Log.d(TAG, "refreshData");
-        if (tipListAdapter != null)
-            tipList.clear();
-        Set<Tip> tips = MainTaskActivity.currentTask.getTask().getTips();
-        if(tips!=null) {
-            noTips.setVisibility(View.GONE);
-            tipList.addAll(MainTaskActivity.currentTask.getTask().getTips());
-         }
-        else {
-            noTips.setVisibility(View.VISIBLE);
+        if(MainTaskActivity.currentTask!=null) {
+            if (tipListAdapter != null)
+                tipList.clear();
+            Set<Tip> tips = MainTaskActivity.currentTask.getTask().getTips();
+            if (tips != null) {
+                noTips.setVisibility(View.GONE);
+                tipList.addAll(MainTaskActivity.currentTask.getTask().getTips());
+            } else {
+                noTips.setVisibility(View.VISIBLE);
+            }
+            tipListAdapter.notifyDataSetChanged();
         }
-        tipListAdapter.notifyDataSetChanged();
     }
 
 

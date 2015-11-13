@@ -94,7 +94,8 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        MainTaskActivity.currentTask.addObserver(this);
+        if(MainTaskActivity.currentTask!=null)
+            MainTaskActivity.currentTask.addObserver(this);
         picture = (ImageView) getView().findViewById(task_picture);
         description = (TextView) getView().findViewById(R.id.task_description);
         question = (TextView) getView().findViewById(R.id.task_question);
@@ -252,12 +253,12 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
             Log.d(TAG, "Pobrano " + task.toString());
             if (task != null) {
                 if (task.getTaskId() == Globals.FINISH_TASK) {
-                    MainTaskActivity.currentTask = null;
+                    MainTaskActivity.currentTask=null;
                     String descriptionText = task.getDescription();
                     if (description != null) description.setText(descriptionText);
                     question.setText("");
                     answerA.setVisibility(View.VISIBLE);
-                    answerA.setText("Zobacz podsumowanie");
+                    answerA.setText("Koniec");
                     answerB.setVisibility(View.GONE);
                     answerC.setVisibility(View.GONE);
                 } else {

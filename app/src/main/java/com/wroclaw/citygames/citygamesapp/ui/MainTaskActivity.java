@@ -32,7 +32,7 @@ public class MainTaskActivity extends FragmentActivity {
 
     public static final String TAG = MainTaskActivity.class.getName();
 
-    public static TaskDao currentTask = null;
+    public static TaskDao currentTask = new TaskDao();
     private RegisterGame registerGameTask;
     private boolean isCurrent;
 

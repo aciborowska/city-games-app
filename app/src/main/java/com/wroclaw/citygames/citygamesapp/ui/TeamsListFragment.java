@@ -26,6 +26,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,9 +51,17 @@ public class TeamsListFragment extends Fragment {
     public static final String TITLE = "Drużyny";
     private SignTask signTask;
 
+    private static final int SINGNIN=1;
+    private static final int SINGOUT=2;
+    private static final int CREATE_NEW_TEAM=3;
+    private  final int TEAM_DUPLICATE_NAME =-10;
+    private final int TEAM_NOT_FOUND = -201;
+    private final int TEAM_SINGULAR = -202;
+
     private TeamListAdapter teamListAdapter;
     private final List<Team> teamList = new ArrayList<>();
     private ListView teamListView;
+    private ProgressBar progressBar;
 
     public static TeamsListFragment newInstance(boolean startingGame, Long scenarioId) {
         TeamsListFragment myFragment = new TeamsListFragment();
@@ -81,6 +90,7 @@ public class TeamsListFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         Log.d(TAG, "onActivityCreated");
 
+        progressBar = (ProgressBar) getView().findViewById(R.id.team_list_progress_bar);
         teamListAdapter = new TeamListAdapter(teamList, App.getCtx());
         teamListView = (ListView) getView().findViewById(R.id.team_list);
         teamListView.setAdapter(teamListAdapter);
@@ -102,11 +112,11 @@ public class TeamsListFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.action_add_team:
                 Log.d(TAG, "ADD");
-                new TeamDialog(getActivity(), "Stwórz drużynę", 3).show();
+                new TeamDialog(getActivity(), "Stwórz drużynę", CREATE_NEW_TEAM).show();
                 break;
             case R.id.action_sing_to_team:
                 Log.d(TAG, "SIGN IN");
-                new TeamDialog(getActivity(), "Dołącz do drużyny", 1).show();
+                new TeamDialog(getActivity(), "Dołącz do drużyny", SINGNIN).show();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -180,7 +190,7 @@ public class TeamsListFragment extends Fragment {
 
                     Team team = new Team();
                     team.setName(name);
-                    team.setPassword(pass);
+                    team.setPassword(Login.MD5Encryption(pass));
                     team.setSingular(0);
 
                     signTask = new SignTask(operation);
@@ -258,7 +268,7 @@ public class TeamsListFragment extends Fragment {
                 .setIcon(R.drawable.ic_action_remove)
                 .setPositiveButton("Tak", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        signTask = new SignTask(2);
+                        signTask = new SignTask(SINGOUT);
                         signTask.execute(team);
                         dialog.dismiss();
                     }
@@ -281,6 +291,12 @@ public class TeamsListFragment extends Fragment {
         public String TAG = SignTask.class.getName();
         int operation;
 
+        @Override
+        protected void onPreExecute() {
+            progressBar.setVisibility(View.VISIBLE);
+            super.onPreExecute();
+        }
+
         public SignTask(int operation) {
             this.operation = operation;
         }
@@ -292,23 +308,22 @@ public class TeamsListFragment extends Fragment {
             Uri.Builder builder = new Uri.Builder();
             Team responseEntity;
             switch (operation) {
-                case 1:
+                case SINGNIN:
                     builder.scheme("http").encodedAuthority(Globals.MAIN_URL)
                             .appendPath(Globals.SIGNIN_URI)
-                            .appendQueryParameter("playerId", String.valueOf(Login.getPlayerId()))
-                            .appendQueryParameter("teamId", String.valueOf(params[0].getTeamId()));
+                            .appendQueryParameter("playerId", String.valueOf(Login.getPlayerId()));
                     String uri = builder.build().toString();
-                    responseEntity = restTemplate.postForObject(uri, null, Team.class);
+                    responseEntity = restTemplate.postForObject(uri, params[0], Team.class);
                     return responseEntity;
-                case 2:
+                case SINGOUT:
                     builder.scheme("http").encodedAuthority(Globals.MAIN_URL)
                             .appendEncodedPath(Globals.SIGNOUT_URI)
                             .appendQueryParameter("playerId", String.valueOf(Login.getPlayerId()))
                             .appendQueryParameter("teamId", String.valueOf(params[0].getTeamId()));
                     uri = builder.build().toString();
-                    responseEntity = restTemplate.postForObject(uri, null, Team.class);
+                    responseEntity = restTemplate.postForObject(uri,null, Team.class);
                     return responseEntity;
-                case 3:
+                case CREATE_NEW_TEAM:
                     builder.scheme("http").encodedAuthority(Globals.MAIN_URL)
                             .appendPath(Globals.CREATE_TEAM_URI)
                             .appendQueryParameter("playerId", String.valueOf(Login.getPlayerId()));
@@ -322,18 +337,37 @@ public class TeamsListFragment extends Fragment {
         @Override
         protected void onPostExecute(Team team) {
             super.onPostExecute(team);
+            progressBar.setVisibility(View.GONE);
             signTask = null;
             if (team != null) {
-                if (operation == 2) {
-                    App.getTeamDao().delete(team);
-                    teamList.remove(team);
-                } else {
-                    App.getTeamDao().save(team);
-                    teamList.add(team);
+                if(team.getTeamId()>0){
+                    if (operation == SINGOUT) {
+                        App.getTeamDao().delete(team);
+                        teamList.remove(team);
+                    } else if(team.getTeamId()!= TEAM_DUPLICATE_NAME){
+                        App.getTeamDao().save(team);
+                        teamList.add(team);
+                    }
+                    refreshData();
+                    Toast.makeText(getContext(), "Wykonano", Toast.LENGTH_SHORT).show();
                 }
-                refreshData();
+                else{
+                    int id = (int)(long)team.getTeamId();
+                    switch(id) {
+                        case  TEAM_DUPLICATE_NAME:
+                            Toast.makeText(getContext(), "Drużyna o podanej nazwie już istnieje!", Toast.LENGTH_SHORT).show();
+                            break;
+                        case TEAM_NOT_FOUND:
+                            Toast.makeText(getContext(), "Brak drużyny o podanej nazwie!", Toast.LENGTH_SHORT).show();
+                            break;
+                        case TEAM_SINGULAR:
+                            Toast.makeText(getContext(), "Nie można zapisać się do własnej  drużyny gracza!", Toast.LENGTH_SHORT).show();
+                            break;
+                        default:
+                           Log.e(TAG, "Operacja o nieznanym ID");
 
-                Toast.makeText(getContext(), "Wykonano", Toast.LENGTH_SHORT).show();
+                    }
+                }
             } else {
                 Toast.makeText(getContext(), "Wystąpił błąd, spróbuj ponownie później", Toast.LENGTH_SHORT).show();
             }
