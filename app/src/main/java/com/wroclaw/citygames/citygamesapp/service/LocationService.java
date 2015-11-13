@@ -1,5 +1,6 @@
 package com.wroclaw.citygames.citygamesapp.service;
 
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -9,8 +10,10 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.wroclaw.citygames.citygamesapp.App;
 import com.wroclaw.citygames.citygamesapp.R;
 import com.wroclaw.citygames.citygamesapp.ui.MainTaskActivity;
 
@@ -41,8 +44,6 @@ public class LocationService extends Service {
 
     protected void onHandleIntent(Intent intent) {
         String intentAction = intent.getStringExtra("service");
-        Log.d(TAG, "onHandleIntent, intentAction: " + (intentAction != null ? intentAction : "null"));
-        startTracking();
         if(intentAction == null) {
             Log.w(TAG, "onHandleIntent: intentAction is null");
         } else if(intentAction.equals(getString(R.string.startTrackingIntent))) {
@@ -61,8 +62,22 @@ public class LocationService extends Service {
             Log.e(TAG, "saveLocation: no known location");
         else {
             Log.d(TAG, "saveLocation: location: " + location.toString());
-            if(location.getLatitude()==targetLatitude && location.getLongitude()==targetLongitude){
+            float result[] = new float[3];
+            Location.distanceBetween(targetLatitude,targetLongitude,location.getLatitude(),location.getLongitude(),result);
+            float distanceInMeters = result[0];
+            boolean isWithinRange = distanceInMeters < 1000;
+            if(isWithinRange){
                 MainTaskActivity.currentTask.setAvaliable(true);
+                NotificationCompat.Builder mBuilder =
+                        new NotificationCompat.Builder(this)
+                                .setSmallIcon(R.drawable.ic_launcher)
+                                .setContentTitle(App.getCtx().getString(R.string.app_name))
+                                .setContentText("Znajdujesz się blisko zadania").setAutoCancel(true);
+
+                NotificationManager mNotificationManager =
+                        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+                mNotificationManager.notify(0, mBuilder.build());
                 stopTracking();
             }
         }

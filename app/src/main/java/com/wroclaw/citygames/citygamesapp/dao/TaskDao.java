@@ -1,11 +1,15 @@
 package com.wroclaw.citygames.citygamesapp.dao;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import com.wroclaw.citygames.citygamesapp.App;
 import com.wroclaw.citygames.citygamesapp.Globals;
+import com.wroclaw.citygames.citygamesapp.R;
 import com.wroclaw.citygames.citygamesapp.model.Task;
 import com.wroclaw.citygames.citygamesapp.model.Tip;
+import com.wroclaw.citygames.citygamesapp.service.LocationService;
 import com.wroclaw.citygames.citygamesapp.util.ImageConverter;
 
 import java.util.ArrayList;
@@ -34,6 +38,18 @@ public class TaskDao extends Observable {
         ImageConverter.cleanPhotoDir();
         currentTask = task;
         saveImages();
+        if(currentTask.getLongitude()!=0 && currentTask.getLatitude()!=0){
+            Log.d(TAG,"startuje locationService");
+            Intent intent = new Intent(App.getCtx(), LocationService.class);
+            intent.putExtra("service", App.getCtx().getString(R.string.startTrackingIntent));
+            App.getCtx().startService(intent);
+        }
+        else{
+            Log.d(TAG,"stopuje LocationService");
+            Intent intent = new Intent(App.getCtx(), LocationService.class);
+            intent.putExtra("service", App.getCtx().getString(R.string.stopTrackingIntent));
+            App.getCtx().stopService(intent);
+        }
         if(currentTask.getTaskId()== Globals.CHOICE_TASK) choiceTask();
         this.setChanged();
         this.notifyObservers();

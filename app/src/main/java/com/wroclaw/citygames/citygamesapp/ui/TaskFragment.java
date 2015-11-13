@@ -157,7 +157,7 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
         Log.d(TAG, "refreshData ");
         Task task = MainTaskActivity.currentTask.getTask();
         if(task.getTaskId()== Globals.UPDATE_TASK){
-            Toast.makeText(App.getCtx(),"Zadanie jest nieaktualne, pobieram nowe",Toast.LENGTH_SHORT).show();
+            Toast.makeText(App.getCtx(),"Zadanie jest nieaktualne, pobieram nowe...",Toast.LENGTH_SHORT).show();
             progressBar.setVisibility(View.VISIBLE);
             getNextTask = new GetNextTask(RestUriBuilder.getCurrentTask());
             getNextTask.execute();

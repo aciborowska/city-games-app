@@ -17,6 +17,7 @@ import com.wroclaw.citygames.citygamesapp.R;
 import com.wroclaw.citygames.citygamesapp.model.Game;
 import com.wroclaw.citygames.citygamesapp.model.Team;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -121,11 +122,13 @@ public class GamesListFragment extends Fragment {
             }
             TextView scenarioName=(TextView)v.findViewById(R.id.game_name);
             TextView scenarioInfo = (TextView) v.findViewById(R.id.game_info);
+            TextView date = (TextView) v.findViewById(R.id.game_date);
 
             Game game = getGroup(groupPosition);
             String name = App.getScenarioDao().get(game.getScenarioId()).getName();
             scenarioName.setText(name);
             scenarioInfo.setText("Zdobyte punkty "+String.valueOf(game.getPoints()));
+            date.setText(new SimpleDateFormat("dd-MM-yyyy").format(game.getTimeStart()));
             return v;
         }
 
