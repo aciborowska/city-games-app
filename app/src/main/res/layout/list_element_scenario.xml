@@ -6,7 +6,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textAppearance="@style/HeaderFont"
         android:text="Large Text"
         android:id="@+id/sceanrio_name"
         android:textColor="@color/dark_brown"/>
@@ -14,7 +14,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textAppearance="@style/RegularFont"
         android:text="Medium Text"
         android:id="@+id/sceanrio_info"
         android:textColor="@color/light_brown"/>

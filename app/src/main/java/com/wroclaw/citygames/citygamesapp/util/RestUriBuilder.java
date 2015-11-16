@@ -19,7 +19,8 @@ public class RestUriBuilder {
 
     public static String registerUri(){
         Uri.Builder builder = new Uri.Builder();
-        builder.scheme("http").encodedAuthority(Globals.MAIN_URL).appendEncodedPath(Globals.REGISTER_URI);
+        builder.scheme("http").encodedAuthority(Globals.MAIN_URL).appendEncodedPath(Globals.LOGIN_URI)
+                .appendEncodedPath(Globals.REGISTER_URI);
         return builder.build().toString();
     }
 
