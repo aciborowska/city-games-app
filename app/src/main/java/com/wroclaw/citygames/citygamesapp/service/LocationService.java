@@ -8,6 +8,8 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
@@ -23,12 +25,12 @@ public class LocationService extends Service {
 
     private static final int LOCATION_TIME_INTERVAL = 1000; // in millis
     private static final int LOCATION_DIST_INTERVAL = 3; // in meters
-    private long targetLongitude;
-    private long targetLatitude;
+    private double targetLongitude;
+    private double targetLatitude;
     private LocationListener locationListener;
-
+    private LocationManager locationManager;
     public LocationService() {
-        Log.d(TAG," locationService created");
+        Log.d(TAG, " locationService created");
     }
 
     @Override
@@ -44,13 +46,14 @@ public class LocationService extends Service {
 
     protected void onHandleIntent(Intent intent) {
         String intentAction = intent.getStringExtra("service");
-        if(intentAction == null) {
+        if (intentAction == null) {
             Log.w(TAG, "onHandleIntent: intentAction is null");
-        } else if(intentAction.equals(getString(R.string.startTrackingIntent))) {
-            targetLongitude = intent.getLongExtra("longitude",0);
-            targetLatitude = intent.getLongExtra("latitude", 0);
+        } else if (intentAction.equals(getString(R.string.startTrackingIntent))) {
+            targetLongitude = MainTaskActivity.currentTask.getTask().getLongitude();
+            targetLatitude = MainTaskActivity.currentTask.getTask().getLatitude();
+            Log.d(TAG, "LocationService: targetLatitue " + String.valueOf(targetLatitude) + ", targetLongitude " + targetLongitude);
             startTracking();
-        } else if(intentAction.equals(getString(R.string.stopTrackingIntent))) {
+        } else if (intentAction.equals(getString(R.string.stopTrackingIntent))) {
             stopTracking();
         } else {
             Log.w(TAG, "onHandleIntent: unknown intentAction");
@@ -58,20 +61,23 @@ public class LocationService extends Service {
     }
 
     private void checkLocation(Location location) {
-        if(location == null)
-            Log.e(TAG, "saveLocation: no known location");
+        if (location == null)
+            Log.e(TAG, "checkLocation: no known location");
         else {
-            Log.d(TAG, "saveLocation: location: " + location.toString());
+            Log.d(TAG, "checkLocation: location: " + location.toString());
             float result[] = new float[3];
-            Location.distanceBetween(targetLatitude,targetLongitude,location.getLatitude(),location.getLongitude(),result);
+
+            Location.distanceBetween(targetLatitude, targetLongitude, location.getLatitude(), location.getLongitude(), result);
             float distanceInMeters = result[0];
+            Log.d(TAG, "checkLocation: distance: " + String.valueOf(distanceInMeters));
             boolean isWithinRange = distanceInMeters < 1000;
-            if(isWithinRange){
-                MainTaskActivity.currentTask.setAvaliable(true);
+            if (isWithinRange) {
+                Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
                 NotificationCompat.Builder mBuilder =
                         new NotificationCompat.Builder(this)
                                 .setSmallIcon(R.drawable.ic_launcher)
                                 .setContentTitle(App.getCtx().getString(R.string.app_name))
+                                .setSound(alarmSound)
                                 .setContentText("Znajdujesz się blisko zadania").setAutoCancel(true);
 
                 NotificationManager mNotificationManager =
@@ -84,11 +90,11 @@ public class LocationService extends Service {
     }
 
     private void startTracking() {
-        final LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationManager = (LocationManager) App.getCtx().getSystemService(App.getCtx().LOCATION_SERVICE);//(LocationManager) getSystemService(Context.LOCATION_SERVICE);
         final Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
         String provider = locationManager.getBestProvider(criteria, true);
-        if(provider != null) {
+        if (provider != null) {
             Log.d(TAG, "startTracking: provider: " + provider);
             locationListener = new LocationListener() {
                 @Override
@@ -99,14 +105,14 @@ public class LocationService extends Service {
 
                 @Override
                 public void onStatusChanged(String provider, int status, Bundle extras) {
-                    // TODO
+
                 }
 
                 @Override
                 public void onProviderEnabled(String provider) {
                     Log.d(TAG, "onProviderEnabled");
                     provider = locationManager.getBestProvider(criteria, true);
-                    if(provider != null) {
+                    if (provider != null) {
                         Log.d(TAG, "onProviderEnabled: provider: " + provider);
                         locationManager.requestLocationUpdates(provider, LOCATION_TIME_INTERVAL, LOCATION_DIST_INTERVAL, locationListener);
                     } else {
@@ -118,7 +124,7 @@ public class LocationService extends Service {
                 public void onProviderDisabled(String provider) {
                     Log.d(TAG, "onProviderDisabled");
                     provider = locationManager.getBestProvider(criteria, true);
-                    if(provider != null) {
+                    if (provider != null) {
                         Log.d(TAG, "onProviderDisabled: provider: " + provider);
                         locationManager.requestLocationUpdates(provider, LOCATION_TIME_INTERVAL, LOCATION_DIST_INTERVAL, locationListener);
                     } else {
@@ -131,9 +137,10 @@ public class LocationService extends Service {
             Log.w(TAG, "startTracking: no provider avaliable");
         }
     }
+
     private void stopTracking() {
         Log.d(TAG, "stopTracking");
-        final LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationManager.removeUpdates(locationListener);
         stopSelf();
     }

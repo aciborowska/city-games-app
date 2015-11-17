@@ -1,6 +1,7 @@
 package com.wroclaw.citygames.citygamesapp.ui;
 
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -24,6 +25,7 @@ import com.wroclaw.citygames.citygamesapp.Globals;
 import com.wroclaw.citygames.citygamesapp.R;
 import com.wroclaw.citygames.citygamesapp.model.Game;
 import com.wroclaw.citygames.citygamesapp.model.Task;
+import com.wroclaw.citygames.citygamesapp.service.LocationService;
 import com.wroclaw.citygames.citygamesapp.util.Gameplay;
 import com.wroclaw.citygames.citygamesapp.util.ImageConverter;
 import com.wroclaw.citygames.citygamesapp.util.RestUriBuilder;
@@ -117,7 +119,6 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
         Log.d(TAG, "handleIntent");
         this.getNextTask = new GetNextTask(RestUriBuilder.getCurrentTask());
         getNextTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
-
     }
 
 
@@ -214,6 +215,7 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
         answer.setVisibility(View.GONE);
         question.setText("");
         description.setText("");
+        answer.setText("");
         picture.setImageResource(R.drawable.question1);
     }
     @Override
@@ -261,6 +263,9 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
                     answerA.setText("Koniec");
                     answerB.setVisibility(View.GONE);
                     answerC.setVisibility(View.GONE);
+                    Intent intent = new Intent(App.getCtx(), LocationService.class);
+                    intent.putExtra("service", App.getCtx().getString(R.string.stopTrackingIntent));
+                    App.getCtx().stopService(intent);
                 } else {
                     MainTaskActivity.currentTask.setTask(task);
                 }

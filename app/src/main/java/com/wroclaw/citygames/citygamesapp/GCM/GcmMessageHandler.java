@@ -5,6 +5,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
@@ -44,8 +46,10 @@ public class GcmMessageHandler extends IntentService {
                 Gameplay.registerGame(Long.valueOf(mes[1]), Long.valueOf(mes[2]));
             }
         }
+        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
+                        .setSound(alarmSound)
                         .setSmallIcon(R.drawable.ic_launcher)
                         .setContentTitle(extras.getString("title"))
                         .setContentText(mes[0]).setAutoCancel(true);

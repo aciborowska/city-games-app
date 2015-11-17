@@ -33,7 +33,9 @@ import android.widget.Toast;
 import com.wroclaw.citygames.citygamesapp.App;
 import com.wroclaw.citygames.citygamesapp.Globals;
 import com.wroclaw.citygames.citygamesapp.R;
+import com.wroclaw.citygames.citygamesapp.model.Game;
 import com.wroclaw.citygames.citygamesapp.model.Team;
+import com.wroclaw.citygames.citygamesapp.util.Gameplay;
 import com.wroclaw.citygames.citygamesapp.util.Login;
 
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -62,6 +64,7 @@ public class TeamsListFragment extends Fragment {
     private final List<Team> teamList = new ArrayList<>();
     private ListView teamListView;
     private ProgressBar progressBar;
+    private RegisterGame registerGameTask;
 
     public static TeamsListFragment newInstance(boolean startingGame, Long scenarioId) {
         TeamsListFragment myFragment = new TeamsListFragment();
@@ -385,11 +388,14 @@ public class TeamsListFragment extends Fragment {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Team team = teamList.get(position);
-            Intent intent = new Intent(getActivity(),MainTaskActivity.class);
-            intent.putExtra("playerId",Login.getPlayerId());
+            progressBar.setVisibility(View.VISIBLE);
+            registerGameTask = new RegisterGame(scenarioId, Login.getPlayerId(), team.getTeamId());
+            registerGameTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+           /* Intent intent = new Intent(getActivity(),MainTaskActivity.class);
+            intent.putExtra("playerId", Login.getPlayerId());
             intent.putExtra("scenarioId",scenarioId);
             intent.putExtra("teamId",team.getTeamId());
-            startActivity(intent);
+            startActivity(intent);*/
         }
     }
 
@@ -398,6 +404,66 @@ public class TeamsListFragment extends Fragment {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Log.d(TAG, "omItemClick id: " + id);
+        }
+    }
+
+    public class RegisterGame extends AsyncTask<Void, Void, Game> {
+
+        private Long scenarioId;
+        private Long playerId;
+        private Long teamId;
+
+        public RegisterGame(Long scenarioId, Long playerId, Long teamId) {
+            this.scenarioId = scenarioId;
+            this.playerId = playerId;
+            this.teamId = teamId;
+        }
+
+        @Override
+        protected Game doInBackground(Void... params) {
+            Log.d(TAG, "Rozpocznamy rozgrywke....");
+            RestTemplate restTemplate = new RestTemplate();
+            restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+            Uri.Builder builder = new Uri.Builder();
+            builder.scheme("http").encodedAuthority(Globals.MAIN_URL)
+                    .appendPath(Globals.GAMEPLAY_URI)
+                    .appendPath(Globals.REGISTER_GAME_URI)
+                    .appendQueryParameter("leaderId", String.valueOf(playerId))
+                    .appendQueryParameter("scenarioId", String.valueOf(scenarioId))
+                    .appendQueryParameter("teamId", String.valueOf(teamId));
+            String uri = builder.build().toString();
+            Game game = null;
+            try {
+                Log.d(TAG, "rejestracja gry: " + uri);
+                game = restTemplate.postForObject(uri, null, Game.class);
+                if (game != null) Gameplay.registerGame(game.getGameId(), teamId);
+            } catch (final Exception e) {
+                Log.d(TAG, "błąd połączenia");
+                e.printStackTrace();
+            }
+            return game;
+        }
+
+        @Override
+        protected void onPostExecute(Game game) {
+            super.onPostExecute(game);
+            registerGameTask = null;
+            progressBar.setVisibility(View.GONE);
+            if (game == null) {
+                Toast.makeText(App.getCtx(), "Wystąpił błąd, spróbuj ponownie później", Toast.LENGTH_SHORT).show();
+            } else if (game.getGameId() > 0) {
+                Gameplay.registerGame(game.getGameId(), teamId);
+                App.getGameDao().save(game);
+                Log.d(TAG, "zarejestrowano nową grę " + game.getGameId());
+                Intent intent = new Intent(getActivity(), MainTaskActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                Toast.makeText(App.getCtx(), "Zarejestrowano grę", Toast.LENGTH_SHORT).show();
+            } else if (game.getGameId() < 0) {
+                Toast.makeText(App.getCtx(), "Wybrana drużyna ma za mało graczy!", Toast.LENGTH_SHORT).show();
+            } else {
+                Log.e(TAG, "Nieznany błąd");
+            }
         }
     }
 }

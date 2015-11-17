@@ -11,13 +11,8 @@ public class Task {
 	private String question;
 	private String correctAnswer;
 	private String picture;
-	private int correctPoints;
-	private int wrongPoints;
 	private float latitude;
 	private float longitude;
-	private TaskGroup taskGroup;
-	private Long nextTaskGood;
-	private Long nextTaskWrong;
 	private Set<Tip> tips = new HashSet<>(0);
 	private int start_task;
 
@@ -56,19 +51,6 @@ public class Task {
 		this.picture = picture;
 	}
 
-	public int getCorrectPoints() {
-		return correctPoints;
-	}
-	public void setCorrectPoints(int correctPoints) {
-		this.correctPoints = correctPoints;
-	}
-
-	public int getWrongPoints() {
-		return wrongPoints;
-	}
-	public void setWrongPoints(int wrongPoints) {
-		this.wrongPoints = wrongPoints;
-	}
 
 	public float getLatitude() {
 		return latitude;
@@ -82,27 +64,6 @@ public class Task {
 	}
 	public void setLongitude(float longitude) {
 		this.longitude = longitude;
-	}
-
-	public TaskGroup getTaskGroup() {
-		return taskGroup;
-	}
-	public void setTaskGroup(TaskGroup taskGroup) {
-		this.taskGroup = taskGroup;
-	}
-
-	public Long getNextTaskGood() {
-		return nextTaskGood;
-	}
-	public void setNextTaskGood(Long nextTaskGood) {
-		this.nextTaskGood = nextTaskGood;
-	}
-
-	public Long getNextTaskWrong() {
-		return nextTaskWrong;
-	}
-	public void setNextTaskWrong(Long nextTaskWrong) {
-		this.nextTaskWrong = nextTaskWrong;
 	}
 
 	public Set<Tip> getTips() {
@@ -129,13 +90,8 @@ public class Task {
 				", question='" + question + '\'' +
 				", correctAnswer='" + correctAnswer + '\'' +
 				", picture='" + picture + '\'' +
-				", correctPoints=" + correctPoints +
-				", wrongPoints=" + wrongPoints +
 				", latitude=" + latitude +
 				", longitude=" + longitude +
-				", taskGroup=" + taskGroup +
-				", nextTaskGood=" + nextTaskGood +
-				", nextTaskWrong=" + nextTaskWrong +
 				", start_task=" + start_task +
 				", tips=" + tips +
 				'}';

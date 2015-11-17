@@ -246,8 +246,7 @@ public class NavigationDrawerActivity extends FragmentActivity {
     public class CollectDataTask extends AsyncTask<Void, Void, Team[]> {
         public String TAG = CollectDataTask.class.getName();
 
-        CollectDataTask() {
-        }
+        CollectDataTask() {}
 
         @Override
         protected Team[] doInBackground(Void... params) {

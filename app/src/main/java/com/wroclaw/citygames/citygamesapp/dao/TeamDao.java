@@ -36,7 +36,7 @@ public class TeamDao implements Dao<Team> {
         values.put(TeamTable.TeamColumns._ID, team.getTeamId());
         values.put(TeamTable.TeamColumns.COLUMN_NAME, team.getName());
         values.put(TeamTable.TeamColumns.COLUMN_PASSWORD, team.getPassword());
-
+        values.put(TeamTable.TeamColumns.COLUMN_SINGULAR, team.getSingular());
         // 3. insert
         return db.insert(TeamTable.TABLE_NAME, // table
                 null, //nullColumnHack

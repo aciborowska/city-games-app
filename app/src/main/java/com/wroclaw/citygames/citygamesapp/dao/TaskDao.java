@@ -38,8 +38,9 @@ public class TaskDao extends Observable {
         ImageConverter.cleanPhotoDir();
         currentTask = task;
         saveImages();
+        Log.d(TAG,"setTask: longitude "+currentTask.getLongitude() );
         if(currentTask.getLongitude()!=0 && currentTask.getLatitude()!=0){
-            Log.d(TAG,"startuje locationService");
+            Log.d(TAG, "startuje locationService");
             Intent intent = new Intent(App.getCtx(), LocationService.class);
             intent.putExtra("service", App.getCtx().getString(R.string.startTrackingIntent));
             App.getCtx().startService(intent);
