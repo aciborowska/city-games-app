@@ -21,9 +21,6 @@ public class MainTaskActivity extends FragmentActivity {
     public static TaskDao currentTask = new TaskDao();
 
 
-    private ViewPager mainViewPager;
-    private MainViewPagerAdapter mainViewPagerAdapter;
-
     public static final int TASK_FRAGMENT_NUM = 1;
     public static final int TIP_FRAGMENT_NUM = 0;
     public static final int MAP_FRAGMENT_NUM = 2;
@@ -35,9 +32,9 @@ public class MainTaskActivity extends FragmentActivity {
         setContentView(R.layout.activity_main_task);
         Log.d(TAG, "onCreate");
         currentTask = new TaskDao();
-        // Zainicjalizuj ViewPager
-        mainViewPager = (ViewPager) findViewById(R.id.view_pager);
-        mainViewPagerAdapter = new MainViewPagerAdapter(getSupportFragmentManager());
+        MainViewPagerAdapter mainViewPagerAdapter = new MainViewPagerAdapter(getSupportFragmentManager());
+
+        ViewPager mainViewPager = (ViewPager) findViewById(R.id.view_pager);
         mainViewPager.setAdapter(mainViewPagerAdapter);
         mainViewPager.setCurrentItem(START_FRAGMENT);
         Intent intent = new Intent(this, LocationService.class);

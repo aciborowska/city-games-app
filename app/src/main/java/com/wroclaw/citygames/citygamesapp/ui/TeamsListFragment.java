@@ -391,11 +391,6 @@ public class TeamsListFragment extends Fragment {
             progressBar.setVisibility(View.VISIBLE);
             registerGameTask = new RegisterGame(scenarioId, Login.getPlayerId(), team.getTeamId());
             registerGameTask.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
-           /* Intent intent = new Intent(getActivity(),MainTaskActivity.class);
-            intent.putExtra("playerId", Login.getPlayerId());
-            intent.putExtra("scenarioId",scenarioId);
-            intent.putExtra("teamId",team.getTeamId());
-            startActivity(intent);*/
         }
     }
 

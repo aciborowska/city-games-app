@@ -18,8 +18,8 @@ import com.wroclaw.citygames.citygamesapp.ui.MainTaskActivity;
 import com.wroclaw.citygames.citygamesapp.util.Gameplay;
 
 public class GcmMessageHandler extends IntentService {
-    private static final String TAG  =GcmMessageHandler.class.getName();
-   // private Handler handler;
+    private static final String TAG = GcmMessageHandler.class.getName();
+    // private Handler handler;
 
     public GcmMessageHandler() {
         super("GcmMessageHandler");
@@ -28,7 +28,7 @@ public class GcmMessageHandler extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
-      //  handler = new Handler();
+        //  handler = new Handler();
     }
 
     @Override
@@ -39,39 +39,35 @@ public class GcmMessageHandler extends IntentService {
         String messageType = gcm.getMessageType(intent);
 
         String[] mes = extras.getString("message").split(";");
-        if(mes.length>1) {
-            Log.d(TAG,"Rozpoczęto grę gameId "+mes[1]+" teamId "+mes[2]);
-            if(Gameplay.getCurrentGame()==-1) {
-                Log.d(TAG,"Zarejestrowano grę");
+        if (mes.length > 1) {
+            Log.d(TAG, "Rozpoczęto grę gameId " + mes[1] + " teamId " + mes[2]);
+            if (Gameplay.getCurrentGame() == -1) {
+                Log.d(TAG, "Zarejestrowano grę");
                 Gameplay.registerGame(Long.valueOf(mes[1]), Long.valueOf(mes[2]));
             }
         }
+        String message = mes[0];
+        String title = extras.getString("title");
         Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder mBuilder =
+        NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(this)
                         .setSound(alarmSound)
                         .setSmallIcon(R.drawable.ic_launcher)
-                        .setContentTitle(extras.getString("title"))
-                        .setContentText(mes[0]).setAutoCancel(true);
+                        .setContentTitle(title)
+                        .setContentText(message).setAutoCancel(true);
 
         Intent resultIntent = new Intent(this, MainTaskActivity.class);
-        resultIntent.putExtra("isCurrent",true);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addParentStack(MainTaskActivity.class);
         stackBuilder.addNextIntent(resultIntent);
-        PendingIntent resultPendingIntent =
-                stackBuilder.getPendingIntent(
-                        0,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
-        mBuilder.setContentIntent(resultPendingIntent);
+        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        notificationBuilder.setContentIntent(resultPendingIntent);
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        
-        mNotificationManager.notify(0, mBuilder.build());
-        Log.i("GCM", "Received : (" + messageType + ")  " + extras.getString("title"));
 
+        mNotificationManager.notify(0, notificationBuilder.build());
+        Log.i("GCM", "Received : (" + messageType + ")  " + extras.getString("title"));
         GcmBroadcastReceiver.completeWakefulIntent(intent);
 
     }

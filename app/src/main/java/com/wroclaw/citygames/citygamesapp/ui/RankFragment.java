@@ -1,7 +1,10 @@
 package com.wroclaw.citygames.citygamesapp.ui;
 
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -24,6 +27,8 @@ import com.wroclaw.citygames.citygamesapp.App;
 import com.wroclaw.citygames.citygamesapp.Globals;
 import com.wroclaw.citygames.citygamesapp.R;
 import com.wroclaw.citygames.citygamesapp.model.Game;
+import com.wroclaw.citygames.citygamesapp.model.Scenario;
+import com.wroclaw.citygames.citygamesapp.util.RankingCheckbox;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -41,13 +46,16 @@ public class RankFragment extends Fragment {
     public static final String TAG = RankFragment.class.getName();
     public static final String TITLE = "Ranking";
 
+
     private List<Game> gameList = new ArrayList<>();
     private RankingAdapter rankingAdapter;
     private ListView rankingListView;
+    private AlertDialog dialog;
     private ProgressBar progressBar;
     private GetGameTask getGameTask;
     private final int MODE_NEW = 0;
     private final int MODE_ADD = 1;
+
 
     private static final String GET_BEST_20  = new Uri.Builder()
             .scheme("http")
@@ -61,7 +69,7 @@ public class RankFragment extends Fragment {
     }
 
     public RankFragment() {
-        // Required empty public constructor
+
     }
 
 
@@ -83,6 +91,7 @@ public class RankFragment extends Fragment {
 
         progressBar = (ProgressBar) getView().findViewById(R.id.ranking_progress_bar);
         getActivity().setTitle(RankFragment.TITLE);
+
 
         getGameTask = new GetGameTask(GET_BEST_20,MODE_NEW);
         progressBar.setVisibility(View.VISIBLE);
@@ -115,6 +124,61 @@ public class RankFragment extends Fragment {
                 getGameTask = new GetGameTask(uri,MODE_ADD);
                 getGameTask.execute();
                 progressBar.setVisibility(View.VISIBLE);
+                break;
+            case R.id.action_rank_settings:
+                final List<String> selectedItems=RankingCheckbox.get();
+                List<Scenario> scenarios = App.getScenarioDao().getAll();
+                final String scenarioNames[] = new String[scenarios.size()];
+                boolean selected[] = new boolean[scenarios.size()];
+                for(int i=0;i<scenarios.size();i++) {
+                    scenarioNames[i]=scenarios.get(i).getName();
+                    if(selectedItems.contains(scenarioNames[i])) selected[i]=true;
+                    else selected[i]=false;
+                }
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Filtruj ranking wg scenariuszy");
+                builder.setMultiChoiceItems(scenarioNames, selected,
+                        new DialogInterface.OnMultiChoiceClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int indexSelected,
+                                                boolean isChecked) {
+                                if (isChecked) {
+                                    selectedItems.add(scenarioNames[indexSelected]);
+                                } else if (selectedItems.contains(scenarioNames[indexSelected])) {
+                                    int idx = selectedItems.indexOf(scenarioNames[indexSelected]);
+                                    selectedItems.remove(idx);
+                                }
+                            }
+                        })
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                RankingCheckbox.save(selectedItems);
+                                getGameTask = new GetGameTask(GET_BEST_20,MODE_NEW);
+                                progressBar.setVisibility(View.VISIBLE);
+                                getGameTask.execute();
+                            }
+                        })
+                        .setNegativeButton("Wyczysc", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                RankingCheckbox.save(new ArrayList<String>());
+                                getGameTask = new GetGameTask(GET_BEST_20,MODE_NEW);
+                                progressBar.setVisibility(View.VISIBLE);
+                                getGameTask.execute();
+                            }
+                        });
+
+
+                dialog = builder.create();
+                dialog.show();
+                Resources resources = dialog.getContext().getResources();
+                int color = resources.getColor(R.color.medium_orange); // your color here
+
+                int titleDividerId = resources.getIdentifier("titleDivider", "id", "android");
+                View titleDivider = dialog.getWindow().getDecorView().findViewById(titleDividerId);
+                titleDivider.setBackgroundColor(color); // change divider color
         }
         return super.onOptionsItemSelected(item);
     }
@@ -182,7 +246,7 @@ public class RankFragment extends Fragment {
             restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
             Log.d(TAG, uri);
             try {
-                ResponseEntity<Game[]> responseEntity = restTemplate.getForEntity(uri, Game[].class);
+                ResponseEntity<Game[]> responseEntity = restTemplate.postForEntity(uri, RankingCheckbox.get(),Game[].class);
                 return responseEntity.getBody();
             } catch (final Exception e) {
                 Log.d(TAG, "błąd połączenia");

@@ -252,7 +252,6 @@ public class TaskFragment extends Fragment implements View.OnClickListener, Obse
         protected void onPostExecute(Task task) {
             getNextTask = null;
             progressBar.setVisibility(View.GONE);
-            Log.d(TAG, "Pobrano " + task.toString());
             if (task != null) {
                 if (task.getTaskId() == Globals.FINISH_TASK) {
                     MainTaskActivity.currentTask=null;

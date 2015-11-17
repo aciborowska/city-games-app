@@ -152,4 +152,6 @@ public class ScenarioDao implements Dao<Scenario> {
             scenario.setPicture(filename);
         }
     }
+
+
 }
