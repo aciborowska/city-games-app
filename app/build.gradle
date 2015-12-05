@@ -1,4 +1,18 @@
 apply plugin: 'com.android.application'
+apply plugin: "sonar-runner"
+
+sonarRunner {
+    sonarProperties {
+        property "sonar.host.url", "http://localhost:9000" // Address of Sonar server
+        property "sonar.sources", "src" // Sources
+        property "sonar.projectName", "CityGamesApp" // Name of your project
+        property "sonar.projectVersion", "1.0-SNAPSHOT" // Version of your project
+        property "sonar.projectDescription", "Aplikacja mobilna dla uczestnika gier miejskich" // Description of your project
+        property "sonar.profile", "Android Lint" // To use the profile Android Lint
+        property "sonar.language", "java"
+        property "sonar.import_unknown_files", true // To allow Sonar to verify the XML's files
+    }
+}
 
 android {
 

@@ -296,8 +296,6 @@ public class NavigationDrawerActivity extends FragmentActivity {
 
     public class CollectScenarioTask extends AsyncTask<Void, Void, Scenario[]> {
         public String TAG = CollectScenarioTask.class.getName();
-
-
         @Override
         protected Scenario[] doInBackground(Void... params) {
             RestTemplate restTemplate = new RestTemplate();
@@ -313,7 +311,6 @@ public class NavigationDrawerActivity extends FragmentActivity {
             }
             return null;
         }
-
         @Override
         protected void onPostExecute(final Scenario[] result) {
             Log.d(TAG, "onPostExecute");
@@ -323,7 +320,8 @@ public class NavigationDrawerActivity extends FragmentActivity {
                 App.getScenarioDao().deleteAll();
                 App.getScenarioDao().saveAll(scenarios);
             } else {
-                Toast.makeText(getApplicationContext(), getResources().getString(R.string.toast_connection_error), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.toast_connection_error),
+                        Toast.LENGTH_SHORT).show();
             }
         }
 

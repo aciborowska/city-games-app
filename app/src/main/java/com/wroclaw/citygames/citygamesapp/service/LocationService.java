@@ -69,7 +69,6 @@ public class LocationService extends Service {
 
             Location.distanceBetween(targetLatitude, targetLongitude, location.getLatitude(), location.getLongitude(), result);
             float distanceInMeters = result[0];
-            Log.d(TAG, "checkLocation: distance: " + String.valueOf(distanceInMeters));
             boolean isWithinRange = distanceInMeters < 1000;
             if (isWithinRange) {
                 Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -90,7 +89,7 @@ public class LocationService extends Service {
     }
 
     private void startTracking() {
-        locationManager = (LocationManager) App.getCtx().getSystemService(App.getCtx().LOCATION_SERVICE);//(LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         final Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
         String provider = locationManager.getBestProvider(criteria, true);

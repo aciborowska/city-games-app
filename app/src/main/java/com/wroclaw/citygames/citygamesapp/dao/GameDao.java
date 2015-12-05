@@ -32,6 +32,7 @@ public class GameDao implements Dao<Game> {
     @Override
     public long save(Game game) {
         Log.d(TAG, game.toString());
+        if(game.getScenario()==null || game.getScenario().getScenarioId()==null|| game.getTeamId()==null) return -1;
         SQLiteDatabase db=dbManager.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(GameTable.GameColumns._ID, game.getGameId());
@@ -61,6 +62,7 @@ public class GameDao implements Dao<Game> {
     @Override
     public void delete(Game game) {
         SQLiteDatabase db=dbManager.getWritableDatabase();
+        if(game==null || game.getGameId()==null) return;
         if(game.getGameId()>0)
             db.delete(GameTable.TABLE_NAME, BaseColumns._ID + " = ?",new String[]{String.valueOf(game.getGameId())});
     }

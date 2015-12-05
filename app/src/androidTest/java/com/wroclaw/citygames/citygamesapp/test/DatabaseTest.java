@@ -215,9 +215,114 @@ public class DatabaseTest extends AndroidTestCase {
     }
 
     public void testInsertGame(){
+        Team team = new Team();
+        Long teamId = teamDao.save(team);
+        assertNotNull(teamId);
+        assertTrue(teamId>0);
+        Scenario scenario = new Scenario();
+
+        Long scenarioId = scenarioDao.save(scenario);
+        scenario.setScenarioId(scenarioId);
+        assertNotNull(scenarioId);
+        assertTrue(scenarioId > 0);
+
         Game game = new Game();
+        game.setTeamId(teamId);
+        game.setScenario(scenario);
+        Long gameId = gameDao.save(game);
+        assertNotNull(gameId);
+        assertTrue(gameId > 0);
+
+        Game game1  = new Game();
+        Long id = gameDao.save(game1);
+        assertNotNull(id);
+        assertTrue(id == -1);
+
+        game.setGameId(gameId);
+        gameId = gameDao.save(game);
+        assertNotNull(gameId);
+        assertTrue(gameId==-1);
+    }
+
+    public void testReadGame(){
+        int count = gameDao.getAll().size();
+        Team team = new Team();
+        Long teamId = teamDao.save(team);
+        Scenario scenario = new Scenario();
+        Long scenarioId = scenarioDao.save(scenario);
+        scenario.setScenarioId(scenarioId);
+
+        Game game = new Game();
+        game.setTeamId(teamId);
+        game.setScenario(scenario);
+        Long gameId = gameDao.save(game);
+        assertNotNull(gameId);
+        assertTrue(gameId > 0);
+        assertTrue(gameDao.getAll().size() == count + 1);
+
+        Game test = gameDao.get(0);
+        assertNull(test);
+
+        test = gameDao.get(gameId);
+        assertNotNull(test);
+        assertTrue(test.getGameId() == gameId);
+    }
+
+    public void testUpdateGame(){
+        int count = gameDao.getAll().size();
+        Team team = new Team();
+        Long teamId = teamDao.save(team);
+        Scenario scenario = new Scenario();
+        Long scenarioId = scenarioDao.save(scenario);
+        scenario.setScenarioId(scenarioId);
+
+        Game game = new Game();
+        game.setTeamId(teamId);
+        game.setScenario(scenario);
+        Long gameId = gameDao.save(game);
+        assertNotNull(gameId);
+        assertTrue(gameId > 0);
+        assertTrue(gameDao.getAll().size() == count + 1);
+        game.setGameId(gameId);
+
+        game.setPoints(100);
+        gameDao.update(game);
+
+        Game test = gameDao.get(gameId);
+        assertNotNull(test);
+        assertTrue(test.getGameId() == gameId);
+        assertTrue(test.getPoints()==game.getPoints());
 
 
+    }
+    public void testRemoveGame(){
+        int count = gameDao.getAll().size();
+        Team team = new Team();
+        Long teamId = teamDao.save(team);
+        Scenario scenario = new Scenario();
+        Long scenarioId = scenarioDao.save(scenario);
+        scenario.setScenarioId(scenarioId);
+
+        Game game = new Game();
+        game.setTeamId(teamId);
+        game.setScenario(scenario);
+        Long gameId = gameDao.save(game);
+        assertNotNull(gameId);
+        assertTrue(gameId > 0);
+        assertTrue(gameDao.getAll().size() == count + 1);
+        game.setGameId(gameId);
+
+        gameDao.delete(null);
+        assertTrue(gameDao.getAll().size() == count + 1);
+
+        gameDao.delete(new Game());
+        assertTrue(gameDao.getAll().size() == count + 1);
+
+        gameDao.delete(game);
+        assertTrue(gameDao.getAll().size() == count);
+
+        gameDao.deleteAll();
+        assertTrue(gameDao.getAll().size() == 0);
     }
 
 }

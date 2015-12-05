@@ -14,7 +14,7 @@ public class Task {
 	private float latitude;
 	private float longitude;
 	private Set<Tip> tips = new HashSet<>(0);
-	private int start_task;
+	private int startTask;
 
 	public Long getTaskId() {
 		return taskId;
@@ -74,12 +74,12 @@ public class Task {
 		this.tips = tips;
 	}
 
-	public int getStart_task() {
-		return start_task;
+	public int getStartTask() {
+		return startTask;
 	}
 
-	public void setStart_task(int start_task) {
-		this.start_task = start_task;
+	public void setStartTask(int start_task) {
+		this.startTask = start_task;
 	}
 
 	@Override
@@ -92,7 +92,7 @@ public class Task {
 				", picture='" + picture + '\'' +
 				", latitude=" + latitude +
 				", longitude=" + longitude +
-				", start_task=" + start_task +
+				", start_task=" + startTask +
 				", tips=" + tips +
 				'}';
 	}
